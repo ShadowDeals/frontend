@@ -10,8 +10,8 @@ function App() {
         <Routes>
             <Route path="/" element={<Navigate to="/welcome" replace />} />
             <Route path="/welcome" element={<WelcomeCentralComponent/>} />
-            {/*<Route path="/login" element={<LoginComponent/>} />*/}
-            {/*<Route path="/register" element={<RegisterComponent/>}/>*/}
+            <Route path="/login" element={<LoginComponent/>} />
+            <Route path="/register" element={<RegisterComponent/>}/>
 
         </Routes>
       </BrowserRouter>

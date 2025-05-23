@@ -1,18 +1,19 @@
 
-import {Box, FormControl, InputLabel, MenuItem, Paper, Select, Typography} from "@mui/material";
+import { Box, FormControl, InputLabel, MenuItem, Paper, Select, Typography } from "@mui/material";
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
-import {StyledTextField} from "./Login.jsx";
-// import {useState} from "react";
+import { StyledTextField } from "./Login.jsx";
+import { useState } from "react";
 
 function ColoredMenuItem({ value, children, ...props }) {
     return (
         <MenuItem
             value={value}
             sx={{
-                backgroundColor: 'black',
-                color: '#990000',
+                backgroundColor: '#990000',
+                color: 'black',
                 '&:hover': {
-                    backgroundColor: '#330000',
+                    backgroundColor: 'black',
+                    color: '#990000',
                 },
             }}
             {...props}
@@ -22,60 +23,67 @@ function ColoredMenuItem({ value, children, ...props }) {
     );
 }
 
-// function RoleSelect() {
-//     const [age, setAge] = useState('');
-//
-//     const handleChange = (event) => {
-//         setAge(event.target.value);
-//     };
-//
-//     return (
-//         <Box
-//             sx={{ width: '100%',marginBottom: '3%' }}
-//         >
-//             <FormControl fullWidth>
-//                 <InputLabel
-//                     id="role-selector-label"
-//                     sx={{
-//                         color: 'black',
-//                         '&.Mui-focused': {
-//                             color: 'black',
-//                         },
-//                     }}
-//                 >Роль</InputLabel>
-//                 <Select
-//                     labelId="role-selector-label"
-//                     id="demo-simple-select"
-//                     value={age}
-//                     label="Роль"
-//                     onChange={handleChange}
-//                     sx={{
-//                         padding: 0,
-//                         backgroundColor: '#990000',
-//                         color: 'black',
-//                         width: '100%',
-//                         '& .MuiOutlinedInput-notchedOutline': {
-//                             borderColor: 'black',
-//                         },
-//                         '&:hover .MuiOutlinedInput-notchedOutline': {
-//                             borderColor: 'black',
-//                         },
-//                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-//                             borderColor: 'black',
-//                         },
-//                         '&.MuiSelect-iconOpen': {
-//                             borderColor: 'black',
-//                         },
-//                     }}
-//                 >
-//                     {/*<ColoredMenuItem sx={{backgroundColor:'#990000'}}value={10}>Ten</ColoredMenuItem>*/}
-//                     {/*<ColoredMenuItem value={20}>Twenty</ColoredMenuItem>*/}
-//                     {/*<ColoredMenuItem value={30}>Thirty</ColoredMenuItem>*/}
-//                 </Select>
-//             </FormControl>
-//         </Box>
-//     );
-// }
+function RoleSelect() {
+    const [age, setAge] = useState('');
+
+    const handleChange = (event) => {
+        setAge(event.target.value);
+    };
+
+    return (
+        <Box
+            sx={{ width: '100%',marginBottom: '3%' }}
+        >
+            <FormControl fullWidth>
+                <InputLabel
+                    id="role-selector-label"
+                    sx={{
+                        color: 'black',
+                        '&.Mui-focused': {
+                            color: 'black',
+                        },
+                    }}
+                >Роль</InputLabel>
+                <Select
+                    labelId="role-selector-label"
+                    id="demo-simple-select"
+                    value={age}
+                    label="Роль"
+                    onChange={handleChange}
+                    MenuProps={{
+                        PaperProps: {
+                            sx: {
+                                border: '3px black',
+                                backgroundColor: '#990000',
+                            },
+                        },
+                    }}
+                    sx={{
+                        backgroundColor: '#990000',
+                        color: 'black',
+                        width: '100%',
+                        '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'black',
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'black',
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'black',
+                        },
+                        '&.MuiSelect-iconOpen': {
+                            borderColor: 'black',
+                        },
+                    }}
+                >
+                    <ColoredMenuItem value={20}>Дон</ColoredMenuItem>
+                    <ColoredMenuItem value={30}>Солдат</ColoredMenuItem>
+                    <ColoredMenuItem value={30}>Пользователь</ColoredMenuItem>
+                </Select>
+            </FormControl>
+        </Box>
+    );
+}
 
 function RegisterComponent() {
     return (
@@ -111,7 +119,7 @@ function RegisterComponent() {
                     }}>
                     Регистрация
                 </Typography>
-                {/*<RoleSelect fullWidth></RoleSelect>*/}
+                <RoleSelect fullWidth></RoleSelect>
                 <StyledTextField fullWidth label="Почта"></StyledTextField>
                 <StyledTextField sx={{marginTop:'3%'}} fullWidth label="Пароль"></StyledTextField>
                 <ColorSwitchableButton
