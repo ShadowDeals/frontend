@@ -1,57 +1,28 @@
-import {useState} from "react";
-import {
-    Box,
-    Paper,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
-    Typography,
-    TextField,
-    Link,
-    Button
-} from "@mui/material";
-import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 
-export function StyledTextField({ sx, ...props }) {
+import {Box, FormControl, InputLabel, MenuItem, Paper, Select, Typography} from "@mui/material";
+import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
+import {StyledTextField} from "./Login.jsx";
+// import {useState} from "react";
+
+function ColoredMenuItem({ value, children, ...props }) {
     return (
-        <TextField
+        <MenuItem
+            value={value}
             sx={{
-                width: '100%',
-                '& .MuiInputLabel-root': {
-                    color: 'black',
+                backgroundColor: 'black',
+                color: '#990000',
+                '&:hover': {
+                    backgroundColor: '#330000',
                 },
-                '& .MuiInputLabel-root.Mui-focused': {
-                    color: 'black',
-                },
-                '& .MuiFormHelperText-root': {
-                    color: 'black',
-                },
-                '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                        borderColor: 'black',
-                    },
-                    '&:hover fieldset': {
-                        borderColor: 'black',
-                    },
-                    '&.Mui-focused fieldset': {
-                        borderColor: 'black',
-                    },
-                    '&.Mui-focused:not(:hover) fieldset': {
-                        borderColor: 'black',
-                    },
-                },
-                ...sx,
             }}
             {...props}
-        />
+        >
+            {children}
+        </MenuItem>
     );
 }
 
-
-
-//
-// export function RoleSelect() {
+// function RoleSelect() {
 //     const [age, setAge] = useState('');
 //
 //     const handleChange = (event) => {
@@ -59,7 +30,9 @@ export function StyledTextField({ sx, ...props }) {
 //     };
 //
 //     return (
-//         <Box sx={{ minWidth: 120 }}>
+//         <Box
+//             sx={{ width: '100%',marginBottom: '3%' }}
+//         >
 //             <FormControl fullWidth>
 //                 <InputLabel
 //                     id="role-selector-label"
@@ -69,14 +42,17 @@ export function StyledTextField({ sx, ...props }) {
 //                             color: 'black',
 //                         },
 //                     }}
-//                 >Age</InputLabel>
+//                 >Роль</InputLabel>
 //                 <Select
-//                     labelId="demo-simple-select-label"
+//                     labelId="role-selector-label"
 //                     id="demo-simple-select"
 //                     value={age}
-//                     label="Age"
+//                     label="Роль"
 //                     onChange={handleChange}
 //                     sx={{
+//                         padding: 0,
+//                         backgroundColor: '#990000',
+//                         color: 'black',
 //                         width: '100%',
 //                         '& .MuiOutlinedInput-notchedOutline': {
 //                             borderColor: 'black',
@@ -92,17 +68,17 @@ export function StyledTextField({ sx, ...props }) {
 //                         },
 //                     }}
 //                 >
-//                     <MenuItem value={10}>Ten</MenuItem>
-//                     <MenuItem value={20}>Twenty</MenuItem>
-//                     <MenuItem value={30}>Thirty</MenuItem>
+//                     {/*<ColoredMenuItem sx={{backgroundColor:'#990000'}}value={10}>Ten</ColoredMenuItem>*/}
+//                     {/*<ColoredMenuItem value={20}>Twenty</ColoredMenuItem>*/}
+//                     {/*<ColoredMenuItem value={30}>Thirty</ColoredMenuItem>*/}
 //                 </Select>
 //             </FormControl>
 //         </Box>
 //     );
 // }
 
-function LoginComponent() {
-    return(
+function RegisterComponent() {
+    return (
         <Box
             display="flex"
             alignItems="right"
@@ -133,32 +109,16 @@ function LoginComponent() {
                         textAlign: 'center',
                         marginBottom: '10%',
                     }}>
-                    Логин
+                    Регистрация
                 </Typography>
+                {/*<RoleSelect fullWidth></RoleSelect>*/}
                 <StyledTextField fullWidth label="Почта"></StyledTextField>
                 <StyledTextField sx={{marginTop:'3%'}} fullWidth label="Пароль"></StyledTextField>
-                <Link
-                    href="#"
-                    underline="hover"
-                    sx={{
-                        marginTop: '3%',
-                        alignSelf: 'flex-end',
-                        cursor: 'pointer',
-                        color: 'black',
-                        fontSize: '0.9rem',
-                    }}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        alert('Забыл пароль? Лечи голову!');
-                    }}
-                >
-                    Забыли пароль?
-                </Link>
                 <ColorSwitchableButton
-                    fullWidth sx={{marginTop:'10%'}}> Войти </ColorSwitchableButton>
+                    fullWidth sx={{marginTop:'10%'}}> Зарегистрироваться </ColorSwitchableButton>
             </Paper>
         </Box>
     );
 }
 
-export default LoginComponent
+export default RegisterComponent;

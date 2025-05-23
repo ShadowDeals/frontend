@@ -8,24 +8,7 @@ import MuiAccordionSummary, {
 } from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 
-function ColorSwitchableButton({ children, ...props }) {
-    return (
-        <Button
-            variant="contained"
-            sx={{
-                backgroundColor: 'black',
-                color: '#990000',
-                '&:hover': {
-                    backgroundColor: '#990000',
-                    color: 'black',
-                },
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-}
+import ColorSwitchableButton from '../CommonComponents/Buttons.jsx';
 
 const AccordionPanel = {
     Don: 'panel1',
