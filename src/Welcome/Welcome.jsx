@@ -1,13 +1,5 @@
 import React from 'react';
 import { Box, Typography, Grid, Button, Stack, List, ListItem, ListItemText} from '@mui/material';
-
-const AccordionPanel = {
-    Don: 'panel1',
-    Admin: 'panel2',
-    Executor: 'panel3',
-    Customer: 'panel4',
-};
-
 import { styled } from '@mui/material/styles';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import MuiAccordion from '@mui/material/Accordion';
@@ -15,6 +7,32 @@ import MuiAccordionSummary, {
     accordionSummaryClasses,
 } from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
+
+function ColorSwitchableButton({ children, ...props }) {
+    return (
+        <Button
+            variant="contained"
+            sx={{
+                backgroundColor: 'black',
+                color: '#990000',
+                '&:hover': {
+                    backgroundColor: '#990000',
+                    color: 'black',
+                },
+            }}
+            {...props}
+        >
+            {children}
+        </Button>
+    );
+}
+
+const AccordionPanel = {
+    Don: 'panel1',
+    Admin: 'panel2',
+    Executor: 'panel3',
+    Customer: 'panel4',
+};
 
 const Accordion = styled((props) => (
     <MuiAccordion disableGutters elevation={0} square {...props}/>
@@ -217,7 +235,6 @@ function WelcomeCentralComponent() {
             alignItems="center"
             justifyContent="center"
             height="100vh"
-            sx={{ bgcolor: 'pink' }}
         >
             <Box
                 display="flex"
@@ -254,18 +271,12 @@ function WelcomeCentralComponent() {
                         justifyContent="center"
                         alignItems="center"
                     >
-                        <Button
-                            variant="contained"
-                            sx={{ backgroundColor: 'black', color: 'red', '&:hover': { backgroundColor: '#990000' } }}
-                        >
+                        <ColorSwitchableButton>
                             Войти
-                        </Button>
-                        <Button
-                            variant="contained"
-                            sx={{ backgroundColor: 'black', color: 'red', '&:hover': { backgroundColor: '#990000' } }}
-                        >
+                        </ColorSwitchableButton>
+                        <ColorSwitchableButton>
                             Зарегистрироваться
-                        </Button>
+                        </ColorSwitchableButton>
                     </Stack>
                 </Stack>
             </Box>
