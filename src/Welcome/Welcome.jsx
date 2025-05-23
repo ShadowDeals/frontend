@@ -1,11 +1,133 @@
 import React from 'react';
 import { Box, Typography, Grid, Button, Stack, List, ListItem, ListItemText} from '@mui/material';
 
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+const AccordionPanel = {
+    Don: 'panel1',
+    Admin: 'panel2',
+    Executor: 'panel3',
+    Customer: 'panel4',
+};
 
+import { styled } from '@mui/material/styles';
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+import MuiAccordion from '@mui/material/Accordion';
+import MuiAccordionSummary, {
+    accordionSummaryClasses,
+} from '@mui/material/AccordionSummary';
+import MuiAccordionDetails from '@mui/material/AccordionDetails';
+
+const Accordion = styled((props) => (
+    <MuiAccordion disableGutters elevation={0} square {...props}/>
+))(({ theme }) => ({
+    backgroundColor: '#990000',
+    border: `1px solid ${theme.palette.divider}`,
+    '&:not(:last-child)': {
+        borderBottom: 0,
+    },
+    '&::before': {
+        display: 'none',
+    },
+}));
+
+const AccordionSummary = styled((props) => (
+    <MuiAccordionSummary
+        expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
+        {...props}
+    />
+))(({ theme }) => ({
+    backgroundColor: 'rgba(99, 0, 0, .03)',
+    flexDirection: 'row-reverse',
+    [`& .${accordionSummaryClasses.expandIconWrapper}.${accordionSummaryClasses.expanded}`]:
+        {
+            transform: 'rotate(90deg)',
+        },
+    [`& .${accordionSummaryClasses.content}`]: {
+        marginLeft: theme.spacing(1),
+    },
+    ...theme.applyStyles('dark', {
+        backgroundColor: 'rgba(99, 0, 0, .05)',
+    }),
+}));
+
+const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+    padding: theme.spacing(2),
+    borderTop: '1px solid rgba(0, 0, 0, .125)',
+}));
+
+function RolesAccordionSet() {
+    const [expanded, setExpanded] = React.useState(false);
+
+    const handleChange = (panel) => (event, newExpanded) => {
+        setExpanded(newExpanded ? panel : false);
+    };
+
+    return (
+        <Box>
+            <Accordion expanded={expanded === AccordionPanel.Don} onChange={handleChange(AccordionPanel.Don)}>
+                <AccordionSummary
+                    expandIcon={<ArrowForwardIosSharpIcon
+                        sx={{
+                            flexDirection: 'row-reverse',
+                            fontSize: '0.9rem'
+                        }}/>} aria-controls="panel1d-content" id="panel1d-header">
+                    <Typography
+                        component="span"
+                        sx={{color: 'black'}}
+                    > Дон </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    Стань лидером группировки. Выкупи себе зону влияния.
+                    <List sx={{ listStyleType: 'disc' }}>
+                        <ListItem sx={{ marginLeft:'2%', display: 'list-item' }}>Получай отчёты о результатах работы своей группировки</ListItem>
+                        <ListItem sx={{ marginLeft:'2%', display: 'list-item' }}>Заблокируй базу данных своей группировки, если что-то пойдёт не так</ListItem>
+                    </List>
+                </AccordionDetails>
+            </Accordion>
+            <Accordion expanded={expanded === AccordionPanel.Admin} onChange={handleChange(AccordionPanel.Admin)}>
+                <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
+                    <Typography component="span">Администратор</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    Управляй делами Дона. Получай % от выручки.
+                    <List sx={{ listStyleType: 'disc' }}>
+                        <ListItem sx={{ marginLeft:'2%', display: 'list-item' }}>Администрируй входящие заявки</ListItem>
+                        <ListItem sx={{ marginLeft:'2%', display: 'list-item' }}>Координируй работу солдат</ListItem>
+                    </List>
+                </AccordionDetails>
+            </Accordion>
+            <Accordion expanded={expanded === AccordionPanel.Executor} onChange={handleChange(AccordionPanel.Executor)}>
+                <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
+                    <Typography component="span">Солдат</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    Выполняй заказы, назначенные Администратором. Получай % от выручки.
+                    <List sx={{ listStyleType: 'disc' }}>
+                        <ListItem sx={{ marginLeft:'2%', display: 'list-item' }}>Примени все свои умения и навыки</ListItem>
+                        <ListItem sx={{ marginLeft:'2%', display: 'list-item' }}>Отправляй Администратору отчёт по результатам работы</ListItem>
+                    </List>
+                </AccordionDetails>
+            </Accordion>
+            <Accordion expanded={expanded === AccordionPanel.Customer} onChange={handleChange(AccordionPanel.Customer)}>
+                <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
+                    <Typography component="span">Пользователь</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    Регистрируйся, если имеешь проблемы, в которых полиция и государство тебе не помощник
+                    <List sx={{ listStyleType: 'disc' }}>
+                        <ListItem sx={{ marginLeft:'2%', display: 'list-item' }}>
+                            Готовься хорошо заплатить
+                        </ListItem>
+                    </List>
+                </AccordionDetails>
+            </Accordion>
+        </Box>
+    );
+}
+
+
+const headingStyles = {
+    textAlign: 'center', color: 'black'
+};
 function TheShadowDealsRoleChoosingCall() {
     return (
         <Typography
@@ -23,7 +145,7 @@ function TheShadowDealsHeading() {
         <Typography
             variant="h2"
             component="h1"
-            sx={{ textAlign: 'center', color: 'black' }}
+            sx={headingStyles}
         >
             The Shadow Deals
         </Typography>
@@ -34,7 +156,7 @@ function TheShadowDealsSlogan() {
     return (
         <Typography
             variant="h4"
-            sx={{ textAlign: 'center', color: 'black' }}
+            sx={headingStyles}
         >
             Услуги мафии — народу!
         </Typography>
@@ -118,124 +240,32 @@ function WelcomeCentralComponent() {
                 sx={{ bgcolor: '#990000' }}
             >
                 <Stack
-                    spacing={2}
+                    spacing={3}
                     sx={{marginTop: '30%'}}
                 >
                     <TheShadowDealsHeading></TheShadowDealsHeading>
                     <TheShadowDealsSlogan></TheShadowDealsSlogan>
                     <TheShadowDealsRoleChoosingCall></TheShadowDealsRoleChoosingCall>
-                    <Box
-                        display="flex"
-                        alignItems="right"
-                        gap={1}
+                    <RolesAccordionSet></RolesAccordionSet>
+
+                    <Stack
+                        direction="row"
+                        spacing={2}
                         justifyContent="center"
-                        width="100%"
-                        sx={{ bgcolor: '#000000' }}
+                        alignItems="center"
                     >
-                        <Stack spacing={0}>
-                            <Accordion
-                            >
-                                <AccordionSummary
-                                    sx={{ borderRadius: 0, bgcolor: '#990000', color: 'white' }}
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel1-content"
-                                    id="panel1-header"
-                                >
-                                    <Typography component="span">Дон</Typography>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <List dense>
-                                        <ListItem>
-                                            <ListItemText primary="Зарегистрируй свою группировку" />
-                                        </ListItem>
-                                        <ListItem>
-                                            <ListItemText primary="Подели зоны влияния с другими бандами" />
-                                        </ListItem>
-                                        <ListItem>
-                                            <ListItemText primary="Просматривай отчёты и аналитику" />
-                                        </ListItem>
-                                    </List>
-                                </AccordionDetails>
-                            </Accordion>
-                            <Accordion>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel1-content"
-                                    id="panel1-header"
-                                    sx={{ borderRadius: 0, bgcolor: '#990000', color: 'white' }}
-                                >
-                                    <Typography component="span">Администратор</Typography>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                    malesuada lacus ex, sit amet blandit leo lobortis eget.
-                                </AccordionDetails>
-                            </Accordion>
-
-                            <Accordion>
-                                <AccordionSummary
-                                    sx={{ borderRadius: 0, bgcolor: '#990000', color: 'white' }}
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel1-content"
-                                    id="panel1-header"
-                                >
-                                    <Typography component="span">Рядовой исполнитель</Typography>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                    malesuada lacus ex, sit amet blandit leo lobortis eget.
-                                </AccordionDetails>
-                            </Accordion>
-
-                            <Accordion>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel1-content"
-                                    id="panel1-header"
-                                    sx={{ borderRadius: 0, bgcolor: '#990000', color: 'white' }}
-                                >
-                                    <Typography component="span">Пользователь</Typography>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                    malesuada lacus ex, sit amet blandit leo lobortis eget.
-                                </AccordionDetails>
-                            </Accordion>
-                        </Stack>
-                        {/*<Accordion>*/}
-                        {/*    <AccordionSummary*/}
-                        {/*        expandIcon={<ExpandMoreIcon />}*/}
-                        {/*        aria-controls="panel2-content"*/}
-                        {/*        id="panel2-header"*/}
-                        {/*    >*/}
-                        {/*        <Typography component="span">Accordion 2</Typography>*/}
-                        {/*    </AccordionSummary>*/}
-                        {/*    <AccordionDetails>*/}
-                        {/*        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse*/}
-                        {/*        malesuada lacus ex, sit amet blandit leo lobortis eget.*/}
-                        {/*    </AccordionDetails>*/}
-                        {/*</Accordion>*/}
-                    </Box>
-
-
-
-                    {/*<Typography*/}
-                    {/*    variant="body1"*/}
-                    {/*    sx={{ mt: 2, color: 'black' }}*/}
-                    {/*>*/}
-                    {/*    Зарегистрируйся как Дон и получи возможность: просматривать учёт работы группировки.*/}
-                    {/*</Typography>*/}
-                    {/*<Typography*/}
-                    {/*    variant="body1">*/}
-                    {/*    Зарегистрируйся как Пользователь и получи возможность заказывать у группировок услуги.*/}
-                    {/*</Typography>*/}
-                    {/*<Typography*/}
-                    {/*    variant="body1">*/}
-                    {/*    Зарегистрируйся как Администратор и получи возможность управлять делами Дона.*/}
-                    {/*</Typography>*/}
-                    <Stack direction="row" spacing={2}>
-                        <Button variant="contained">Войти</Button>
-                        <Button variant="contained">Зарегистрироваться</Button>
+                        <Button
+                            variant="contained"
+                            sx={{ backgroundColor: 'black', color: 'red', '&:hover': { backgroundColor: '#990000' } }}
+                        >
+                            Войти
+                        </Button>
+                        <Button
+                            variant="contained"
+                            sx={{ backgroundColor: 'black', color: 'red', '&:hover': { backgroundColor: '#990000' } }}
+                        >
+                            Зарегистрироваться
+                        </Button>
                     </Stack>
                 </Stack>
             </Box>
