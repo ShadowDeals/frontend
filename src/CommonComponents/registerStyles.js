@@ -10,7 +10,7 @@ export const registerPaperSx = {
     justifyContent: 'flex-start'
 }
 
-export const getRegisterPaperSx = (role = '') => ({
+export const getRegisterPaperSx = () => ({
     width: '20%',
     height: '55%',
     display: 'flex',
