@@ -19,8 +19,7 @@ import {
     getRegisterPaperSx,
     registerSelectMenuItemSx,
     registerSelectSx
-} from "../CommonComponents/registerStyles.js";
-
+} from "../CommonComponents/RegisterStyles.js";
 
 function OptionalRegionChoosingComponent() {
     const [specifyRegion, setSpecifyRegion] = useState(false);
@@ -28,9 +27,7 @@ function OptionalRegionChoosingComponent() {
         <Box>
             <Stack
                 direction="row"
-
                 justifyContent="flex-start"
-                alignItems="flex-start"
             >
                 <FormControlLabel
                     control={
@@ -48,7 +45,7 @@ function OptionalRegionChoosingComponent() {
                     label="Указать регион"
                     sx={{ color: 'black' }}
                 />
-                {specifyRegion !== false ? (<RegionSelect></RegionSelect>) :(<></>)}
+                {specifyRegion !== false ? (<RegionSelect sx={{width: '60%'}}></RegionSelect>) :(<></>)}
             </Stack>
         </Box>
     );
@@ -73,7 +70,7 @@ function SurnameNameStack() {
             sx={{marginBottom:'3%'}}
         >
             <StyledTextField fullWidth label="Фамилия" />
-            <StyledTextField sx={{ marginTop: '3%' }} fullWidth label="Имя" />
+            <StyledTextField sx={{}} fullWidth label="Имя" />
         </Stack>
     )
 }
@@ -95,6 +92,7 @@ function AdministratorSoldierRegisterComponent() {
         </Box>
     )
 }
+
 function DonRegisterComponent() {
     return (
         <>
@@ -150,7 +148,6 @@ function RegionSelect({ sx, props }) {
                     }}
                     sx={registerSelectSx}
                 >
-                    <ColoredMenuItem value={"Шумиловский городок"}>Шумиловский городок</ColoredMenuItem>
                     <ColoredMenuItem value={"Выборгский район"}>Выборгский район</ColoredMenuItem>
                     <ColoredMenuItem value={"Московский район"}>Московский район</ColoredMenuItem>
                     <ColoredMenuItem value={"Василеостровский раайон"}>Василеостровский раайон</ColoredMenuItem>

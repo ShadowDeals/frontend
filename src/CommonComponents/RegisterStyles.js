@@ -1,15 +1,3 @@
-export const registerPaperSx = {
-    width: '20vw',
-    height: '55vh',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    p: 5,
-    backgroundColor: '#990000',
-    color: 'black',
-    justifyContent: 'flex-start'
-}
-
 export const getRegisterPaperSx = () => ({
     width: '20%',
     height: '55%',

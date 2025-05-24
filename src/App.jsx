@@ -5,6 +5,9 @@ import LoginComponent from "./AccessControl/Login.jsx";
 import RegisterComponent from "./AccessControl/Register.jsx";
 import PasswordResetComponent from "./AccessControl/PasswordReset.jsx";
 import EmailConfirmComponent from "./AccessControl/EmailConfirm.jsx";
+import MainDonComponent from "./Don/DonComponent.jsx";
+import {ThemeProvider} from "@mui/material";
+import TheShadowDealsTheme from "./Theme.jsx";
 
 function App() {
   return (
@@ -16,6 +19,14 @@ function App() {
             <Route path="/register" element={<RegisterComponent/>}/>
             <Route path="/password-reset" element={<PasswordResetComponent/>}/>
             <Route path="/email-confirm" element={<EmailConfirmComponent/>}/>
+            <Route
+                path="/dons/id1234"
+                element={
+                    <ThemeProvider theme={TheShadowDealsTheme}>
+                        <MainDonComponent />
+                    </ThemeProvider>
+                }
+            />
         </Routes>
       </BrowserRouter>
   )

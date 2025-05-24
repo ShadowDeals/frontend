@@ -57,7 +57,7 @@ function LoginComponent() {
     return(
         <Box
             display="flex"
-            alignItems="right"
+            alignItems="flex-end"
             gap={1}
             justifyContent="center"
             width="100vw"
@@ -68,7 +68,7 @@ function LoginComponent() {
                 elevation={3}
                 sx={{
                     width: '15vw',
-                    height: '30 vh',
+                    height: '35vh',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
