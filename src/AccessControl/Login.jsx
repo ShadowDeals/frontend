@@ -1,15 +1,10 @@
-import {useState} from "react";
+import { useNavigate } from 'react-router-dom';
 import {
     Box,
     Paper,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
     Typography,
     TextField,
     Link,
-    Button
 } from "@mui/material";
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 
@@ -48,60 +43,17 @@ export function StyledTextField({ sx, ...props }) {
     );
 }
 
-
-
-//
-// export function RoleSelect() {
-//     const [age, setAge] = useState('');
-//
-//     const handleChange = (event) => {
-//         setAge(event.target.value);
-//     };
-//
-//     return (
-//         <Box sx={{ minWidth: 120 }}>
-//             <FormControl fullWidth>
-//                 <InputLabel
-//                     id="role-selector-label"
-//                     sx={{
-//                         color: 'black',
-//                         '&.Mui-focused': {
-//                             color: 'black',
-//                         },
-//                     }}
-//                 >Age</InputLabel>
-//                 <Select
-//                     labelId="demo-simple-select-label"
-//                     id="demo-simple-select"
-//                     value={age}
-//                     label="Age"
-//                     onChange={handleChange}
-//                     sx={{
-//                         width: '100%',
-//                         '& .MuiOutlinedInput-notchedOutline': {
-//                             borderColor: 'black',
-//                         },
-//                         '&:hover .MuiOutlinedInput-notchedOutline': {
-//                             borderColor: 'black',
-//                         },
-//                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-//                             borderColor: 'black',
-//                         },
-//                         '&.MuiSelect-iconOpen': {
-//                             borderColor: 'black',
-//                         },
-//                     }}
-//                 >
-//                     <MenuItem value={10}>Ten</MenuItem>
-//                     <MenuItem value={20}>Twenty</MenuItem>
-//                     <MenuItem value={30}>Thirty</MenuItem>
-//                 </Select>
-//             </FormControl>
-//         </Box>
-//     );
-// }
-
 function LoginComponent() {
+    const navigate = useNavigate();
+
+    const navigatePasswordReset = () => {
+        navigate('/password-reset', { state: { fromLogin: true } });
+    };
+
+    const navigateWelcome = () => {
+        navigate('/welcome');
+    };
+
     return(
         <Box
             display="flex"
@@ -116,7 +68,7 @@ function LoginComponent() {
                 elevation={3}
                 sx={{
                     width: '15vw',
-                    height: '35vh',
+                    height: '30 vh',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -126,6 +78,19 @@ function LoginComponent() {
                     justifyContent: 'flex-start'
                 }}
             >
+                <Link
+                    underline="hover"
+                    sx={{
+                        alignSelf: 'flex-start',
+                        cursor: 'pointer',
+                        color: 'black',
+                        fontSize: '0.9rem',
+                        marginBottom: '5%',
+                    }}
+                    onClick={navigateWelcome}
+                >
+                    На главную
+                </Link>
                 <Typography
                     variant="h4"
                     component="h1"
@@ -138,7 +103,6 @@ function LoginComponent() {
                 <StyledTextField fullWidth label="Почта"></StyledTextField>
                 <StyledTextField sx={{marginTop:'3%'}} fullWidth label="Пароль"></StyledTextField>
                 <Link
-                    href="#"
                     underline="hover"
                     sx={{
                         marginTop: '3%',
@@ -147,10 +111,7 @@ function LoginComponent() {
                         color: 'black',
                         fontSize: '0.9rem',
                     }}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        alert('Забыл пароль? Лечи голову!');
-                    }}
+                    onClick={navigatePasswordReset}
                 >
                     Забыли пароль?
                 </Link>

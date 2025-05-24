@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Grid, Button, Stack, List, ListItem, ListItemText} from '@mui/material';
+import { Box, Typography, Grid, Link, Stack, List, ListItem} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import MuiAccordion from '@mui/material/Accordion';
@@ -9,28 +9,7 @@ import MuiAccordionSummary, {
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 
 import ColorSwitchableButton from '../CommonComponents/Buttons.jsx';
-
-//
-// function ColorSwitchableButton({ children, sx, ...props }) {
-//     return (
-//         <Button
-//             variant="contained"
-//             sx={{
-//                 backgroundColor: 'black',
-//                 color: '#990000',
-//                 transition: 'all 0.01s ease-in',
-//                 '&:hover': {
-//                     backgroundColor: '#990000',
-//                     color: 'black',
-//                 },
-//                 ...sx
-//             }}
-//             {...props}
-//         >
-//             {children}
-//         </Button>
-//     );
-// }
+import {useNavigate} from "react-router-dom";
 
 const AccordionPanel = {
     Don: 'panel1',
@@ -234,6 +213,15 @@ function GridLogos() {
     );
 }
 function WelcomeCentralComponent() {
+    const navigate = useNavigate();
+
+    const handleLoginClick = () => {
+        navigate('/login');
+    };
+
+    const handleRegisterClick = () => {
+        navigate('/register');
+    };
     return (
         <Box
             display="flex"
@@ -276,10 +264,10 @@ function WelcomeCentralComponent() {
                         justifyContent="center"
                         alignItems="center"
                     >
-                        <ColorSwitchableButton>
+                        <ColorSwitchableButton onClick={handleLoginClick}>
                             Войти
                         </ColorSwitchableButton>
-                        <ColorSwitchableButton>
+                        <ColorSwitchableButton onClick={handleRegisterClick}>
                             Зарегистрироваться
                         </ColorSwitchableButton>
                     </Stack>

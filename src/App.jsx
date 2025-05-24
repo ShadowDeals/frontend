@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import WelcomeCentralComponent from "./Welcome/Welcome.jsx";
 import LoginComponent from "./AccessControl/Login.jsx";
 import RegisterComponent from "./AccessControl/Register.jsx";
+import PasswordResetComponent from "./AccessControl/PasswordReset.jsx";
 
 function App() {
   return (
@@ -12,7 +13,7 @@ function App() {
             <Route path="/welcome" element={<WelcomeCentralComponent/>} />
             <Route path="/login" element={<LoginComponent/>} />
             <Route path="/register" element={<RegisterComponent/>}/>
-
+            <Route path="/password-reset" element={<PasswordResetComponent/>}/>
         </Routes>
       </BrowserRouter>
   )

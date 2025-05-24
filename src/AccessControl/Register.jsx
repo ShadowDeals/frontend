@@ -1,8 +1,9 @@
 
-import { Box, FormControl, InputLabel, MenuItem, Paper, Select, Typography } from "@mui/material";
+import {Box, FormControl, InputLabel, Link, MenuItem, Paper, Select, Typography} from "@mui/material";
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 import { StyledTextField } from "./Login.jsx";
 import { useState } from "react";
+import {useNavigate} from "react-router-dom";
 
 function ColoredMenuItem({ value, children, ...props }) {
     return (
@@ -43,12 +44,12 @@ function RoleSelect() {
                             color: 'black',
                         },
                     }}
-                >Роль</InputLabel>
+                >Выберите роль</InputLabel>
                 <Select
                     labelId="role-selector-label"
                     id="demo-simple-select"
                     value={age}
-                    label="Роль"
+                    label="Выберите роль"
                     onChange={handleChange}
                     MenuProps={{
                         PaperProps: {
@@ -76,9 +77,9 @@ function RoleSelect() {
                         },
                     }}
                 >
-                    <ColoredMenuItem value={20}>Дон</ColoredMenuItem>
-                    <ColoredMenuItem value={30}>Солдат</ColoredMenuItem>
-                    <ColoredMenuItem value={30}>Пользователь</ColoredMenuItem>
+                    <ColoredMenuItem >Дон</ColoredMenuItem>
+                    <ColoredMenuItem >Солдат</ColoredMenuItem>
+                    <ColoredMenuItem >Пользователь</ColoredMenuItem>
                 </Select>
             </FormControl>
         </Box>
@@ -86,6 +87,11 @@ function RoleSelect() {
 }
 
 function RegisterComponent() {
+    const navigate = useNavigate();
+
+    const navigateWelcome = () => {
+        navigate('/welcome');
+    };
     return (
         <Box
             display="flex"
@@ -100,7 +106,7 @@ function RegisterComponent() {
                 elevation={3}
                 sx={{
                     width: '15vw',
-                    height: '35vh',
+                    height: '38vh',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -110,6 +116,19 @@ function RegisterComponent() {
                     justifyContent: 'flex-start'
                 }}
             >
+                <Link
+                    underline="hover"
+                    sx={{
+                        alignSelf: 'flex-start',
+                        cursor: 'pointer',
+                        color: 'black',
+                        fontSize: '0.9rem',
+                        marginBottom: '5%',
+                    }}
+                    onClick={navigateWelcome}
+                >
+                    На главную
+                </Link>
                 <Typography
                     variant="h4"
                     component="h1"
