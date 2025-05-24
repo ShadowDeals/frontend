@@ -6,10 +6,10 @@ import MuiAccordion from '@mui/material/Accordion';
 import MuiAccordionSummary, {
     accordionSummaryClasses,
 } from '@mui/material/AccordionSummary';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
 
+import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import ColorSwitchableButton from '../CommonComponents/Buttons.jsx';
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const AccordionPanel = {
     Don: 'panel1',
@@ -114,7 +114,7 @@ function RolesAccordionSet() {
                     <Typography component="span">Пользователь</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    Регистрируйся, если имеешь проблемы, в которых полиция и государство тебе не помощник
+                    Регистрируйся, если имеешь проблемы, в которых полиция и государство тебе не помощник.
                     <List sx={{ listStyleType: 'disc' }}>
                         <ListItem sx={{ marginLeft:'2%', display: 'list-item' }}>
                             Готовься хорошо заплатить
