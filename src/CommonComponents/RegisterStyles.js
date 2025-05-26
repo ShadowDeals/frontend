@@ -1,6 +1,6 @@
 export const getRegisterPaperSx = () => ({
     width: '20%',
-    height: '55%',
+    height: '70%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -25,6 +25,12 @@ export const registerSelectSx = {
     },
     '&.MuiSelect-iconOpen': {
         borderColor: 'black',
+    },
+    '&.Mui-error': {
+        borderColor: 'blue',
+    },
+    '&.Mui-error .MuiOutlinedInput-notchedOutline': {
+        borderColor: 'red',
     },
 }
 

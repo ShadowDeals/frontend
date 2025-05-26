@@ -9,26 +9,45 @@ import {
     Stack,
     Typography,
     Checkbox,
-    FormControlLabel
+    FormControlLabel, FormHelperText
 } from "@mui/material";
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 import { StyledTextField } from "./Login.jsx";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 import {
     getRegisterPaperSx,
     registerSelectMenuItemSx,
     registerSelectSx
 } from "../CommonComponents/RegisterStyles.js";
 
-function OptionalRegionChoosingComponent() {
+const donValidationSchema = Yup.object({
+    surname: Yup.string().required('Обязательно'),
+    name: Yup.string().required('Обязательно'),
+    region: Yup.string().required('Выберите регион'),
+    email: Yup.string().email('Неверный формат email').required('Введите почту'),
+    password: Yup.string().min(6, 'Минимум 6 символов').required('Введите пароль'),
+    passwordConfirm: Yup.string()
+        .required('Подтвердите пароль').test(
+            'passwords-match',
+            'Пароли должны совпадать',
+            function (value) {
+                const { password } = this.parent;
+                // если оба пустые — ошибка
+                if (!password && !value) return false;
+                return password === value;
+            }
+        )
+});
+
+function OptionalRegionChoosingComponent({ values, errors, touched, handleChange, handleBlur }) {
     const [specifyRegion, setSpecifyRegion] = useState(false);
+
     return (
         <Box>
-            <Stack
-                direction="row"
-                justifyContent="flex-start"
-            >
+            <Stack direction="row" justifyContent="flex-start" alignItems="center" spacing={2}>
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -45,35 +64,102 @@ function OptionalRegionChoosingComponent() {
                     label="Указать регион"
                     sx={{ color: 'black' }}
                 />
-                {specifyRegion !== false ? (<RegionSelect sx={{width: '60%'}}></RegionSelect>) :(<></>)}
+                {specifyRegion && (
+                    <RegionSelect
+                        name="region"
+                        value={values.region}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.region && Boolean(errors.region)}
+                        helperText={touched.region && errors.region}
+                        sx={{ width: '60%' }}
+                    />
+                )}
             </Stack>
         </Box>
     );
 }
 
-function EmailPasswordTextFields() {
+function EmailPasswordTextFields({ values, errors, touched, handleChange, handleBlur }) {
     return (
-        <>
-            <StyledTextField fullWidth label="Почта" />
-            <StyledTextField sx={{ marginTop: '3%' }} fullWidth label="Пароль" />
-        </>
-    )
+        <Box>
+            <StyledTextField
+                size={'small'}
+                fullWidth
+                label="Почта"
+                name="email"
+                value={values.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.email && Boolean(errors.email)}
+                helperText={touched.email && errors.email}
+            />
+            <StyledTextField
+                size={'small'}
+                fullWidth
+                label="Пароль"
+                type="password"
+                sx={{ marginTop: '3%' }}
+                name="password"
+                value={values.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.password && Boolean(errors.password)}
+                helperText={touched.password && errors.password}
+            />
+            <StyledTextField
+                size={'small'}
+                fullWidth
+                label="Подтверждение пароля"
+                type="password"
+                sx={{ marginTop: '3%' }}
+                name="passwordConfirm"
+                value={values.passwordConfirm}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.passwordConfirm && Boolean(errors.passwordConfirm)}
+                helperText={touched.passwordConfirm && errors.passwordConfirm}
+            />
+        </Box>
+    );
 }
 
-function SurnameNameStack() {
+
+function SurnameNameStack({ values, errors, touched, handleChange, handleBlur }) {
     return (
         <Stack
             direction="row"
             spacing={2}
             justifyContent="center"
             alignItems="center"
-            sx={{marginBottom:'3%'}}
+            sx={{ marginBottom: '3%' }}
         >
-            <StyledTextField fullWidth label="Фамилия" />
-            <StyledTextField sx={{}} fullWidth label="Имя" />
+            <StyledTextField
+                size={'small'}
+                fullWidth
+                label="Фамилия"
+                name="surname"
+                value={values.surname}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.surname && Boolean(errors.surname)}
+                helperText={touched.surname && errors.surname}
+            />
+            <StyledTextField
+                size={'small'}
+                fullWidth
+                label="Имя"
+                name="name"
+                value={values.name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.name && Boolean(errors.name)}
+                helperText={touched.name && errors.name}
+            />
         </Stack>
-    )
+    );
 }
+
 
 function UserRegisterComponent() {
     return (
@@ -93,7 +179,13 @@ function AdministratorSoldierRegisterComponent() {
     )
 }
 
-function DonRegisterComponent() {
+function DonRegisterComponent({
+                                  values,
+                                  errors,
+                                  touched,
+                                  handleChange,
+                                  handleBlur
+                              }) {
     return (
         <>
             <Stack
@@ -102,47 +194,112 @@ function DonRegisterComponent() {
                 justifyContent="center"
                 alignItems="center"
             >
-                <SurnameNameStack></SurnameNameStack>
+                <SurnameNameStack
+                    values={values}
+                    errors={errors}
+                    touched={touched}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                />
             </Stack>
-            <RegionSelect sx={{ marginTop: '3%' }} ></RegionSelect>
-            <EmailPasswordTextFields></EmailPasswordTextFields>
+            <RegionSelect
+                name="region"
+                size={'small'}
+                value={values.region}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.region && Boolean(errors.region)}
+                helperText={touched.region && errors.region}
+                sx={{ marginTop: '3%' }}
+            />
+            <EmailPasswordTextFields
+                values={values}
+                errors={errors}
+                touched={touched}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+            />
         </>
-    )
+    );
 }
 
-function RegionSelect({ sx, props }) {
-    const [region, setRegion] = useState("");
-    const handleChange = (event) => {
-        setRegion(event.target.value);
-    };
+function DonRegisterForm() {
     return (
-        <Box
-            sx={{ width: '100%', marginTop: '3%', marginBottom: '3%', ...sx}}
+        <Formik
+            initialValues={{
+                surname: '',
+                name: '',
+                region: '',
+                email: '',
+                password: '',
+                passwordConfirm: '',
+            }}
+            validationSchema={donValidationSchema}
+            onSubmit={(values) => {
+                console.log('Форма дона отправлена:', values);
+            }}
         >
-            <FormControl fullWidth>
+            {({
+                  values,
+                  errors,
+                  touched,
+                  handleChange,
+                  handleBlur,
+                  handleSubmit,
+              }) => (
+                <form onSubmit={handleSubmit}>
+                    <DonRegisterComponent
+                        values={values}
+                        errors={errors}
+                        touched={touched}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                    />
+                    <ColorSwitchableButton type="submit" fullWidth sx={{ marginTop: '8%' }}>
+                        Зарегистрироваться
+                    </ColorSwitchableButton>
+                </form>
+            )}
+        </Formik>
+    );
+}
+
+
+function RegionSelect({ sx = {}, value, onChange, onBlur, error, helperText, name }) {
+    return (
+        <Box sx={{ width: '100%', marginTop: '3%', marginBottom: '3%', ...sx }}>
+            <FormControl size='small' fullWidth error={error}>
                 <InputLabel
+                    size='small'
                     id="region-selector-label"
                     sx={{
                         color: 'black',
+                        '&.Mui-error': {
+                            color: '#cc0000',
+                        },
                         '&.Mui-focused': {
                             color: 'black',
                         },
+                        '&.Mui-error[data-shrink="true"]': {
+                            color: '#cc0000',
+                        }
                     }}
                 >
-                    Выберите регион
+                    Регион влияния
                 </InputLabel>
                 <Select
                     labelId="region-selector-label"
                     id="region-select"
-                    value={region}
+                    name={name}
+                    value={value}
                     label="Выберите регион"
-                    onChange={handleChange}
-                    {...props}
+                    onChange={onChange}
+                    onBlur={onBlur}
                     MenuProps={{
                         PaperProps: {
                             sx: {
                                 border: '3px black',
-                                backgroundColor: '#990000',
+                                backgroundColor: '#990000'
                             },
                         },
                     }}
@@ -150,12 +307,20 @@ function RegionSelect({ sx, props }) {
                 >
                     <ColoredMenuItem value={"Выборгский район"}>Выборгский район</ColoredMenuItem>
                     <ColoredMenuItem value={"Московский район"}>Московский район</ColoredMenuItem>
-                    <ColoredMenuItem value={"Василеостровский раайон"}>Василеостровский раайон</ColoredMenuItem>
+                    <ColoredMenuItem value={"Василеостровский район"}>Василеостровский район</ColoredMenuItem>
                 </Select>
+                {error && (
+                    <FormHelperText sx={{
+                        '&.Mui-error': {
+                            color: '#cc0000',
+                        },
+                    }}>{helperText}</FormHelperText>
+                )}
             </FormControl>
         </Box>
     );
 }
+
 
 function ColoredMenuItem({ value, children, ...props }) {
     return (
@@ -178,7 +343,7 @@ function RoleSelect({ role, onRoleChanged }) {
         <Box
             sx={{ width: '100%',marginBottom: '3%' }}
         >
-            <FormControl fullWidth>
+            <FormControl size='small' fullWidth>
                 <InputLabel
                     id="role-selector-label"
                     sx={{
@@ -260,7 +425,7 @@ function RegisterComponent() {
                 <RoleSelect role={selectedRole} onRoleChanged={setSelectedRole} fullWidth></RoleSelect>
                 {selectedRole === '' ? (<></>):(
                     selectedRole === 'Дон' ? (
-                        <DonRegisterComponent></DonRegisterComponent>
+                        <DonRegisterForm></DonRegisterForm>
                     ) : (
                         selectedRole === 'Администратор' || selectedRole === 'Солдат' ? (
                             <Box>
@@ -275,8 +440,6 @@ function RegisterComponent() {
                         )
                     )
                 )}
-                <ColorSwitchableButton
-                    fullWidth sx={{marginTop:'8%'}}> Зарегистрироваться </ColorSwitchableButton>
             </Paper>
         </Box>
     );

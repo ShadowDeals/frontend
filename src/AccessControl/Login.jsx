@@ -8,6 +8,86 @@ import {
 } from "@mui/material";
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+
+const validationSchema = Yup.object({
+    email: Yup.string().email('Неверный формат email').required('Введите почту'),
+    password: Yup.string().required('Введите пароль'),
+});
+
+function LoginForm({ navigatePasswordReset }) {
+    return (
+        <Formik
+            initialValues={{ email: '', password: '' }}
+            validationSchema={validationSchema}
+            onSubmit={(values, { setSubmitting }) => {
+                console.log('Логин:', values);
+                setSubmitting(false);
+            }}
+        >
+            {({
+                  values,
+                  errors,
+                  touched,
+                  handleChange,
+                  handleBlur,
+                  handleSubmit,
+                  isSubmitting,
+              }) => (
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
+                    <StyledTextField
+                        fullWidth
+                        label="Почта"
+                        name="email"
+                        value={values.email}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.email && Boolean(errors.email)}
+                        helperText={touched.email && errors.email}
+                    />
+
+                    <StyledTextField
+                        sx={{ marginTop: '3%' }}
+                        fullWidth
+                        label="Пароль"
+                        name="password"
+                        type="password"
+                        value={values.password}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.password && Boolean(errors.password)}
+                        helperText={touched.password && errors.password}
+                    />
+
+                    <Link
+                        underline="hover"
+                        sx={{
+                            marginTop: '3%',
+                            alignSelf: 'flex-end',
+                            cursor: 'pointer',
+                            color: 'black',
+                            fontSize: '0.9rem',
+                        }}
+                        onClick={navigatePasswordReset}
+                    >
+                        Забыли пароль?
+                    </Link>
+
+                    <ColorSwitchableButton
+                        type="submit"
+                        fullWidth
+                        sx={{ marginTop: '10%' }}
+                        disabled={isSubmitting}
+                    >
+                        Войти
+                    </ColorSwitchableButton>
+                </form>
+            )}
+        </Formik>
+    );
+}
+
 export function StyledTextField({ sx, ...props }) {
     return (
         <TextField
@@ -19,8 +99,15 @@ export function StyledTextField({ sx, ...props }) {
                 '& .MuiInputLabel-root.Mui-focused': {
                     color: 'black',
                 },
+                // Добавляем цвет для лейбла в состоянии ошибки
+                '& .MuiInputLabel-root.Mui-error': {
+                    color: 'red',
+                },
                 '& .MuiFormHelperText-root': {
                     color: 'black',
+                },
+                '& .MuiFormHelperText-root.Mui-error': {
+                    color: 'red',
                 },
                 '& .MuiOutlinedInput-root': {
                     '& fieldset': {
@@ -32,6 +119,9 @@ export function StyledTextField({ sx, ...props }) {
                     '&.Mui-focused fieldset': {
                         borderColor: 'black',
                     },
+                    '&.Mui-error fieldset': {
+                        borderColor: 'red',
+                    },
                     '&.Mui-focused:not(:hover) fieldset': {
                         borderColor: 'black',
                     },
@@ -42,6 +132,7 @@ export function StyledTextField({ sx, ...props }) {
         />
     );
 }
+
 
 function LoginComponent() {
     const navigate = useNavigate();
@@ -100,23 +191,9 @@ function LoginComponent() {
                     }}>
                     Логин
                 </Typography>
-                <StyledTextField fullWidth label="Почта"></StyledTextField>
-                <StyledTextField sx={{marginTop:'3%'}} fullWidth label="Пароль"></StyledTextField>
-                <Link
-                    underline="hover"
-                    sx={{
-                        marginTop: '3%',
-                        alignSelf: 'flex-end',
-                        cursor: 'pointer',
-                        color: 'black',
-                        fontSize: '0.9rem',
-                    }}
-                    onClick={navigatePasswordReset}
-                >
-                    Забыли пароль?
-                </Link>
-                <ColorSwitchableButton
-                    fullWidth sx={{marginTop:'10%'}}> Войти </ColorSwitchableButton>
+                <LoginForm navigatePasswordReset={navigatePasswordReset}></LoginForm>
+                {/*<StyledTextField fullWidth label="Почта"></StyledTextField>*/}
+                {/*<StyledTextField sx={{marginTop:'3%'}} fullWidth label="Пароль"></StyledTextField>*/}
             </Paper>
         </Box>
     );
