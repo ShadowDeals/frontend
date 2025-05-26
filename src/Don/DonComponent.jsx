@@ -128,7 +128,7 @@ export default function PersistentDrawerLeft() {
                     backgroundColor:'blue',
                     color: 'blue',
                 }}>
-                    <IconButton onClick={handleDrawerClose}>
+                    <IconButton onClick=    {handleDrawerClose}>
                         {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                     </IconButton>
                 </DrawerHeader>
