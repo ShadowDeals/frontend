@@ -11,11 +11,12 @@ import {
     Checkbox,
     FormControlLabel, FormHelperText
 } from "@mui/material";
+
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 import { StyledTextField } from "./Login.jsx";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Formik } from 'formik';
+import {Formik, useFormikContext} from 'formik';
 import * as Yup from 'yup';
 import {
     getRegisterPaperSx,
@@ -23,11 +24,19 @@ import {
     registerSelectSx
 } from "../CommonComponents/RegisterStyles.js";
 
+
+const userValidationSchema = Yup.object({});
+
 const administratorValidationSchema = Yup.object({
     surname: Yup.string().required('Обязательно'),
     name: Yup.string().required('Обязательно'),
     email: Yup.string().email('Неверный формат email').required('Введите почту'),
-    region: Yup.string().required('Выберите регион'),
+    specifyRegion: Yup.boolean(),
+    region: Yup.string().when('specifyRegion', {
+        is: true,
+        then: (schema) => schema.required('Выберите регион'),
+        otherwise: (schema) => schema.notRequired()
+    }),
     password: Yup.string().min(6, 'Минимум 6 символов').required('Введите пароль'),
     passwordConfirm: Yup.string()
         .required('Подтвердите пароль').test(
@@ -59,16 +68,33 @@ const donValidationSchema = Yup.object({
         )
 });
 
-function OptionalRegionChoosingComponent({ values, errors, touched, handleChange, handleBlur }) {
-    const [specifyRegion, setSpecifyRegion] = useState(false);
+function OptionalRegionChoosingComponent() {
+    const { values,
+        errors,
+        touched,
+        handleChange,
+        handleBlur,
+        setFieldValue,
+        setFieldTouched,
+        setFieldError } = useFormikContext();
+    const [specReg, setSpecReg] = useState(false);
     return (
         <Box>
             <Stack direction="row" justifyContent="flex-start" alignItems="center" spacing={2}>
                 <FormControlLabel
                     control={
                         <Checkbox
-                            checked={specifyRegion}
-                            onChange={(e) => setSpecifyRegion(e.target.checked)}
+                            checked={specReg}
+                            onChange={(e) => {
+                                const checked= e.target.checked;
+                                setSpecReg(checked)
+                                setFieldValue('specifyRegion', checked);
+                                if (!checked) {
+                                    setFieldValue('region', '');
+                                }
+                                setFieldTouched('region', false);
+                                setFieldError('region', undefined);
+                            }}
                             sx={{
                                 color: 'black',
                                 '&.Mui-checked': {
@@ -80,14 +106,14 @@ function OptionalRegionChoosingComponent({ values, errors, touched, handleChange
                     label="Указать регион"
                     sx={{ color: 'black' }}
                 />
-                {specifyRegion && (
+                {specReg && (
                     <RegionSelect
                         name="region"
                         values={values}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        error={touched.region && Boolean(errors.region)}
-                        helperText={touched.region && errors.region}
+                        error={values.specifyRegion && touched.region && Boolean(errors.region)}
+                        helperText={values.specifyRegion && touched.region && errors.region}
                         sx={{ width: '60%' }}
                     />
                 )}
@@ -96,7 +122,12 @@ function OptionalRegionChoosingComponent({ values, errors, touched, handleChange
     );
 }
 
-function EmailPasswordTextFields({ values, errors, touched, handleChange, handleBlur }) {
+function EmailPasswordTextFields() {
+    const { values,
+        errors,
+        touched,
+        handleChange,
+        handleBlur } = useFormikContext();
     return (
         <Box>
             <StyledTextField
@@ -141,7 +172,13 @@ function EmailPasswordTextFields({ values, errors, touched, handleChange, handle
 }
 
 
-function SurnameNameStack({ values, errors, touched, handleChange, handleBlur }) {
+function SurnameNameStack() {
+    const { values,
+        errors,
+        touched,
+        handleChange,
+        handleBlur } = useFormikContext();
+
     return (
         <Stack
             direction="row"
@@ -176,13 +213,12 @@ function SurnameNameStack({ values, errors, touched, handleChange, handleBlur })
     );
 }
 
-
 function UserRegisterComponent() {
     return (
-        <>
+        <Box>
             <StyledTextField fullWidth sx={{marginBottom:'3%'}} label="Никнейм" />
             <EmailPasswordTextFields></EmailPasswordTextFields>
-        </>
+        </Box>
     )
 }
 
@@ -192,6 +228,7 @@ function AdministratorSoldierRegisterForm() {
             initialValues={{
                 surname: '',
                 name: '',
+                specifyRegion: false,
                 region: '',
                 email: '',
                 password: '',
@@ -204,20 +241,8 @@ function AdministratorSoldierRegisterForm() {
         >
             {formik => (
                 <form onSubmit={formik.handleSubmit}>
-                    <AdministratorSoldierRegisterComponent
-                        values={formik.values}
-                        errors={formik.errors}
-                        touched={formik.touched}
-                        handleChange={formik.handleChange}
-                        handleBlur={formik.handleBlur}
-                    />
-                    <OptionalRegionChoosingComponent
-                        values={formik.values}
-                        errors={formik.errors}
-                        touched={formik.touched}
-                        handleChange={formik.handleChange}
-                        handleBlur={formik.handleBlur}
-                    ></OptionalRegionChoosingComponent>
+                    <AdministratorSoldierRegisterComponent/>
+                    <OptionalRegionChoosingComponent></OptionalRegionChoosingComponent>
                     <ColorSwitchableButton type="submit" fullWidth sx={{ marginTop: '8%' }}>
                         Зарегистрироваться
                     </ColorSwitchableButton>
@@ -227,64 +252,35 @@ function AdministratorSoldierRegisterForm() {
     );
 }
 
-function AdministratorSoldierRegisterComponent({
-                                                   values,
-                                                   errors,
-                                                   touched,
-                                                   handleChange,
-                                                   handleBlur
-                                               }) {
+function AdministratorSoldierRegisterComponent() {
     return (
         <Box>
-            <SurnameNameStack
-                values={values}
-                errors={errors}
-                touched={touched}
-                handleChange={handleChange}
-                handleBlur={handleBlur}
-            ></SurnameNameStack>
-            <EmailPasswordTextFields
-                values={values}
-                errors={errors}
-                touched={touched}
-                handleChange={handleChange}
-                handleBlur={handleBlur}
-            ></EmailPasswordTextFields>
+            <SurnameNameStack></SurnameNameStack>
+            <EmailPasswordTextFields></EmailPasswordTextFields>
         </Box>
     )
 }
 
-function DonRegisterComponent({
-                                  values,
-                                  errors,
-                                  touched,
-                                  handleChange,
-                                  handleBlur
-                              }) {
+function DonRegisterComponent() {
+    const {values,
+        errors,
+        touched,
+        handleChange,
+        handleBlur
+    } = useFormikContext();
     return (
-        <>
+        <Box>
             <Stack
                 direction="row"
                 spacing={2}
                 justifyContent="center"
                 alignItems="center"
             >
-                <SurnameNameStack
-                    values={values}
-                    errors={errors}
-                    touched={touched}
-                    handleChange={handleChange}
-                    handleBlur={handleBlur}
-                />
+                <SurnameNameStack/>
             </Stack>
             <RegionSelect
                 name="region"
                 size={'small'}
-                value={values.region}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={touched.region && Boolean(errors.region)}
-                helperText={touched.region && errors.region}
                 sx={{ marginTop: '3%' }}
             />
             <EmailPasswordTextFields
@@ -294,7 +290,7 @@ function DonRegisterComponent({
                 handleChange={handleChange}
                 handleBlur={handleBlur}
             />
-        </>
+        </Box>
     );
 }
 
@@ -314,37 +310,31 @@ function DonRegisterForm() {
                 console.log('Форма дона отправлена:', values);
             }}
         >
-            {({
-                  values,
-                  errors,
-                  touched,
-                  handleChange,
-                  handleBlur,
-                  handleSubmit,
-              }) => (
-                <form onSubmit={handleSubmit}>
-                    <DonRegisterComponent
-                        values={values}
-                        errors={errors}
-                        touched={touched}
-                        handleChange={handleChange}
-                        handleBlur={handleBlur}
-                    />
-                    <ColorSwitchableButton type="submit" fullWidth sx={{ marginTop: '8%' }}>
-                        Зарегистрироваться
-                    </ColorSwitchableButton>
-                </form>
-            )}
+            {({handleSubmit}) => {
+                return (
+                    <form onSubmit={handleSubmit}>
+                        <DonRegisterComponent/>
+                        <ColorSwitchableButton type="submit" fullWidth sx={{ marginTop: '8%' }}>
+                            Зарегистрироваться
+                        </ColorSwitchableButton>
+                    </form>
+                );
+            }}
         </Formik>
     );
 }
 
+function RegionSelect({ sx = {}, name }) {
+    const { values,
+        handleChange,
+        handleBlur,
+        touched,
+        errors} = useFormikContext();
 
-function RegionSelect({ sx = {}, values, onChange, onBlur, error, helperText, name }) {
-
+    console
     return (
         <Box sx={{ width: '100%', marginTop: '3%', marginBottom: '3%', ...sx }}>
-            <FormControl size='small' fullWidth error={error}>
+            <FormControl size='small' fullWidth error={touched.region && Boolean(errors.region)}>
                 <InputLabel
                     size='small'
                     id="region-selector-label"
@@ -369,8 +359,9 @@ function RegionSelect({ sx = {}, values, onChange, onBlur, error, helperText, na
                     name={name}
                     value={values.region}
                     label="Выберите регион"
-                    onChange={onChange}
-                    onBlur={onBlur}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched.region && Boolean(errors.region)}
                     MenuProps={{
                         PaperProps: {
                             sx: {
@@ -385,12 +376,12 @@ function RegionSelect({ sx = {}, values, onChange, onBlur, error, helperText, na
                     <ColoredMenuItem value={"Московский район"}>Московский район</ColoredMenuItem>
                     <ColoredMenuItem value={"Василеостровский район"}>Василеостровский район</ColoredMenuItem>
                 </Select>
-                {error && (
+                {touched.region && Boolean(errors.region) && (
                     <FormHelperText sx={{
                         '&.Mui-error': {
                             color: '#cc0000',
                         },
-                    }}>{helperText}</FormHelperText>
+                    }}>{touched.region && errors.region}</FormHelperText>
                 )}
             </FormControl>
         </Box>

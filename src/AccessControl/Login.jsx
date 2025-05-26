@@ -99,7 +99,6 @@ export function StyledTextField({ sx, ...props }) {
                 '& .MuiInputLabel-root.Mui-focused': {
                     color: 'black',
                 },
-                // Добавляем цвет для лейбла в состоянии ошибки
                 '& .MuiInputLabel-root.Mui-error': {
                     color: 'red',
                 },
