@@ -23,6 +23,24 @@ import {
     registerSelectSx
 } from "../CommonComponents/RegisterStyles.js";
 
+const administratorValidationSchema = Yup.object({
+    surname: Yup.string().required('Обязательно'),
+    name: Yup.string().required('Обязательно'),
+    email: Yup.string().email('Неверный формат email').required('Введите почту'),
+    region: Yup.string().required('Выберите регион'),
+    password: Yup.string().min(6, 'Минимум 6 символов').required('Введите пароль'),
+    passwordConfirm: Yup.string()
+        .required('Подтвердите пароль').test(
+            'passwords-match',
+            'Пароли должны совпадать',
+            function (value) {
+                const { password } = this.parent;
+                if (!password && !value) return false;
+                return password === value;
+            }
+        )
+});
+
 const donValidationSchema = Yup.object({
     surname: Yup.string().required('Обязательно'),
     name: Yup.string().required('Обязательно'),
@@ -35,7 +53,6 @@ const donValidationSchema = Yup.object({
             'Пароли должны совпадать',
             function (value) {
                 const { password } = this.parent;
-                // если оба пустые — ошибка
                 if (!password && !value) return false;
                 return password === value;
             }
@@ -44,7 +61,6 @@ const donValidationSchema = Yup.object({
 
 function OptionalRegionChoosingComponent({ values, errors, touched, handleChange, handleBlur }) {
     const [specifyRegion, setSpecifyRegion] = useState(false);
-
     return (
         <Box>
             <Stack direction="row" justifyContent="flex-start" alignItems="center" spacing={2}>
@@ -67,7 +83,7 @@ function OptionalRegionChoosingComponent({ values, errors, touched, handleChange
                 {specifyRegion && (
                     <RegionSelect
                         name="region"
-                        value={values.region}
+                        values={values}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         error={touched.region && Boolean(errors.region)}
@@ -170,11 +186,70 @@ function UserRegisterComponent() {
     )
 }
 
-function AdministratorSoldierRegisterComponent() {
+function AdministratorSoldierRegisterForm() {
+    return (
+        <Formik
+            initialValues={{
+                surname: '',
+                name: '',
+                region: '',
+                email: '',
+                password: '',
+                passwordConfirm: '',
+            }}
+            validationSchema={administratorValidationSchema}
+            onSubmit={(values) => {
+                console.log('Форма отправлена:', values);
+            }}
+        >
+            {formik => (
+                <form onSubmit={formik.handleSubmit}>
+                    <AdministratorSoldierRegisterComponent
+                        values={formik.values}
+                        errors={formik.errors}
+                        touched={formik.touched}
+                        handleChange={formik.handleChange}
+                        handleBlur={formik.handleBlur}
+                    />
+                    <OptionalRegionChoosingComponent
+                        values={formik.values}
+                        errors={formik.errors}
+                        touched={formik.touched}
+                        handleChange={formik.handleChange}
+                        handleBlur={formik.handleBlur}
+                    ></OptionalRegionChoosingComponent>
+                    <ColorSwitchableButton type="submit" fullWidth sx={{ marginTop: '8%' }}>
+                        Зарегистрироваться
+                    </ColorSwitchableButton>
+                </form>
+            )}
+        </Formik>
+    );
+}
+
+function AdministratorSoldierRegisterComponent({
+                                                   values,
+                                                   errors,
+                                                   touched,
+                                                   handleChange,
+                                                   handleBlur
+                                               }) {
     return (
         <Box>
-            <SurnameNameStack></SurnameNameStack>
-            <EmailPasswordTextFields></EmailPasswordTextFields>
+            <SurnameNameStack
+                values={values}
+                errors={errors}
+                touched={touched}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+            ></SurnameNameStack>
+            <EmailPasswordTextFields
+                values={values}
+                errors={errors}
+                touched={touched}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+            ></EmailPasswordTextFields>
         </Box>
     )
 }
@@ -265,7 +340,8 @@ function DonRegisterForm() {
 }
 
 
-function RegionSelect({ sx = {}, value, onChange, onBlur, error, helperText, name }) {
+function RegionSelect({ sx = {}, values, onChange, onBlur, error, helperText, name }) {
+
     return (
         <Box sx={{ width: '100%', marginTop: '3%', marginBottom: '3%', ...sx }}>
             <FormControl size='small' fullWidth error={error}>
@@ -291,7 +367,7 @@ function RegionSelect({ sx = {}, value, onChange, onBlur, error, helperText, nam
                     labelId="region-selector-label"
                     id="region-select"
                     name={name}
-                    value={value}
+                    value={values.region}
                     label="Выберите регион"
                     onChange={onChange}
                     onBlur={onBlur}
@@ -429,8 +505,7 @@ function RegisterComponent() {
                     ) : (
                         selectedRole === 'Администратор' || selectedRole === 'Солдат' ? (
                             <Box>
-                                <AdministratorSoldierRegisterComponent></AdministratorSoldierRegisterComponent>
-                                <OptionalRegionChoosingComponent></OptionalRegionChoosingComponent>
+                                <AdministratorSoldierRegisterForm></AdministratorSoldierRegisterForm>
                             </Box>
                         ) : (
                             <Box>
