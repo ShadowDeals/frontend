@@ -18,6 +18,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import DonDashboard from "./DonDashboard.jsx";
 
 const drawerWidth = 240;
 
@@ -125,22 +126,30 @@ export default function PersistentDrawerLeft() {
                 open={open}
             >
                 <DrawerHeader sx = {{
-                    backgroundColor:'blue',
-                    color: 'blue',
+                    backgroundColor:'black',
+                    color: 'black',
                 }}>
-                    <IconButton onClick=    {handleDrawerClose}>
+                    <IconButton onClick={handleDrawerClose}>
                         {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
                 <List>
                     {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                        <ListItem key={text} disablePadding>
+                        <ListItem key={text} disablePadding
+                                  sx={{
+                                      '&:hover .MuiListItemText-primary': {
+                                          color: 'black',
+                                      },
+                                      '&:hover .MuiListItemIcon-root': {
+                                          color: 'black',
+                                      },
+                                  }}>
                             <ListItemButton>
                                 <ListItemIcon>
                                     {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                                 </ListItemIcon>
-                                <ListItemText primary={text} />
+                                <ListItemText primary={text}/>
                             </ListItemButton>
                         </ListItem>
                     ))}
@@ -162,20 +171,7 @@ export default function PersistentDrawerLeft() {
             <Main open={open}>
                 <DrawerHeader />
                 <Box sx={{width:'100%', height:'100%', backgroundColor:'black', display: 'flex', justifyContent:'center', alignItems: 'center', }}>
-                    <Typography sx={{ marginBottom: 2 }}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                        tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-                        enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-                        imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus.
-                        Convallis convallis tellus id interdum velit laoreet id donec ultrices.
-                        Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-                        adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra
-                        nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum
-                        leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis
-                        feugiat vivamus at augue. At augue eget arcu dictum varius duis at
-                        consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-                        sapien faucibus et molestie ac.
-                    </Typography>
+                    <DonDashboard></DonDashboard>
                 </Box>
             </Main>
         </Box>

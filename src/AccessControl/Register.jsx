@@ -25,7 +25,27 @@ import {
 } from "../CommonComponents/RegisterStyles.js";
 
 
-const userValidationSchema = Yup.object({});
+const userValidationSchema = Yup.object({
+    username: Yup.string().required('Введите имя'),
+    email: Yup.string().email('Неверный формат email').required('Введите почту'),
+    specifyRegion: Yup.boolean(),
+    region: Yup.string().when('specifyRegion', {
+        is: true,
+        then: (schema) => schema.required('Выберите регион'),
+        otherwise: (schema) => schema.notRequired()
+    }),
+    password: Yup.string().min(6, 'Минимум 6 символов').required('Введите пароль'),
+    passwordConfirm: Yup.string()
+        .required('Подтвердите пароль').test(
+            'passwords-match',
+            'Пароли должны совпадать',
+            function (value) {
+                const { password } = this.parent;
+                if (!password && !value) return false;
+                return password === value;
+            }
+        )
+});
 
 const administratorValidationSchema = Yup.object({
     surname: Yup.string().required('Обязательно'),
@@ -171,7 +191,6 @@ function EmailPasswordTextFields() {
     );
 }
 
-
 function SurnameNameStack() {
     const { values,
         errors,
@@ -213,10 +232,51 @@ function SurnameNameStack() {
     );
 }
 
+function UserRegisterForm() {
+    return (
+        <Formik
+            initialValues={{
+                username: '',
+                email: '',
+                specifyRegion: false,
+                region: '',
+                password: '',
+                passwordConfirm: '',
+            }}
+            validationSchema={userValidationSchema}
+            onSubmit={(values) => {
+                console.log('Форма пользователя отправлена:', values);
+            }}
+        >
+            {({ handleSubmit }) => (
+                <form onSubmit={handleSubmit}>
+                    <UserRegisterComponent />
+                    <OptionalRegionChoosingComponent />
+                    <ColorSwitchableButton type="submit" fullWidth sx={{ marginTop: '8%' }}>
+                        Зарегистрироваться
+                    </ColorSwitchableButton>
+                </form>
+            )}
+        </Formik>
+    );
+}
+
 function UserRegisterComponent() {
+    const { values,
+        errors,
+        touched,
+        handleChange,
+        handleBlur } = useFormikContext();
     return (
         <Box>
-            <StyledTextField fullWidth sx={{marginBottom:'3%'}} label="Никнейм" />
+            <StyledTextField
+                name={'username'}
+                value={values.username}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.username && Boolean(errors.username)}
+                helperText={touched.username && errors.username}
+                size='small' fullWidth sx={{marginBottom:'3%'}} label="Никнейм" />
             <EmailPasswordTextFields></EmailPasswordTextFields>
         </Box>
     )
@@ -330,8 +390,6 @@ function RegionSelect({ sx = {}, name }) {
         handleBlur,
         touched,
         errors} = useFormikContext();
-
-    console
     return (
         <Box sx={{ width: '100%', marginTop: '3%', marginBottom: '3%', ...sx }}>
             <FormControl size='small' fullWidth error={touched.region && Boolean(errors.region)}>
@@ -500,8 +558,7 @@ function RegisterComponent() {
                             </Box>
                         ) : (
                             <Box>
-                                <UserRegisterComponent></UserRegisterComponent>
-                                <OptionalRegionChoosingComponent></OptionalRegionChoosingComponent>
+                                <UserRegisterForm></UserRegisterForm>
                             </Box>
                         )
                     )

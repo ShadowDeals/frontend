@@ -1,6 +1,6 @@
 export const getRegisterPaperSx = () => ({
-    width: '20%',
-    height: '70%',
+    width: '30%',
+    height: '80%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
