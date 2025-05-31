@@ -15,7 +15,11 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import PlotsDashboard from "../Don/PlotsDashboard.jsx";
 import {RoleTitle, RoleMenuList} from "./RoleSpecifiedComponents.jsx";
 import {Typography} from "@mui/material";
-import {LockDatabaseComponent} from "../Don/LockDbPage.jsx";
+import {LockDatabaseComponent} from "../Don/LockDbComponent.jsx";
+import EmployeeTabs from "../Don/EmployeesComponent.jsx";
+import OrdersComponent from "../Admin/OrdersComponent.jsx";
+import {useNavigate} from "react-router-dom";
+import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 
 const drawerWidth = 240;
 
@@ -73,10 +77,10 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     justifyContent: 'flex-end',
 }));
 
-export default function PersistentDrawerLeft() {
+export default function HomeComponent() {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
-    const currentRole = 'don'
+    const currentRole = 'admin'
     const [activePage, setActivePage] = React.useState(null);
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -86,8 +90,13 @@ export default function PersistentDrawerLeft() {
         setOpen(false);
     };
 
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        navigate('/welcome');
+    };
+
     return (
-        <Box sx={{ width:'100vw', height:'100vh', backgroundColor:'black', display: 'flex' }}>
+        <Box sx={{ width:'100vw', height:'100vh', backgroundColor:'black', display: 'flex', overflow: 'hidden'}}>
             <CssBaseline />
             <AppBar position="fixed" open={open}>
                 <Toolbar>
@@ -106,6 +115,19 @@ export default function PersistentDrawerLeft() {
                         <MenuIcon />
                     </IconButton>
                     <RoleTitle role={currentRole}/>
+                    <Box sx={{ ml: 'auto' }}>
+                        <ColorSwitchableButton onClick={handleLogout}
+                                               sx={{ backgroundColor: '#990000',
+                                                       color: 'black',
+                                                       '&:hover': {
+                                                   backgroundColor: 'black',
+                                                           color: '#990000',
+                                                       }
+                        }}>
+                            Выйти
+                        </ColorSwitchableButton>
+                    </Box>
+
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -135,13 +157,12 @@ export default function PersistentDrawerLeft() {
                               setActivePage={setActivePage}/>
             </Drawer>
             <Main open={open}>
-                <DrawerHeader />
-                <Box sx={{width:'100%', height:'100%', backgroundColor:'black', display: 'flex', justifyContent:'center', alignItems: 'center', }}>
+                <DrawerHeader sx={{ overflow:'hidden' }}/>
+                <Box sx={{width:'100%', height:'100%', backgroundColor:'black', display: 'flex', justifyContent:'center', alignItems: 'center', overflow: 'hidden'}}>
                     {activePage === 'Статистика' && <PlotsDashboard />}
                     {activePage === 'Доступ к БД' && <LockDatabaseComponent></LockDatabaseComponent>}
-                    {activePage === 'Администраторы' && <Typography variant="h6" component="div">asdasd</Typography>}
-                    {activePage === 'Панель управления' && <Typography variant="h6" component="div">zxczxc</Typography>}
-                    {/*<PlotsDashboard></PlotsDashboard>*/}
+                    {activePage === 'Сотрудники' && <EmployeeTabs></EmployeeTabs>}
+                    {activePage === 'Заказы' && <OrdersComponent></OrdersComponent>}
                 </Box>
             </Main>
         </Box>

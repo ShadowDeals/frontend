@@ -204,7 +204,7 @@ function SurnameNameStack() {
             spacing={2}
             justifyContent="center"
             alignItems="center"
-            sx={{ marginBottom: '3%' }}
+            sx={{ marginBottom: '3%', width:'100%' }}
         >
             <StyledTextField
                 size={'small'}

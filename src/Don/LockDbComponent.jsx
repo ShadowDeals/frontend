@@ -39,6 +39,11 @@ export function PasswordDialog({ open, onClose, onConfirm }) {
             <DialogContent sx={{ bgcolor: '#990000', color: 'black' }}>
                 <form onSubmit={formik.handleSubmit} id="password-form">
                     <StyledTextField
+                        sx={{
+                            '& input': {
+                                color: 'black',
+                            },
+                        }}
                         autoFocus
                         margin="dense"
                         label="Пароль"
@@ -116,18 +121,19 @@ export function LockDatabaseComponent() {
 
                 <Button
                     variant="contained"
-                    color={isLocked ? 'success' : 'error'}
                     onClick={handleOpenDialog}
                     sx={{
                         fontSize: '1.5rem',
                         padding: '1rem 3rem',
                         color: 'black',
+                        bgcolor: isLocked ? '#009900' : '#990000'
                     }}
                 >
                     {isLocked ? 'Разблокировать БД' : 'Блокировать БД'}
                 </Button>
             </Stack>
             <PasswordDialog
+                sx = {{bgcolor:'black'}}
                 open={dialogOpen}
                 onClose={() => setDialogOpen(false)}
                 onConfirm={handleConfirm}

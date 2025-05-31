@@ -16,6 +16,7 @@ import { Typography } from "@mui/material";
 const roleDescriptions = {
     don: 'дона',
     admin: 'администратора',
+    soldier: 'солдата',
     user: 'пользователя',
 };
 
@@ -33,11 +34,10 @@ export const menuItemsByRole = {
     don: [
         { text: 'Статистика', icon: <BarChartIcon /> },
         { text: 'Доступ к БД', icon: <StorageIcon /> },
-        { text: 'Администраторы', icon: <PeopleIcon /> },
+        { text: 'Сотрудники', icon: <PeopleIcon /> },
     ],
     admin: [
-        { text: 'Заказы', icon: <DashboardIcon /> },
-        { text: 'Отчёты', icon: <AssessmentIcon /> },
+        { text: 'Заказы', icon: <DashboardIcon /> }
     ],
     user: [
         { text: 'Профиль', icon: <PersonIcon /> },
