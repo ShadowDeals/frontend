@@ -134,7 +134,7 @@ function OptionalRegionChoosingComponent() {
                         onBlur={handleBlur}
                         error={values.specifyRegion && touched.region && Boolean(errors.region)}
                         helperText={values.specifyRegion && touched.region && errors.region}
-                        sx={{ width: '60%' }}
+                        sx={{ width: '100%' }}
                     />
                 )}
             </Stack>

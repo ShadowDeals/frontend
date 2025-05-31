@@ -1,8 +1,6 @@
 import React from 'react';
-import {Box, Grid, Stack, Typography,} from '@mui/material';
+import {Grid, Stack, Typography} from '@mui/material';
 import { BarChart, LineChart, Unstable_RadarChart as RadarChart } from '@mui/x-charts';
-
-
 
 export function ChartsOverviewDemo() {
     return (
@@ -47,7 +45,7 @@ export function BasicRadar() {
     );
 }
 
-const DonDashboard = () => {
+const PlotsDashboard = () => {
     return (
         <Grid container rowSpacing={3} size={'sm'} columnSpacing={{padding:3, xs: 1, sm: 2, md: 3 }}>
             <Grid size={6}>
@@ -79,4 +77,4 @@ const DonDashboard = () => {
 };
 
 
-export default DonDashboard;
+export default PlotsDashboard;

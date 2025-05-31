@@ -7,7 +7,7 @@ import {
     DialogTitle,
     DialogContent,
     DialogContentText,
-    DialogActions, Link
+    DialogActions, Link, Stack
 } from '@mui/material';
 import {useLocation, Navigate, useNavigate} from 'react-router-dom';
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
@@ -53,7 +53,7 @@ function PasswordResetComponent() {
                     elevation={3}
                     sx={{
                         width: '15vw',
-                        height: '28vh',
+                        height: '30vh',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
@@ -63,42 +63,45 @@ function PasswordResetComponent() {
                         justifyContent: 'flex-start',
                     }}
                 >
-                    <Link
-                        underline="hover"
-                        sx={{
-                            alignSelf: 'flex-start',
-                            cursor: 'pointer',
-                            color: 'black',
-                            fontSize: '0.9rem',
-                            marginBottom: '5%',
-                        }}
-                        onClick={navigateToLogin}
-                    >
-                        Назад
-                    </Link>
-                    <Typography
-                        variant="h4"
-                        component="h1"
-                        sx={{
-                            textAlign: 'center',
-                            marginBottom: '10%',
-                        }}
-                    >
-                        Восстановить пароль
-                    </Typography>
-                    <StyledTextField
-                        fullWidth
-                        label="Почта"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <ColorSwitchableButton
-                        fullWidth
-                        sx={{ marginTop: '10%' }}
-                        onClick={handleSubmit}
-                    >
-                        Подтвердить
-                    </ColorSwitchableButton>
+                    <Stack spacing={2}>
+                        <Link
+                            underline="hover"
+                            sx={{
+                                alignSelf: 'flex-start',
+                                cursor: 'pointer',
+                                color: 'black',
+                                fontSize: '0.9rem',
+                                marginBottom: '5%',
+                            }}
+                            onClick={navigateToLogin}
+                        >
+                            Назад
+                        </Link>
+                        <Typography
+                            variant="h6"
+                            component="h1"
+                            sx={{
+                                textAlign: 'center',
+                                marginBottom: '10%',
+                            }}
+                        >
+                            Восстановить пароль
+                        </Typography>
+                        <StyledTextField
+                            fullWidth
+                            size='small'
+                            label="Почта"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        <ColorSwitchableButton
+                            fullWidth
+                            sx={{ marginTop: '10%' }}
+                            onClick={handleSubmit}
+                        >
+                            Подтвердить
+                        </ColorSwitchableButton>
+                    </Stack>
                 </Paper>
             )}
 

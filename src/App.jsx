@@ -5,7 +5,7 @@ import LoginComponent from "./AccessControl/Login.jsx";
 import RegisterComponent from "./AccessControl/Register.jsx";
 import PasswordResetComponent from "./AccessControl/PasswordReset.jsx";
 import EmailConfirmComponent from "./AccessControl/EmailConfirm.jsx";
-import MainDonComponent from "./Don/DonComponent.jsx";
+import MainDonComponent from "./Common/HomeComponent.jsx";
 import {ThemeProvider} from "@mui/material";
 import TheShadowDealsTheme from "./Theme.jsx";
 

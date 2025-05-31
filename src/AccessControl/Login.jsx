@@ -38,6 +38,7 @@ function LoginForm({ navigatePasswordReset }) {
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
                     <StyledTextField
                         fullWidth
+                        size="small"
                         label="Почта"
                         name="email"
                         value={values.email}
@@ -49,6 +50,7 @@ function LoginForm({ navigatePasswordReset }) {
 
                     <StyledTextField
                         sx={{ marginTop: '3%' }}
+                        size="small"
                         fullWidth
                         label="Пароль"
                         name="password"
@@ -157,8 +159,8 @@ function LoginComponent() {
             <Paper
                 elevation={3}
                 sx={{
-                    width: '15vw',
-                    height: '35vh',
+                    width: '20vw',
+                    height: '45vh',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -191,8 +193,6 @@ function LoginComponent() {
                     Логин
                 </Typography>
                 <LoginForm navigatePasswordReset={navigatePasswordReset}></LoginForm>
-                {/*<StyledTextField fullWidth label="Почта"></StyledTextField>*/}
-                {/*<StyledTextField sx={{marginTop:'3%'}} fullWidth label="Пароль"></StyledTextField>*/}
             </Paper>
         </Box>
     );
