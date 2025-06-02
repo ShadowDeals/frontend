@@ -8,6 +8,7 @@ import EmailConfirmComponent from "./AccessControl/EmailConfirm.jsx";
 import MainDonComponent from "./Common/HomeComponent.jsx";
 import {ThemeProvider} from "@mui/material";
 import TheShadowDealsTheme from "./Theme.jsx";
+import CheckEmailComponent from "./AccessControl/CheckEmail.jsx";
 
 function App() {
   return (
@@ -19,6 +20,13 @@ function App() {
             <Route path="/register" element={<RegisterComponent/>}/>
             <Route path="/password-reset" element={<PasswordResetComponent/>}/>
             <Route path="/email-confirm" element={<EmailConfirmComponent/>}/>
+            <Route path="/check-email"
+                   element={
+                       <ThemeProvider theme={TheShadowDealsTheme}>
+                        <CheckEmailComponent/>
+                       </ThemeProvider>
+                   }
+            />
             <Route
                 path="/dons/id1234"
                 element={

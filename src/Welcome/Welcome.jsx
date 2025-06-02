@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Box, Typography, Grid, Link, Stack, List, ListItem} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
@@ -10,6 +10,7 @@ import MuiAccordionSummary, {
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import ColorSwitchableButton from '../CommonComponents/Buttons.jsx';
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AccordionPanel = {
     Don: 'panel1',
@@ -222,6 +223,25 @@ function WelcomeCentralComponent() {
     const handleRegisterClick = () => {
         navigate('/register');
     };
+
+    const [showRegister, setShowRegister] = useState(false);
+
+    useEffect(() => {
+        axios.get("http://localhost:8080/region?isBandExist=false")
+            .then((response) => {
+                const data = response.data;
+                if (Array.isArray(data) && data.length > 0) {
+                    setShowRegister(true);
+                } else {
+                    setShowRegister(false);
+                }
+            })
+            .catch((error) => {
+                console.error("Ошибка при загрузке данных о регионах:", error);
+                setShowRegister(false);
+            });
+    }, []);
+
     return (
         <Box
             display="flex"
@@ -267,9 +287,11 @@ function WelcomeCentralComponent() {
                         <ColorSwitchableButton onClick={handleLoginClick}>
                             Войти
                         </ColorSwitchableButton>
-                        <ColorSwitchableButton onClick={handleRegisterClick}>
-                            Зарегистрироваться
-                        </ColorSwitchableButton>
+                        {showRegister && (
+                            <ColorSwitchableButton onClick={handleRegisterClick}>
+                                Зарегистрироваться
+                            </ColorSwitchableButton>
+                        )}
                     </Stack>
                 </Stack>
             </Box>

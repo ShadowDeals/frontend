@@ -14,7 +14,7 @@ import {
 
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 import { StyledTextField } from "./Login.jsx";
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import {Formik, useFormikContext} from 'formik';
 import * as Yup from 'yup';
@@ -23,6 +23,7 @@ import {
     registerSelectMenuItemSx,
     registerSelectSx
 } from "../CommonComponents/RegisterStyles.js";
+import axios from "axios";
 
 
 const userValidationSchema = Yup.object({
@@ -354,7 +355,7 @@ function DonRegisterComponent() {
     );
 }
 
-function DonRegisterForm() {
+function DonRegisterForm({onSuccess}) {
     return (
         <Formik
             initialValues={{
@@ -366,9 +367,18 @@ function DonRegisterForm() {
                 passwordConfirm: '',
             }}
             validationSchema={donValidationSchema}
-            onSubmit={(values) => {
-                console.log('Форма дона отправлена:', values);
+            onSubmit={async (values, { setSubmitting, setErrors }) => {
+                const userEmail = values.email;
+                try {
+                    await new Promise((resolve) => setTimeout(resolve, 1000));
+                    onSuccess(userEmail);
+                } catch (err) {
+                    setErrors({ email: `Ошибка подключения к серверу: ${err.message || err}` });
+                } finally {
+                    setSubmitting(false);
+                }
             }}
+
         >
             {({handleSubmit}) => {
                 return (
@@ -390,6 +400,19 @@ function RegionSelect({ sx = {}, name }) {
         handleBlur,
         touched,
         errors} = useFormikContext();
+
+    const [regions, setRegions] = useState([]);
+
+    useEffect(() => {
+        axios.get('http://localhost:8080/region?isBandExist=false')
+            .then(response => {
+                setRegions(response.data);
+            })
+            .catch(error => {
+                console.error('Ошибка при загрузке регионов:', error);
+            });
+    }, []);
+
     return (
         <Box sx={{ width: '100%', marginTop: '3%', marginBottom: '3%', ...sx }}>
             <FormControl size='small' fullWidth error={touched.region && Boolean(errors.region)}>
@@ -430,9 +453,11 @@ function RegionSelect({ sx = {}, name }) {
                     }}
                     sx={registerSelectSx}
                 >
-                    <ColoredMenuItem value={"Выборгский район"}>Выборгский район</ColoredMenuItem>
-                    <ColoredMenuItem value={"Московский район"}>Московский район</ColoredMenuItem>
-                    <ColoredMenuItem value={"Василеостровский район"}>Василеостровский район</ColoredMenuItem>
+                    {regions.map(region => (
+                        <ColoredMenuItem key={region} value={region}>
+                            {region}
+                        </ColoredMenuItem>
+                    ))}
                 </Select>
                 {touched.region && Boolean(errors.region) && (
                     <FormHelperText sx={{
@@ -511,6 +536,11 @@ function RegisterComponent() {
     const navigateWelcome = () => {
         navigate('/welcome');
     };
+    const handleRegisterSuccess = (email) => {
+        console.log('Почта для подтверждения:', email);
+        navigate('/check-email', { state: { email } });
+    };
+
     return (
         <Box
             display="flex"
@@ -550,7 +580,7 @@ function RegisterComponent() {
                 <RoleSelect role={selectedRole} onRoleChanged={setSelectedRole} fullWidth></RoleSelect>
                 {selectedRole === '' ? (<></>):(
                     selectedRole === 'Дон' ? (
-                        <DonRegisterForm></DonRegisterForm>
+                        <DonRegisterForm onSuccess={handleRegisterSuccess}></DonRegisterForm>
                     ) : (
                         selectedRole === 'Администратор' || selectedRole === 'Солдат' ? (
                             <Box>
