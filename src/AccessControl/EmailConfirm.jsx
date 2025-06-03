@@ -17,22 +17,30 @@ export function EmailConfirmComponent() {
     const [success, setSuccess] = useState(false);
     useEffect(() => {
         const code = searchParams.get("code");
+        const baseUrl = "http://localhost:8080/auth/confirm/email";
 
-        if (!code) {
-            return;
-        }
+        const fullUrl = `${baseUrl}?code=${encodeURIComponent(code)}`;
+        console.log("Полный HTTP путь запроса:", fullUrl);
 
-        axios.post("http://localhost:8080/api/auth/confirm", { code })
+        axios.put(fullUrl)
             .then(() => {
-                console.log('Почта успешно подтверждена')
+                console.log("Почта успешно подтверждена");
                 setSuccess(true);
             })
-            .catch(() => {
-                console.log('Произошла ошибка')
+            .catch((error) => {
+                if (error.response) {
+                    console.log("Произошла ошибка");
+                    console.log("Код ошибки:", error.response.status);
+                    console.log("Текст ошибки:", error.response.data?.message || "Нет сообщения");
+                } else if (error.request) {
+                    console.log("Запрос был отправлен, но ответа нет");
+                } else {
+                    console.log("Ошибка настройки запроса:", error.message);
+                }
                 setError(true);
             })
             .finally(() => {
-                console.log('Загрзка завершена')
+                console.log("Загрузка завершена");
                 setLoading(false);
             });
     }, [searchParams]);

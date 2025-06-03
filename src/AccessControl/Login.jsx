@@ -10,6 +10,11 @@ import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import axios from "axios";
+
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../Redux/store.js';
+
 
 const validationSchema = Yup.object({
     email: Yup.string().email('Неверный формат email').required('Введите почту'),
@@ -17,13 +22,36 @@ const validationSchema = Yup.object({
 });
 
 function LoginForm({ navigatePasswordReset }) {
+    const dispatch = useDispatch();
     return (
         <Formik
             initialValues={{ email: '', password: '' }}
             validationSchema={validationSchema}
-            onSubmit={(values, { setSubmitting }) => {
+            onSubmit={async (values, { setSubmitting }) => {
                 console.log('Логин:', values);
-                setSubmitting(false);
+
+                try {
+                    const { data } = await axios.post('http://localhost:8080/auth/signin', {
+                        email: values.email,
+                        password: values.password,
+                    });
+                    console.log('Успешный логин, данные:', data);
+                    dispatch(setCredentials({
+                        accessToken: data.accessToken,
+                        accessExpiresAt: data.accessExpiresAt,
+                        email: data.email,
+                        refreshToken: data.refreshToken,
+                    }));
+
+                } catch (error) {
+                    if (error.response) {
+                        console.error('Ошибка логина:', error.response.data.message || 'Неизвестная ошибка');
+                    } else {
+                        console.error('Ошибка сети или сервера:', error.message);
+                    }
+                } finally {
+                    setSubmitting(false);
+                }
             }}
         >
             {({

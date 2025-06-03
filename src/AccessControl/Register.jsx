@@ -356,6 +356,11 @@ function DonRegisterComponent() {
 }
 
 function DonRegisterForm({onSuccess, onError}) {
+    const REGION_MAP = {
+        'Василеостровский район': 'VASILEOSTROVKIY_REGION',
+        'Выборгский район': 'VIBORGSKY_REGION',
+        'Московский район': 'MOSCOW_REGION'
+    };
     return (
         <Formik
             initialValues={{
@@ -369,16 +374,18 @@ function DonRegisterForm({onSuccess, onError}) {
             validationSchema={donValidationSchema}
             onSubmit={async (values, { setSubmitting }) => {
                 try {
+                    console.log('Отправляем body: ')
                     const body = {
                         nickname: values.surname,
                         firstName: values.name,
                         lastName: values.surname,
                         password: values.password,
                         role: 'DON',
-                        region: values.region,
+                        region: REGION_MAP[values.region],
                         email: values.email,
                     };
 
+                    console.log('Отправляем body: ', body)
 
                     const res = await fetch('http://localhost:8080/auth/signup', {
                         method: 'POST',

@@ -9,34 +9,38 @@ import MainDonComponent from "./Common/HomeComponent.jsx";
 import { ThemeProvider } from "@mui/material";
 import TheShadowDealsTheme from "./Theme.jsx";
 import CheckEmailComponent from "./AccessControl/CheckEmail.jsx";
+import {Provider} from "react-redux";
+import store from "./Redux/store.js"
 
 function App() {
   return (
-      <BrowserRouter>
-        <Routes>
-            <Route path="/" element={<Navigate to="/welcome" replace />} />
-            <Route path="/welcome" element={<WelcomeCentralComponent/>} />
-            <Route path="/login" element={<LoginComponent/>} />
-            <Route path="/register" element={<RegisterComponent/>}/>
-            <Route path="/password-reset" element={<PasswordResetComponent/>}/>
-            <Route path="/confirm" element={<EmailConfirmComponent/>}/>
-            <Route path="/check-email"
-                   element={
-                       <ThemeProvider theme={TheShadowDealsTheme}>
-                        <CheckEmailComponent/>
-                       </ThemeProvider>
-                   }
-            />
-            <Route
-                path="/dons/id1234"
-                element={
-                    <ThemeProvider theme={TheShadowDealsTheme}>
-                        <MainDonComponent />
-                    </ThemeProvider>
-                }
-            />
-        </Routes>
-      </BrowserRouter>
+      <Provider store={store}>
+          <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<Navigate to="/welcome" replace />} />
+                    <Route path="/welcome" element={<WelcomeCentralComponent/>} />
+                    <Route path="/login" element={<LoginComponent/>} />
+                    <Route path="/register" element={<RegisterComponent/>}/>
+                    <Route path="/password-reset" element={<PasswordResetComponent/>}/>
+                    <Route path="/confirm" element={<EmailConfirmComponent/>}/>
+                    <Route path="/check-email"
+                           element={
+                               <ThemeProvider theme={TheShadowDealsTheme}>
+                                <CheckEmailComponent/>
+                               </ThemeProvider>
+                           }
+                    />
+                    <Route
+                        path="/dons/id1234"
+                        element={
+                            <ThemeProvider theme={TheShadowDealsTheme}>
+                                <MainDonComponent />
+                            </ThemeProvider>
+                        }
+                    />
+                </Routes>
+          </BrowserRouter>
+      </Provider>
   )
 }
 

@@ -1,7 +1,11 @@
 import React from 'react';
 import { Typography, Paper, Box } from '@mui/material';
+import { useLocation } from "react-router-dom";
 
-export default function CheckEmailComponent({ email }) {
+export default function CheckEmailComponent() {
+    const location = useLocation();
+    const email = location.state?.email;
+
     return (
         <Box
             sx={{
@@ -26,8 +30,8 @@ export default function CheckEmailComponent({ email }) {
                 <Typography variant="h4" component="h1" sx={{color: 'black'}} gutterBottom>
                     Регистрация успешна!
                 </Typography>
-                <Typography variant="body1" sx={{color: 'black'}}>
-                    Проверь почту {email} для подтверждения письма.
+                <Typography variant="body1" sx={{ color: 'black' }}>
+                    Проверь почту {email || '...'} для подтверждения письма.
                 </Typography>
             </Paper>
         </Box>
