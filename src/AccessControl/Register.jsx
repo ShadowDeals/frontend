@@ -9,7 +9,7 @@ import {
     Stack,
     Typography,
     Checkbox,
-    FormControlLabel, FormHelperText
+    FormControlLabel, FormHelperText, Alert, Snackbar
 } from "@mui/material";
 
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
@@ -355,7 +355,7 @@ function DonRegisterComponent() {
     );
 }
 
-function DonRegisterForm({onSuccess}) {
+function DonRegisterForm({onSuccess, onError}) {
     return (
         <Formik
             initialValues={{
@@ -367,13 +367,33 @@ function DonRegisterForm({onSuccess}) {
                 passwordConfirm: '',
             }}
             validationSchema={donValidationSchema}
-            onSubmit={async (values, { setSubmitting, setErrors }) => {
-                const userEmail = values.email;
+            onSubmit={async (values, { setSubmitting }) => {
                 try {
-                    await new Promise((resolve) => setTimeout(resolve, 1000));
-                    onSuccess(userEmail);
+                    const body = {
+                        nickname: values.surname,
+                        firstName: values.name,
+                        lastName: values.surname,
+                        password: values.password,
+                        role: 'DON',
+                        region: values.region,
+                        email: values.email,
+                    };
+
+
+                    const res = await fetch('http://localhost:8080/auth/signup', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body),
+                    });
+
+                    if (res.ok) {
+                        onSuccess(values.email);
+                    } else {
+                        const errorData = await res.json();
+                        onError({ errcode: res.status, text: errorData.message || 'Ошибка регистрации' });
+                    }
                 } catch (err) {
-                    setErrors({ email: `Ошибка подключения к серверу: ${err.message || err}` });
+                    onError({ errcode: 'network', text: err.message || err.toString() });
                 } finally {
                     setSubmitting(false);
                 }
@@ -533,12 +553,26 @@ function RegisterComponent() {
     const navigate = useNavigate();
     const [selectedRole, setSelectedRole] = useState('');
 
+    const [snackbarPresented, setSnackbarPresented] = useState(false);
+    const [snackbarError, setSnackbarError] = useState({ errcode: null, text: '' });
+
     const navigateWelcome = () => {
         navigate('/welcome');
     };
     const handleRegisterSuccess = (email) => {
         console.log('Почта для подтверждения:', email);
         navigate('/check-email', { state: { email } });
+    };
+
+    const handleRegisterError = ({ errcode, text }) => {
+        console.error(`Ошибка регистрации [${errcode}]: ${text}`);
+        setSnackbarError({ errcode, text });
+        setSnackbarPresented(true);
+    };
+
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') return;
+        setSnackbarPresented(false);
     };
 
     return (
@@ -580,7 +614,7 @@ function RegisterComponent() {
                 <RoleSelect role={selectedRole} onRoleChanged={setSelectedRole} fullWidth></RoleSelect>
                 {selectedRole === '' ? (<></>):(
                     selectedRole === 'Дон' ? (
-                        <DonRegisterForm onSuccess={handleRegisterSuccess}></DonRegisterForm>
+                        <DonRegisterForm onSuccess={handleRegisterSuccess} onError={handleRegisterError}></DonRegisterForm>
                     ) : (
                         selectedRole === 'Администратор' || selectedRole === 'Солдат' ? (
                             <Box>
@@ -594,6 +628,16 @@ function RegisterComponent() {
                     )
                 )}
             </Paper>
+            <Snackbar
+                open={snackbarPresented}
+                autoHideDuration={5000}
+                onClose={handleSnackbarClose}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+                    Ошибка {snackbarError.errcode}: {snackbarError.text}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 }

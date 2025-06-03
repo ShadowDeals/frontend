@@ -6,7 +6,7 @@ import RegisterComponent from "./AccessControl/Register.jsx";
 import PasswordResetComponent from "./AccessControl/PasswordReset.jsx";
 import EmailConfirmComponent from "./AccessControl/EmailConfirm.jsx";
 import MainDonComponent from "./Common/HomeComponent.jsx";
-import {ThemeProvider} from "@mui/material";
+import { ThemeProvider } from "@mui/material";
 import TheShadowDealsTheme from "./Theme.jsx";
 import CheckEmailComponent from "./AccessControl/CheckEmail.jsx";
 
@@ -19,7 +19,7 @@ function App() {
             <Route path="/login" element={<LoginComponent/>} />
             <Route path="/register" element={<RegisterComponent/>}/>
             <Route path="/password-reset" element={<PasswordResetComponent/>}/>
-            <Route path="/email-confirm" element={<EmailConfirmComponent/>}/>
+            <Route path="/confirm" element={<EmailConfirmComponent/>}/>
             <Route path="/check-email"
                    element={
                        <ThemeProvider theme={TheShadowDealsTheme}>
