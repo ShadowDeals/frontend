@@ -5,7 +5,7 @@ import LoginComponent from "./AccessControl/Login.jsx";
 import RegisterComponent from "./AccessControl/Register.jsx";
 import PasswordResetComponent from "./AccessControl/PasswordReset.jsx";
 import EmailConfirmComponent from "./AccessControl/EmailConfirm.jsx";
-import MainDonComponent from "./Common/HomeComponent.jsx";
+import HomeComponent from "./Common/HomeComponent.jsx";
 import { ThemeProvider } from "@mui/material";
 import TheShadowDealsTheme from "./Theme.jsx";
 import CheckEmailComponent from "./AccessControl/CheckEmail.jsx";
@@ -34,7 +34,7 @@ function App() {
                         path="/dons/id1234"
                         element={
                             <ThemeProvider theme={TheShadowDealsTheme}>
-                                <MainDonComponent />
+                                <HomeComponent />
                             </ThemeProvider>
                         }
                     />

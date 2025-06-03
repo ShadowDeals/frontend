@@ -23,6 +23,7 @@ const validationSchema = Yup.object({
 
 function LoginForm({ navigatePasswordReset }) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     return (
         <Formik
             initialValues={{ email: '', password: '' }}
@@ -43,6 +44,7 @@ function LoginForm({ navigatePasswordReset }) {
                         refreshToken: data.refreshToken,
                     }));
 
+                    navigate("/dons/id1234")
                 } catch (error) {
                     if (error.response) {
                         console.error('Ошибка логина:', error.response.data.message || 'Неизвестная ошибка');

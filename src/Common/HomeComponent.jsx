@@ -21,6 +21,9 @@ import OrdersComponent from "../Admin/OrdersComponent.jsx";
 import {useNavigate} from "react-router-dom";
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 
+import { useDispatch } from 'react-redux';
+import {clearCredentials, setCredentials} from '../Redux/store.js';
+
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -82,6 +85,7 @@ export default function HomeComponent() {
     const [open, setOpen] = React.useState(false);
     const currentRole = 'admin'
     const [activePage, setActivePage] = React.useState(null);
+    const dispatch = useDispatch();
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -92,6 +96,7 @@ export default function HomeComponent() {
 
     const navigate = useNavigate();
     const handleLogout = () => {
+        dispatch(clearCredentials());
         navigate('/welcome');
     };
 
