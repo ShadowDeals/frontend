@@ -7,7 +7,7 @@ import StorageIcon from '@mui/icons-material/Storage';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
-import AssessmentIcon from '@mui/icons-material/Assessment';
+import ExploreIcon from '@mui/icons-material/Explore';
 import PersonIcon from '@mui/icons-material/Person';
 import MessageIcon from '@mui/icons-material/Message';
 import List from '@mui/material/List';
@@ -39,6 +39,10 @@ export const menuItemsByRole = {
     admin: [
         { text: 'Заказы', icon: <DashboardIcon /> }
     ],
+    soldier: [
+        { text: 'Сведения о банде', icon: <ExploreIcon /> },
+    ],
+
     user: [
         { text: 'Профиль', icon: <PersonIcon /> },
         { text: 'Сообщения', icon: <MessageIcon /> },

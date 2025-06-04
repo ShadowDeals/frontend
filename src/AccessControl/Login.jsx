@@ -44,7 +44,7 @@ function LoginForm({ navigatePasswordReset }) {
                         refreshToken: data.refreshToken,
                     }));
 
-                    navigate("/dons/id1234")
+                    navigate("/id1234")
                 } catch (error) {
                     if (error.response) {
                         console.error('Ошибка логина:', error.response.data.message || 'Неизвестная ошибка');

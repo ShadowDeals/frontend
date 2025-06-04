@@ -14,7 +14,6 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import PlotsDashboard from "../Don/PlotsDashboard.jsx";
 import {RoleTitle, RoleMenuList} from "./RoleSpecifiedComponents.jsx";
-import {Typography} from "@mui/material";
 import {LockDatabaseComponent} from "../Don/LockDbComponent.jsx";
 import EmployeeTabs from "../Don/EmployeesComponent.jsx";
 import OrdersComponent from "../Admin/OrdersComponent.jsx";
@@ -22,7 +21,7 @@ import {useNavigate} from "react-router-dom";
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 
 import { useDispatch } from 'react-redux';
-import {clearCredentials, setCredentials} from '../Redux/store.js';
+import { clearCredentials } from '../Redux/store.js';
 
 const drawerWidth = 240;
 
@@ -83,7 +82,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 export default function HomeComponent() {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
-    const currentRole = 'admin'
+    const currentRole = 'soldier'
     const [activePage, setActivePage] = React.useState(null);
     const dispatch = useDispatch();
     const handleDrawerOpen = () => {

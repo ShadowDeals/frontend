@@ -25,6 +25,12 @@ import {
 } from "../CommonComponents/RegisterStyles.js";
 import axios from "axios";
 
+const REGION_MAP = {
+    'Василеостровский район': 'VASILEOSTROVKIY_REGION',
+    'Выборгский район': 'VIBORGSKY_REGION',
+    'Московский район': 'MOSCOW_REGION',
+    '': ''
+};
 
 const userValidationSchema = Yup.object({
     username: Yup.string().required('Введите имя'),
@@ -48,7 +54,7 @@ const userValidationSchema = Yup.object({
         )
 });
 
-const administratorValidationSchema = Yup.object({
+const administratorSoldierValidationSchema = Yup.object({
     surname: Yup.string().required('Обязательно'),
     name: Yup.string().required('Обязательно'),
     email: Yup.string().email('Неверный формат email').required('Введите почту'),
@@ -101,7 +107,7 @@ function OptionalRegionChoosingComponent() {
     const [specReg, setSpecReg] = useState(false);
     return (
         <Box>
-            <Stack direction="row" justifyContent="flex-start" alignItems="center" spacing={2}>
+            <Stack direction="row" justifyContent="flex-start" alignItems="center" spacing={2} sx={{marginTop:'3%'}}>
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -133,6 +139,7 @@ function OptionalRegionChoosingComponent() {
                         values={values}
                         onChange={handleChange}
                         onBlur={handleBlur}
+                        isBandExist={true}
                         error={values.specifyRegion && touched.region && Boolean(errors.region)}
                         helperText={values.specifyRegion && touched.region && errors.region}
                         sx={{ width: '100%' }}
@@ -283,7 +290,7 @@ function UserRegisterComponent() {
     )
 }
 
-function AdministratorSoldierRegisterForm() {
+function AdministratorSoldierRegisterForm({onSuccess, onError, role}) {
     return (
         <Formik
             initialValues={{
@@ -295,9 +302,39 @@ function AdministratorSoldierRegisterForm() {
                 password: '',
                 passwordConfirm: '',
             }}
-            validationSchema={administratorValidationSchema}
-            onSubmit={(values) => {
-                console.log('Форма отправлена:', values);
+            validationSchema={administratorSoldierValidationSchema}
+            onSubmit={async (values, { setSubmitting }) => {
+                try {
+                    console.log('Отправляем body: ')
+                    const body = {
+                        nickname: values.surname,
+                        firstName: values.name,
+                        lastName: values.surname,
+                        password: values.password,
+                        role:  role,
+                        region: REGION_MAP[values.region],
+                        email: values.email,
+                    };
+
+                    console.log('Отправляем body: ', body)
+
+                    const res = await fetch('http://localhost:8080/auth/signup', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body),
+                    });
+
+                    if (res.ok) {
+                        onSuccess(values.email);
+                    } else {
+                        const errorData = await res.json();
+                        onError({ errcode: res.status, text: errorData.message || 'Ошибка регистрации' });
+                    }
+                } catch (err) {
+                    onError({ errcode: 'network', text: err.message || err.toString() });
+                } finally {
+                    setSubmitting(false);
+                }
             }}
         >
             {formik => (
@@ -343,6 +380,7 @@ function DonRegisterComponent() {
                 name="region"
                 size={'small'}
                 sx={{ marginTop: '3%' }}
+                isBandExist={false}
             />
             <EmailPasswordTextFields
                 values={values}
@@ -356,11 +394,6 @@ function DonRegisterComponent() {
 }
 
 function DonRegisterForm({onSuccess, onError}) {
-    const REGION_MAP = {
-        'Василеостровский район': 'VASILEOSTROVKIY_REGION',
-        'Выборгский район': 'VIBORGSKY_REGION',
-        'Московский район': 'MOSCOW_REGION'
-    };
     return (
         <Formik
             initialValues={{
@@ -421,7 +454,7 @@ function DonRegisterForm({onSuccess, onError}) {
     );
 }
 
-function RegionSelect({ sx = {}, name }) {
+function RegionSelect({ sx = {}, name, isBandExist= true }) {
     const { values,
         handleChange,
         handleBlur,
@@ -431,7 +464,8 @@ function RegionSelect({ sx = {}, name }) {
     const [regions, setRegions] = useState([]);
 
     useEffect(() => {
-        axios.get('http://localhost:8080/region?isBandExist=false')
+        axios.get(`http://localhost:8080/region?isBandExist=${isBandExist}`, {
+        })
             .then(response => {
                 setRegions(response.data);
             })
@@ -515,6 +549,24 @@ function RoleSelect({ role, onRoleChanged }) {
     const handleChange = (event) => {
         onRoleChanged(event.target.value);
     };
+    const [availableRoles, setAvailableRoles] = useState([]);
+
+    useEffect(() => {
+        axios.get('http://localhost:8080/region?isBandExist=true')
+            .then(response => {
+                const hasRegions = Array.isArray(response.data) && response.data.length > 0;
+                if (hasRegions) {
+                    setAvailableRoles(["Дон", "Пользователь", "Администратор", "Солдат"]);
+                } else {
+                    setAvailableRoles(["Дон"]);
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при загрузке регионов:', error);
+                setAvailableRoles(["Дон"]);
+            });
+    }, []);
+
 
     return (
         <Box
@@ -546,10 +598,11 @@ function RoleSelect({ role, onRoleChanged }) {
                     }}
                     sx={registerSelectSx}
                 >
-                    <ColoredMenuItem value={"Дон"}>Дон</ColoredMenuItem>
-                    <ColoredMenuItem value={"Администратор"}>Администратор</ColoredMenuItem>
-                    <ColoredMenuItem value={"Солдат"}>Солдат</ColoredMenuItem>
-                    <ColoredMenuItem value={"Пользователь"}>Пользователь</ColoredMenuItem>
+                    {availableRoles.map((r) => (
+                        <ColoredMenuItem key={r} value={r}>
+                            {r}
+                        </ColoredMenuItem>
+                    ))}
                 </Select>
             </FormControl>
         </Box>
@@ -625,7 +678,12 @@ function RegisterComponent() {
                     ) : (
                         selectedRole === 'Администратор' || selectedRole === 'Солдат' ? (
                             <Box>
-                                <AdministratorSoldierRegisterForm></AdministratorSoldierRegisterForm>
+                                <AdministratorSoldierRegisterForm
+                                    onSuccess={handleRegisterSuccess} onError={handleRegisterError}
+                                    role={selectedRole === 'Администратор' ? 'ADMIN' : 'SOLDIER'}
+                                >
+
+                                </AdministratorSoldierRegisterForm>
                             </Box>
                         ) : (
                             <Box>
