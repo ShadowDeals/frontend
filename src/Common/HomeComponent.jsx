@@ -20,8 +20,13 @@ import OrdersComponent from "../Admin/OrdersComponent.jsx";
 import {useNavigate} from "react-router-dom";
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 
-import { useDispatch } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { clearCredentials } from '../Redux/store.js';
+import GangInfo from "../Soldier/GangInfo.jsx";
+import {jwtDecode} from "jwt-decode";
+import FindGang from "../Soldier/FindGang.jsx";
+import TasksComponent from "../Soldier/TasksComponent.jsx";
+import Cookies from "js-cookie";
 
 const drawerWidth = 240;
 
@@ -79,25 +84,33 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     justifyContent: 'flex-end',
 }));
 
+function useDecodedToken() {
+    const token = Cookies.get('accessToken');
+    console.log("token decoded: ", token);
+    return token ? jwtDecode(token) : null;
+}
+
 export default function HomeComponent() {
+    const decodedToken = useDecodedToken();
+    console.log('Токен из куки на home component:', decodedToken);
+    // const currentRole = decodedToken?.roles?.[0] || null;
+    const currentRole = 'Пользователь';
+    console.log('Роль текущая: ', currentRole);
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
-    const currentRole = 'soldier'
     const [activePage, setActivePage] = React.useState(null);
     const dispatch = useDispatch();
-    const handleDrawerOpen = () => {
-        setOpen(true);
-    };
 
-    const handleDrawerClose = () => {
-        setOpen(false);
-    };
+    const toggleDrawer = (state) => () => setOpen(state);
 
     const navigate = useNavigate();
     const handleLogout = () => {
         dispatch(clearCredentials());
+        Cookies.remove('accessToken');
         navigate('/welcome');
     };
+
+    // const accessToken = useSelector((state) => state.auth.accessToken);
 
     return (
         <Box sx={{ width:'100vw', height:'100vh', backgroundColor:'black', display: 'flex', overflow: 'hidden'}}>
@@ -107,7 +120,7 @@ export default function HomeComponent() {
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
-                        onClick={handleDrawerOpen}
+                        onClick={toggleDrawer(true)}
                         edge="start"
                         sx={[
                             {
@@ -151,7 +164,7 @@ export default function HomeComponent() {
                     backgroundColor:'black',
                     color: 'black',
                 }}>
-                    <IconButton onClick={handleDrawerClose}>
+                    <IconButton onClick={toggleDrawer(false)}>
                         {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                     </IconButton>
                 </DrawerHeader>
@@ -167,6 +180,10 @@ export default function HomeComponent() {
                     {activePage === 'Доступ к БД' && <LockDatabaseComponent></LockDatabaseComponent>}
                     {activePage === 'Сотрудники' && <EmployeeTabs></EmployeeTabs>}
                     {activePage === 'Заказы' && <OrdersComponent></OrdersComponent>}
+                    {activePage === 'Задания' && <TasksComponent></TasksComponent>}
+                    {activePage === 'Сведения о банде'  && ((
+                        decodedAccessToken !== null ? <GangInfo /> : <FindGang />
+                    ))}
                 </Box>
             </Main>
         </Box>

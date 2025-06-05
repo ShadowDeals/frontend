@@ -29,7 +29,7 @@ const REGION_MAP = {
     'Василеостровский район': 'VASILEOSTROVKIY_REGION',
     'Выборгский район': 'VIBORGSKY_REGION',
     'Московский район': 'MOSCOW_REGION',
-    '': ''
+    '': null
 };
 
 const userValidationSchema = Yup.object({
@@ -240,7 +240,7 @@ function SurnameNameStack() {
     );
 }
 
-function UserRegisterForm() {
+function UserRegisterForm({onSuccess, onError, role}) {
     return (
         <Formik
             initialValues={{
@@ -252,8 +252,38 @@ function UserRegisterForm() {
                 passwordConfirm: '',
             }}
             validationSchema={userValidationSchema}
-            onSubmit={(values) => {
-                console.log('Форма пользователя отправлена:', values);
+            onSubmit={async (values, { setSubmitting }) => {
+                try {
+                    console.log('Отправляем body: ')
+                    const body = {
+                        nickname: values.surname,
+                        firstName: values.name,
+                        lastName: values.surname,
+                        password: values.password,
+                        role:  role,
+                        region: REGION_MAP[values.region],
+                        email: values.email,
+                    };
+
+                    console.log('Отправляем body: ', body)
+
+                    const res = await fetch('http://localhost:8080/auth/signup', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body),
+                    });
+
+                    if (res.ok) {
+                        onSuccess(values.email);
+                    } else {
+                        const errorData = await res.json();
+                        onError({ errcode: res.status, text: errorData.message || 'Ошибка регистрации' });
+                    }
+                } catch (err) {
+                    onError({ errcode: 'network', text: err.message || err.toString() });
+                } finally {
+                    setSubmitting(false);
+                }
             }}
         >
             {({ handleSubmit }) => (
@@ -552,20 +582,36 @@ function RoleSelect({ role, onRoleChanged }) {
     const [availableRoles, setAvailableRoles] = useState([]);
 
     useEffect(() => {
-        axios.get('http://localhost:8080/region?isBandExist=true')
-            .then(response => {
-                const hasRegions = Array.isArray(response.data) && response.data.length > 0;
-                if (hasRegions) {
-                    setAvailableRoles(["Дон", "Пользователь", "Администратор", "Солдат"]);
-                } else {
+        const fetchRegions = async () => {
+            try {
+                const [withBandsResponse, withoutBandsResponse] = await Promise.all([
+                    axios.get('http://localhost:8080/region?isBandExist=true'),
+                    axios.get('http://localhost:8080/region?isBandExist=false')
+                ]);
+
+                const regionsWithBands = withBandsResponse.data;
+                const regionsWithoutBands = withoutBandsResponse.data;
+
+                const hasWithBands = Array.isArray(regionsWithBands) && regionsWithBands.length > 0;
+                const hasWithoutBands = Array.isArray(regionsWithoutBands) && regionsWithoutBands.length > 0;
+
+                if (!hasWithBands) {
                     setAvailableRoles(["Дон"]);
+                } else if (!hasWithoutBands) {
+                    setAvailableRoles(["Администратор", "Солдат", "Пользователь"]);
+                } else {
+                    setAvailableRoles(["Дон", "Администратор", "Солдат", "Пользователь"]);
                 }
-            })
-            .catch(error => {
-                console.error('Ошибка при загрузке регионов:', error);
+
+            } catch (error) {
+                console.error("Ошибка при загрузке регионов:", error);
                 setAvailableRoles(["Дон"]);
-            });
+            }
+        };
+
+        fetchRegions();
     }, []);
+
 
 
     return (
@@ -687,7 +733,10 @@ function RegisterComponent() {
                             </Box>
                         ) : (
                             <Box>
-                                <UserRegisterForm></UserRegisterForm>
+                                <UserRegisterForm
+                                    onSuccess={handleRegisterSuccess} onError={handleRegisterError}
+                                    role={selectedRole === 'Администратор' ? 'ADMIN' : 'SOLDIER'}
+                                ></UserRegisterForm>
                             </Box>
                         )
                     )

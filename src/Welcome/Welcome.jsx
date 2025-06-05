@@ -224,24 +224,6 @@ function WelcomeCentralComponent() {
         navigate('/register');
     };
 
-    const [showRegister, setShowRegister] = useState(false);
-
-    useEffect(() => {
-        axios.get("http://localhost:8080/region?isBandExist=false")
-            .then((response) => {
-                const data = response.data;
-                if (Array.isArray(data) && data.length > 0) {
-                    setShowRegister(true);
-                } else {
-                    setShowRegister(false);
-                }
-            })
-            .catch((error) => {
-                console.error("Ошибка при загрузке данных о регионах:", error);
-                setShowRegister(false);
-            });
-    }, []);
-
     return (
         <Box
             display="flex"
@@ -287,11 +269,9 @@ function WelcomeCentralComponent() {
                         <ColorSwitchableButton onClick={handleLoginClick}>
                             Войти
                         </ColorSwitchableButton>
-                        {showRegister && (
                             <ColorSwitchableButton onClick={handleRegisterClick}>
                                 Зарегистрироваться
                             </ColorSwitchableButton>
-                        )}
                     </Stack>
                 </Stack>
             </Box>

@@ -7,6 +7,7 @@ import {
     Link,
 } from "@mui/material";
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
+import Cookies from 'js-cookie';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -43,6 +44,15 @@ function LoginForm({ navigatePasswordReset }) {
                         email: data.email,
                         refreshToken: data.refreshToken,
                     }));
+
+                    Cookies.set('accessToken', data.accessToken, {
+                        expires: 7,
+                        secure: true,
+                        sameSite: 'Strict',
+                    });
+
+                    const tokenFromCookie = Cookies.get('accessToken');
+                    console.log('Токен из куки:', tokenFromCookie);
 
                     navigate("/id1234")
                 } catch (error) {

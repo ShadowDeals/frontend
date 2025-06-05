@@ -10,14 +10,15 @@ import PeopleIcon from '@mui/icons-material/People';
 import ExploreIcon from '@mui/icons-material/Explore';
 import PersonIcon from '@mui/icons-material/Person';
 import MessageIcon from '@mui/icons-material/Message';
+import TaskIcon from '@mui/icons-material/Task';
 import List from '@mui/material/List';
 import { Typography } from "@mui/material";
 
 const roleDescriptions = {
-    don: 'дона',
-    admin: 'администратора',
-    soldier: 'солдата',
-    user: 'пользователя',
+    'Дон': 'Дона',
+    'Администратор': 'Администратора',
+    'Солдат': 'Солдат',
+    'Пользователь': 'Пользователь',
 };
 
 export const RoleTitle = ({ role }) => {
@@ -31,19 +32,21 @@ export const RoleTitle = ({ role }) => {
 };
 
 export const menuItemsByRole = {
-    don: [
+    'Дон': [
         { text: 'Статистика', icon: <BarChartIcon /> },
         { text: 'Доступ к БД', icon: <StorageIcon /> },
         { text: 'Сотрудники', icon: <PeopleIcon /> },
     ],
-    admin: [
-        { text: 'Заказы', icon: <DashboardIcon /> }
+    'Администратор': [
+        { text: 'Заказы', icon: <DashboardIcon /> },
+        { text: 'Сотрудники', icon: <PeopleIcon /> },
     ],
-    soldier: [
+    'Солдат': [
         { text: 'Сведения о банде', icon: <ExploreIcon /> },
+        { text: 'Задания', icon: <TaskIcon /> },
     ],
 
-    user: [
+    'Пользователь': [
         { text: 'Профиль', icon: <PersonIcon /> },
         { text: 'Сообщения', icon: <MessageIcon /> },
     ],
