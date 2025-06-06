@@ -26,9 +26,9 @@ import {
 import axios from "axios";
 
 const REGION_MAP = {
-    'Василеостровский район': 'VASILEOSTROVKIY_REGION',
-    'Выборгский район': 'VIBORGSKY_REGION',
-    'Московский район': 'MOSCOW_REGION',
+    'Василеостровский район': 'Василеостровский район',
+    'Выборгский район': 'Выборгский район',
+    'Московский район': 'Московский район',
     '': null
 };
 
@@ -254,7 +254,6 @@ function UserRegisterForm({onSuccess, onError, role}) {
             validationSchema={userValidationSchema}
             onSubmit={async (values, { setSubmitting }) => {
                 try {
-                    console.log('Отправляем body: ')
                     const body = {
                         nickname: values.surname,
                         firstName: values.name,
@@ -335,7 +334,6 @@ function AdministratorSoldierRegisterForm({onSuccess, onError, role}) {
             validationSchema={administratorSoldierValidationSchema}
             onSubmit={async (values, { setSubmitting }) => {
                 try {
-                    console.log('Отправляем body: ')
                     const body = {
                         nickname: values.surname,
                         firstName: values.name,
@@ -439,7 +437,7 @@ function DonRegisterForm({onSuccess, onError}) {
                 try {
                     console.log('Отправляем body: ')
                     const body = {
-                        nickname: values.surname,
+                        nickname: null,
                         firstName: values.name,
                         lastName: values.surname,
                         password: values.password,

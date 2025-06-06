@@ -94,7 +94,7 @@ export default function HomeComponent() {
     const decodedToken = useDecodedToken();
     console.log('Токен из куки на home component:', decodedToken);
     // const currentRole = decodedToken?.roles?.[0] || null;
-    const currentRole = 'Пользователь';
+    const currentRole = 'Дон';
     console.log('Роль текущая: ', currentRole);
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
