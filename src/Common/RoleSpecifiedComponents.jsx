@@ -17,8 +17,8 @@ import { Typography } from "@mui/material";
 const roleDescriptions = {
     'Дон': 'Дона',
     'Администратор': 'Администратора',
-    'Солдат': 'Солдат',
-    'Пользователь': 'Пользователь',
+    'Солдат': 'Солдата',
+    'Пользователь': 'Пользователя',
 };
 
 export const RoleTitle = ({ role }) => {
@@ -33,11 +33,13 @@ export const RoleTitle = ({ role }) => {
 
 export const menuItemsByRole = {
     'Дон': [
+        { text: 'Сведения о банде', icon: <ExploreIcon /> },
         { text: 'Статистика', icon: <BarChartIcon /> },
         { text: 'Доступ к БД', icon: <StorageIcon /> },
         { text: 'Сотрудники', icon: <PeopleIcon /> },
     ],
     'Администратор': [
+        { text: 'Сведения о банде', icon: <ExploreIcon /> },
         { text: 'Заказы', icon: <DashboardIcon /> },
         { text: 'Сотрудники', icon: <PeopleIcon /> },
     ],

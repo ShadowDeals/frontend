@@ -1,30 +1,50 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Card, CardContent, Stack } from '@mui/material';
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
-
-const mockGangs = [
-    { id: 1, name: 'Василеостровский район' },
-    { id: 2, name: 'Выборгский район' },
-    { id: 3, name: 'Девяткино' },
-    { id: 4, name: 'Десяткино' },
-    { id: 5, name: 'Купчино' },
-    { id: 6, name: 'Мурино' },
-    { id: 7, name: 'Московский район' },
-    { id: 8, name: 'Парк Победы' },
-    { id: 9, name: 'Лесная' },
-    { id: 10, name: 'Кантемировская' },
-    { id: 11, name: 'без названия' },
-    { id: 12, name: 'без названия' },
-    { id: 13, name: 'без названия' },
-    { id: 14, name: 'без названия' },
-];
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const FindGang = () => {
-    const [submitted, setSubmitted] = useState({});
+    const [submitted, setSubmitted] = useState([]); // массив строк: regionName
+    const [gangs, setGangs] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const accessToken = Cookies.get('accessToken');
 
-    const handleApply = (gangId) => {
-        setSubmitted((prev) => ({ ...prev, [gangId]: true }));
+    const handleApply = (regionName) => {
+        setSubmitted((prev) => [...prev, regionName]);
+        // Здесь можно добавить POST-запрос на отправку заявки
     };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [gangsRes, ownRequestsRes] = await Promise.all([
+                    axios.get('http://localhost:8080/region?isBandExist=true'),
+                    axios.get('http://localhost:8080/request/own', {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        }
+                    })
+                ]);
+
+                const gangList = gangsRes.data || [];
+                const ownRequests = ownRequestsRes.data;
+
+                const submittedRegions = Array.isArray(ownRequests)
+                    ? ownRequests.map(r => r.bandRegion)
+                    : [];
+
+                setGangs(gangList);
+                setSubmitted(submittedRegions);
+            } catch (error) {
+                console.error("Ошибка при загрузке данных:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [accessToken]);
 
     return (
         <Box sx={{ width: '100%', height: '100%', padding: 4 }}>
@@ -41,9 +61,9 @@ const FindGang = () => {
                     padding: 2,
                 }}
             >
-                {mockGangs.map((gang) => (
+                {gangs.map((gang, index) => (
                     <Card
-                        key={gang.id}
+                        key={gang.id || gang}
                         sx={{
                             minWidth: 200,
                             backgroundColor: '#990000',
@@ -55,7 +75,7 @@ const FindGang = () => {
                         <CardContent>
                             <Stack direction="row" justifyContent="space-between" alignItems="center">
                                 <Typography color="black" variant="h6">
-                                    {gang.name}
+                                    {gang}
                                 </Typography>
                                 <ColorSwitchableButton
                                     variant="contained"
@@ -67,10 +87,10 @@ const FindGang = () => {
                                             color: 'black',
                                         },
                                     }}
-                                    onClick={() => handleApply(gang.id)}
-                                    disabled={submitted[gang.id]}
+                                    onClick={() => handleApply(gang)}
+                                    disabled={submitted.includes(gang)}
                                 >
-                                    {submitted[gang.id] ? 'Заявка отправлена' : 'Отправить заявку'}
+                                    {submitted.includes(gang) ? 'Заявка отправлена' : 'Отправить заявку'}
                                 </ColorSwitchableButton>
                             </Stack>
                         </CardContent>

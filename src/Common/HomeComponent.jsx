@@ -27,6 +27,7 @@ import {jwtDecode} from "jwt-decode";
 import FindGang from "../Soldier/FindGang.jsx";
 import TasksComponent from "../Soldier/TasksComponent.jsx";
 import Cookies from "js-cookie";
+import {Typography} from "@mui/material";
 
 const drawerWidth = 240;
 
@@ -95,6 +96,8 @@ export default function HomeComponent() {
     console.log('Токен из куки на home component:', decodedToken);
     const currentRole = decodedToken?.roles?.[0] || null;
 
+
+    const bandId = decodedToken?.bandId || null;
     console.log('Роль текущая: ', currentRole);
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
@@ -110,7 +113,6 @@ export default function HomeComponent() {
         navigate('/welcome');
     };
 
-    // const accessToken = useSelector((state) => state.auth.accessToken);
 
     return (
         <Box sx={{ width:'100vw', height:'100vh', backgroundColor:'black', display: 'flex', overflow: 'hidden'}}>
@@ -176,14 +178,20 @@ export default function HomeComponent() {
             <Main open={open}>
                 <DrawerHeader sx={{ overflow:'hidden' }}/>
                 <Box sx={{width:'100%', height:'100%', backgroundColor:'black', display: 'flex', justifyContent:'center', alignItems: 'center', overflow: 'hidden'}}>
+                    {activePage === 'Сведения о банде'  && ((
+                        bandId ? <GangInfo role={currentRole} /> : <FindGang />
+                    ))}
                     {activePage === 'Статистика' && <PlotsDashboard />}
                     {activePage === 'Доступ к БД' && <LockDatabaseComponent></LockDatabaseComponent>}
-                    {activePage === 'Сотрудники' && <EmployeeTabs role={currentRole}></EmployeeTabs>}
-                    {activePage === 'Заказы' && <OrdersComponent></OrdersComponent>}
-                    {activePage === 'Задания' && <TasksComponent></TasksComponent>}
-                    {activePage === 'Сведения о банде'  && ((
-                        decodedToken !== null ? <GangInfo /> : <FindGang />
-                    ))}
+
+                    {['Сотрудники', 'Заказы', 'Задания'].includes(activePage) && bandId === null && (
+                        <Typography color="white" variant="h4" sx={{ textAlign: 'center', width: '100%',color:'#990000'}}>
+                            Дождитесь вступления в банду
+                        </Typography>
+                    )}
+                    {bandId !== null && activePage === 'Сотрудники' && <EmployeeTabs role={currentRole}></EmployeeTabs>}
+                    {bandId !== null && activePage === 'Заказы' && <OrdersComponent></OrdersComponent>}
+                    {bandId !== null && activePage === 'Задания' && <TasksComponent></TasksComponent>}
                 </Box>
             </Main>
         </Box>

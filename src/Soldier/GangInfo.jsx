@@ -1,15 +1,18 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
-import {useSelector} from "react-redux";
 import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
-const GangInfo = () => {
-    const accessToken = useSelector((state) => state.auth.accessToken);
-    const decoded = accessToken ? jwtDecode(accessToken) : null;
+const GangInfo = ({role}) => {
+    const accessToken = Cookies.get("accessToken");
+    const decodedToken = accessToken ? jwtDecode(accessToken) : null;
 
-    console.log("Decoded token:", decoded);
+    console.log("Decoded token:", decodedToken);
 
+    const exitBand = ()=> {
+        console.log("хэндлер выхода из банды активирован");
+    };
     return (
         <Box
             sx={{
@@ -23,17 +26,20 @@ const GangInfo = () => {
             }}
         >
             <Typography variant="h5" sx={{color:'black'}} gutterBottom>
-                Информация о банде
+                Вы состоите в банде!
             </Typography>
             <Typography variant="body1" sx={{ color:'black', mb: 3 }}>
-                Здесь будет отображаться информация о вашей банде.
+                ID вашей банды: {decodedToken.bandId}
             </Typography>
-
-            <ColorSwitchableButton
-                variant="contained"
-            >
-                Выйти
-            </ColorSwitchableButton>
+            {
+                role !== 'Дон'&& (
+                <ColorSwitchableButton
+                    variant="contained"
+                    onClick={exitBand}
+                >
+                    Выйти
+                </ColorSwitchableButton>)
+            }
         </Box>
     );
 };
