@@ -7,13 +7,18 @@ import {
     DialogTitle,
     DialogContent,
     DialogContentText,
-    DialogActions, Link, Stack, TextField
+    DialogActions,
+    Link,
+    Stack,
+    TextField,
+    Button
 } from '@mui/material';
-import {useLocation, Navigate, useNavigate} from 'react-router-dom';
+import { useLocation, Navigate, useNavigate } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 
 function PasswordResetComponent() {
-    const [email, setEmail] = useState('');
     const [dialogOpen, setDialogOpen] = useState(false);
 
     const location = useLocation();
@@ -23,11 +28,17 @@ function PasswordResetComponent() {
         return <Navigate to="/login" replace />;
     }
 
-    const handleSubmit = () => {
-        if (email.trim()) {
+    const formik = useFormik({
+        initialValues: {
+            email: '',
+        },
+        validationSchema: Yup.object({
+            email: Yup.string().email('Неверный формат почты').required('Обязательное поле'),
+        }),
+        onSubmit: () => {
             setDialogOpen(true);
-        }
-    };
+        },
+    });
 
     const handleClose = () => {
         setDialogOpen(false);
@@ -45,31 +56,26 @@ function PasswordResetComponent() {
             alignItems="center"
             width="100vw"
             height="100vh"
-            sx={{ bgcolor: 'black' }}
         >
             {!dialogOpen && (
                 <Paper
-                    elevation={3}
+                    elevation={5}
                     sx={{
-                        width: '15vw',
-                        height: '30vh',
+                        width: '20%',
+                        height: '30%',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         p: 5,
-                        bgcolor: '#990000',
-                        color: 'black',
                         justifyContent: 'flex-start',
                     }}
                 >
-                    <Stack spacing={2}>
+                    <Stack spacing={2} component="form" onSubmit={formik.handleSubmit}>
                         <Link
                             underline="hover"
                             sx={{
                                 alignSelf: 'flex-start',
                                 cursor: 'pointer',
-                                color: 'black',
-                                fontSize: '0.9rem',
                                 marginBottom: '5%',
                             }}
                             onClick={navigateToLogin}
@@ -88,18 +94,25 @@ function PasswordResetComponent() {
                         </Typography>
                         <TextField
                             fullWidth
-                            size='small'
+                            size="small"
                             label="Почта"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            name="email"
+                            value={formik.values.email}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            onFocus={() => formik.setFieldError('email', '')}
+                            error={formik.touched.email && Boolean(formik.errors.email)}
+                            helperText={formik.touched.email ? formik.errors.email || ' ' : ' '}
                         />
-                        <ColorSwitchableButton
+                        <Button
                             fullWidth
+                            type="submit"
+                            variant='outlined'
                             sx={{ marginTop: '10%' }}
-                            onClick={handleSubmit}
+                            disabled={formik.isSubmitting}
                         >
                             Подтвердить
-                        </ColorSwitchableButton>
+                        </Button>
                     </Stack>
                 </Paper>
             )}
@@ -109,22 +122,13 @@ function PasswordResetComponent() {
                 onClose={handleClose}
                 aria-labelledby="password-reset-dialog-title"
             >
-                <DialogTitle
-                    id="password-reset-dialog-title"
-                    sx = {{backgroundColor:'#990000'}}
-                >
-                    Запрос принят
-                </DialogTitle>
-                <DialogContent
-                    sx = {{backgroundColor:'#990000'}}
-                >
+                <DialogTitle id="password-reset-dialog-title">Запрос принят</DialogTitle>
+                <DialogContent>
                     <DialogContentText>
-                        Проверьте почту  {email} — мы отправили вам ссылку для восстановления пароля.
+                        Проверьте почту <strong>{formik.values.email}</strong> — мы отправили вам ссылку для восстановления пароля.
                     </DialogContentText>
                 </DialogContent>
-                <DialogActions
-                    sx = {{backgroundColor:'#990000'}}
-                >
+                <DialogActions>
                     <ColorSwitchableButton onClick={handleClose} autoFocus>
                         OK
                     </ColorSwitchableButton>

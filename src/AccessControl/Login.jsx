@@ -108,6 +108,7 @@ function LoginComponent() {
                                 type: fieldName === 'password' ? 'password' : 'text',
                                 value: formik.values[fieldName],
                                 onChange: formik.handleChange,
+                                onFocus: () => formik.setFieldError(fieldName, ''),
                                 onBlur: formik.handleBlur,
                                 error: hasError,
                                 helperText: formik.touched[fieldName] ? formik.errors[fieldName] || ' ' : ' ',

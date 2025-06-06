@@ -29,6 +29,29 @@ const TheShadowDealsTheme = createTheme({
         },
     },
     components: {
+        MuiMenuItem: {
+            styleOverrides: {
+                root: {
+                    '&:hover': {
+                        backgroundColor: '#5C3A0E',
+                        color: '#F2E6C4',
+                    },
+                    '&.Mui-selected': {
+                        backgroundColor: '#F2E6C4',
+                        '&:hover': {
+                            backgroundColor: '#5C3A0E',
+                        },
+                    },
+                },
+            },
+        },
+        MuiSelect: {
+            styleOverrides: {
+                select: ({ ownerState, theme }) => ({
+                    color: ownerState.error ? '#D32F2F' : undefined,
+                }),
+            },
+        },
         MuiTextField: {
             defaultProps: {
                 variant: 'outlined',
@@ -72,7 +95,7 @@ const TheShadowDealsTheme = createTheme({
                 root: {
                     color: '#5C3A0E',
                     marginTop: 4,
-                    minHeight: '20px', // Чтобы не прыгало
+                    minHeight: '20px',
                 },
             },
         },
@@ -143,7 +166,6 @@ const TheShadowDealsTheme = createTheme({
         MuiAppBar: {
             styleOverrides: {
                 root: {
-                    backgroundColor: '#000000',
                     color: '#5C3A0E',
                 },
             },
@@ -176,23 +198,6 @@ const TheShadowDealsTheme = createTheme({
                 },
             },
         },
-        MuiTab: {
-            styleOverrides: {
-                root: {
-                    color: '#5C3A0E',
-                    '&.Mui-selected': {
-                        color: '#ff0000',
-                    },
-                },
-            },
-        },
-        MuiTabs: {
-            styleOverrides: {
-                indicator: {
-                    backgroundColor: '#ff0000',
-                },
-            },
-        },
         MuiTableRow: {
             styleOverrides: {
                 root: {
@@ -205,6 +210,19 @@ const TheShadowDealsTheme = createTheme({
                     },
                     '&:hover .MuiCheckbox-root': {
                         color: 'black',
+                    },
+                },
+            },
+        },
+        MuiCheckbox: {
+            styleOverrides: {
+                root: {
+                    color: '#5C3A0E',
+                    '&.Mui-checked': {
+                        color: '#5C3A0E',
+                    },
+                    '& .MuiSvgIcon-root': {
+                        fontSize: 28,
                     },
                 },
             },
