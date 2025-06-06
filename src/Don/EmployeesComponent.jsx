@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import {Typography} from "@mui/material";
-import PendingEmployees from "../Common/PendingEmployeesComponent.jsx";
+import PendingEmployees from "../Common/EmployeesStatusView.jsx";
+import EmployeesStatusView from "../Common/EmployeesStatusView.jsx";
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -35,27 +35,28 @@ function a11yProps(index) {
     };
 }
 
-export default function EmployeeTabs(role) {
+export default function EmployeeTabs({role}) {
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
+    console.log("Действующая роль: ", role)
     return (
         <Box sx={{ height: '100%', width:'100%' }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs
                     value={value} onChange={handleChange} aria-label="basic tabs example">
-                    {role === 'Дон' && (<Tab label="Администраторы" {...a11yProps(0)} />)}
-                    <Tab label="Солдаты" {...a11yProps(1)} />
+                    {<Tab label="Входящие запросы" {...a11yProps(0)} />}
+                    <Tab label="Действующие сотрудники" {...a11yProps(1)} />
                 </Tabs>
             </Box>
             <CustomTabPanel value={value} index={0}>
-                <PendingEmployees></PendingEmployees>
+                <EmployeesStatusView role={role} status={'pending'}></EmployeesStatusView>
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
-                <PendingEmployees/>
+                <EmployeesStatusView role={role} status={'active'}></EmployeesStatusView>
             </CustomTabPanel>
         </Box>
     );

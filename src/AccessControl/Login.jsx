@@ -54,7 +54,7 @@ function LoginForm({ navigatePasswordReset }) {
                     const tokenFromCookie = Cookies.get('accessToken');
                     console.log('Токен из куки:', tokenFromCookie);
 
-                    navigate("/id1234")
+                    navigate("/home")
                 } catch (error) {
                     if (error.response) {
                         console.error('Ошибка логина:', error.response.data.message || 'Неизвестная ошибка');

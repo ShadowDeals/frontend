@@ -1,6 +1,6 @@
 import { Box, Paper, Typography, Button } from "@mui/material";
 import {useNavigate, useSearchParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import CircularProgress from '@mui/material/CircularProgress';
 
@@ -15,10 +15,16 @@ export function EmailConfirmComponent() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
-    useEffect(() => {
-        const code = searchParams.get("code");
-        const baseUrl = "http://localhost:8080/auth/confirm/email";
+    const didRun = useRef(false);
 
+    useEffect(() => {
+        if (didRun.current) return;
+        didRun.current = true;
+
+        const code = searchParams.get("code");
+        if (!code) return;
+
+        const baseUrl = "http://localhost:8080/auth/confirm/email";
         const fullUrl = `${baseUrl}?code=${encodeURIComponent(code)}`;
         console.log("Полный HTTP путь запроса:", fullUrl);
 

@@ -20,7 +20,7 @@ import OrdersComponent from "../Admin/OrdersComponent.jsx";
 import {useNavigate} from "react-router-dom";
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { clearCredentials } from '../Redux/store.js';
 import GangInfo from "../Soldier/GangInfo.jsx";
 import {jwtDecode} from "jwt-decode";
@@ -93,8 +93,8 @@ function useDecodedToken() {
 export default function HomeComponent() {
     const decodedToken = useDecodedToken();
     console.log('Токен из куки на home component:', decodedToken);
-    // const currentRole = decodedToken?.roles?.[0] || null;
-    const currentRole = 'Дон';
+    const currentRole = decodedToken?.roles?.[0] || null;
+
     console.log('Роль текущая: ', currentRole);
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
@@ -178,11 +178,11 @@ export default function HomeComponent() {
                 <Box sx={{width:'100%', height:'100%', backgroundColor:'black', display: 'flex', justifyContent:'center', alignItems: 'center', overflow: 'hidden'}}>
                     {activePage === 'Статистика' && <PlotsDashboard />}
                     {activePage === 'Доступ к БД' && <LockDatabaseComponent></LockDatabaseComponent>}
-                    {activePage === 'Сотрудники' && <EmployeeTabs></EmployeeTabs>}
+                    {activePage === 'Сотрудники' && <EmployeeTabs role={currentRole}></EmployeeTabs>}
                     {activePage === 'Заказы' && <OrdersComponent></OrdersComponent>}
                     {activePage === 'Задания' && <TasksComponent></TasksComponent>}
                     {activePage === 'Сведения о банде'  && ((
-                        decodedAccessToken !== null ? <GangInfo /> : <FindGang />
+                        decodedToken !== null ? <GangInfo /> : <FindGang />
                     ))}
                 </Box>
             </Main>

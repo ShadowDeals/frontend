@@ -31,7 +31,7 @@ function App() {
                            }
                     />
                     <Route
-                        path="/id1234"
+                        path="/home"
                         element={
                             <ThemeProvider theme={TheShadowDealsTheme}>
                                 <HomeComponent />
