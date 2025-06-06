@@ -7,11 +7,10 @@ import {
     DialogTitle,
     DialogContent,
     DialogContentText,
-    DialogActions, Link, Stack
+    DialogActions, Link, Stack, TextField
 } from '@mui/material';
 import {useLocation, Navigate, useNavigate} from 'react-router-dom';
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
-import { StyledTextField } from "./Login.jsx";
 
 function PasswordResetComponent() {
     const [email, setEmail] = useState('');
@@ -87,7 +86,7 @@ function PasswordResetComponent() {
                         >
                             Восстановить пароль
                         </Typography>
-                        <StyledTextField
+                        <TextField
                             fullWidth
                             size='small'
                             label="Почта"

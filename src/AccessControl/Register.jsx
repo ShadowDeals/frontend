@@ -9,11 +9,10 @@ import {
     Stack,
     Typography,
     Checkbox,
-    FormControlLabel, FormHelperText, Alert, Snackbar
+    FormControlLabel, FormHelperText, Alert, Snackbar, TextField
 } from "@mui/material";
 
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
-import { StyledTextField } from "./Login.jsx";
 import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import {Formik, useFormikContext} from 'formik';
@@ -158,7 +157,7 @@ function EmailPasswordTextFields() {
         handleBlur } = useFormikContext();
     return (
         <Box>
-            <StyledTextField
+            <TextField
                 size={'small'}
                 fullWidth
                 label="Почта"
@@ -169,7 +168,7 @@ function EmailPasswordTextFields() {
                 error={touched.email && Boolean(errors.email)}
                 helperText={touched.email && errors.email}
             />
-            <StyledTextField
+            <TextField
                 size={'small'}
                 fullWidth
                 label="Пароль"
@@ -182,7 +181,7 @@ function EmailPasswordTextFields() {
                 error={touched.password && Boolean(errors.password)}
                 helperText={touched.password && errors.password}
             />
-            <StyledTextField
+            <TextField
                 size={'small'}
                 fullWidth
                 label="Подтверждение пароля"
@@ -214,7 +213,7 @@ function SurnameNameStack() {
             alignItems="center"
             sx={{ marginBottom: '3%', width:'100%' }}
         >
-            <StyledTextField
+            <TextField
                 size={'small'}
                 fullWidth
                 label="Фамилия"
@@ -225,7 +224,7 @@ function SurnameNameStack() {
                 error={touched.surname && Boolean(errors.surname)}
                 helperText={touched.surname && errors.surname}
             />
-            <StyledTextField
+            <TextField
                 size={'small'}
                 fullWidth
                 label="Имя"
@@ -306,7 +305,7 @@ function UserRegisterComponent() {
         handleBlur } = useFormikContext();
     return (
         <Box>
-            <StyledTextField
+            <TextField
                 name={'username'}
                 value={values.username}
                 onChange={handleChange}

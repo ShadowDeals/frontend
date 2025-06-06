@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import { Box, Typography, Grid, Link, Stack, List, ListItem} from '@mui/material';
-import { styled } from '@mui/material/styles';
+import {Box, Typography, Grid, Link, Stack, List, ListItem, Button} from '@mui/material';
+import {styled, useTheme} from '@mui/material/styles';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import MuiAccordion from '@mui/material/Accordion';
 import MuiAccordionSummary, {
@@ -22,8 +22,6 @@ const AccordionPanel = {
 const Accordion = styled((props) => (
     <MuiAccordion disableGutters elevation={0} square {...props}/>
 ))(({ theme }) => ({
-    backgroundColor: '#990000',
-    border: `1px solid ${theme.palette.divider}`,
     '&:not(:last-child)': {
         borderBottom: 0,
     },
@@ -38,7 +36,7 @@ const AccordionSummary = styled((props) => (
         {...props}
     />
 ))(({ theme }) => ({
-    backgroundColor: 'rgba(99, 0, 0, .03)',
+    backgroundColor: theme.palette.primary.main,
     flexDirection: 'row-reverse',
     [`& .${accordionSummaryClasses.expandIconWrapper}.${accordionSummaryClasses.expanded}`]:
         {
@@ -54,7 +52,6 @@ const AccordionSummary = styled((props) => (
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
     padding: theme.spacing(2),
-    borderTop: '1px solid rgba(0, 0, 0, .125)',
 }));
 
 function RolesAccordionSet() {
@@ -75,7 +72,6 @@ function RolesAccordionSet() {
                         }}/>} aria-controls="panel1d-content" id="panel1d-header">
                     <Typography
                         component="span"
-                        sx={{color: 'black'}}
                     > Дон </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -128,48 +124,9 @@ function RolesAccordionSet() {
 }
 
 
-const headingStyles = {
-    textAlign: 'center', color: 'black'
-};
-function TheShadowDealsRoleChoosingCall() {
-    return (
-        <Typography
-            variant="h4"
-            component="h3"
-            sx={{ textAlign: 'center', color: 'black' }}
-        >
-         Выбери свою роль
-        </Typography>
-    );
-}
-
-function TheShadowDealsHeading() {
-    return (
-        <Typography
-            variant="h2"
-            component="h1"
-            sx={headingStyles}
-        >
-            The Shadow Deals
-        </Typography>
-    );
-}
-
-function TheShadowDealsSlogan() {
-    return (
-        <Typography
-            variant="h4"
-            sx={headingStyles}
-        >
-            Услуги мафии — народу!
-        </Typography>
-    );
-}
-
 function LogoGridItem({ src, alt = 'default-logo' }) {
     return (
         <Grid
-            sx={{ bgcolor: 'black' }}
             width="50%"
             height="50%"
         >
@@ -190,7 +147,6 @@ function GridLogos() {
             container
             spacing={0}
             columns={2}
-            sx={{ bgcolor: 'blue' }}
             width="60%"
             height="60%"
         >
@@ -215,7 +171,7 @@ function GridLogos() {
 }
 function WelcomeCentralComponent() {
     const navigate = useNavigate();
-
+    const theme = useTheme();
     const handleLoginClick = () => {
         navigate('/login');
     };
@@ -229,15 +185,15 @@ function WelcomeCentralComponent() {
             display="flex"
             alignItems="center"
             justifyContent="center"
-            height="100vh"
+            width='100vw'
+            height='100vh'
         >
             <Box
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
                 width="60%"
-                height="100vh"
-                sx={{ bgcolor: 'black' }}
+                height="100%"
             >
                 <GridLogos>
                 </GridLogos>
@@ -248,16 +204,32 @@ function WelcomeCentralComponent() {
                 gap={1}
                 justifyContent="center"
                 width="40%"
-                height="100vh"
-                sx={{ bgcolor: '#990000' }}
+                height="100%"
             >
                 <Stack
                     spacing={3}
                     sx={{marginTop: '30%'}}
                 >
-                    <TheShadowDealsHeading></TheShadowDealsHeading>
-                    <TheShadowDealsSlogan></TheShadowDealsSlogan>
-                    <TheShadowDealsRoleChoosingCall></TheShadowDealsRoleChoosingCall>
+                    <Typography
+                        variant="h2"
+                        component="h1"
+                        sx={{textAlign: 'center'}}
+                    >
+                        The Shadow Deals
+                    </Typography>
+                    <Typography
+                        variant="h4"
+                        sx={{textAlign: 'center'}}
+                    >
+                        Услуги мафии — народу!
+                    </Typography>
+                    <Typography
+                        variant="h4"
+                        component="h3"
+                        sx={{ textAlign: 'center'}}
+                    >
+                        Выбери свою роль
+                    </Typography>
                     <RolesAccordionSet></RolesAccordionSet>
 
                     <Stack
@@ -266,12 +238,12 @@ function WelcomeCentralComponent() {
                         justifyContent="center"
                         alignItems="center"
                     >
-                        <ColorSwitchableButton onClick={handleLoginClick}>
+                        <Button variant='outlined' onClick={handleLoginClick}>
                             Войти
-                        </ColorSwitchableButton>
-                            <ColorSwitchableButton onClick={handleRegisterClick}>
+                        </Button>
+                            <Button variant='outlined' onClick={handleRegisterClick}>
                                 Зарегистрироваться
-                            </ColorSwitchableButton>
+                            </Button>
                     </Stack>
                 </Stack>
             </Box>

@@ -11,36 +11,27 @@ import TheShadowDealsTheme from "./Theme.jsx";
 import CheckEmailComponent from "./AccessControl/CheckEmail.jsx";
 import {Provider} from "react-redux";
 import store from "./Redux/store.js"
+import CssBaseline from "@mui/material/CssBaseline";
 
 function App() {
   return (
-      <Provider store={store}>
-          <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<Navigate to="/welcome" replace />} />
-                    <Route path="/welcome" element={<WelcomeCentralComponent/>} />
-                    <Route path="/login" element={<LoginComponent/>} />
-                    <Route path="/register" element={<RegisterComponent/>}/>
-                    <Route path="/password-reset" element={<PasswordResetComponent/>}/>
-                    <Route path="/confirm" element={<EmailConfirmComponent/>}/>
-                    <Route path="/check-email"
-                           element={
-                               <ThemeProvider theme={TheShadowDealsTheme}>
-                                <CheckEmailComponent/>
-                               </ThemeProvider>
-                           }
-                    />
-                    <Route
-                        path="/home"
-                        element={
-                            <ThemeProvider theme={TheShadowDealsTheme}>
-                                <HomeComponent />
-                            </ThemeProvider>
-                        }
-                    />
-                </Routes>
-          </BrowserRouter>
-      </Provider>
+      <ThemeProvider theme={TheShadowDealsTheme}>
+          <CssBaseline />
+          <Provider store={store}>
+              <BrowserRouter>
+                    <Routes>
+                        <Route path="/" element={<Navigate to="/welcome" replace />} />
+                        <Route path="/welcome" element={<WelcomeCentralComponent/>} />
+                        <Route path="/login" element={<LoginComponent/>} />
+                        <Route path="/register" element={<RegisterComponent/>}/>
+                        <Route path="/password-reset" element={<PasswordResetComponent/>}/>
+                        <Route path="/confirm" element={<EmailConfirmComponent/>}/>
+                        <Route path="/check-email" element={<CheckEmailComponent/>}/>
+                        <Route path="/home" element={<HomeComponent />}/>
+                    </Routes>
+              </BrowserRouter>
+          </Provider>
+      </ThemeProvider>
   )
 }
 

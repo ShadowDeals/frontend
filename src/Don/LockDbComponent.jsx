@@ -9,7 +9,6 @@ import {Box,
     DialogActions
 } from '@mui/material';
 import React, { useState } from 'react';
-import {StyledTextField} from "../AccessControl/Login.jsx";
 import { Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
 
@@ -38,7 +37,7 @@ export function PasswordDialog({ open, onClose, onConfirm }) {
             </DialogTitle>
             <DialogContent sx={{ bgcolor: '#990000', color: 'black' }}>
                 <form onSubmit={formik.handleSubmit} id="password-form">
-                    <StyledTextField
+                    <TextField
                         sx={{
                             '& input': {
                                 color: 'black',
