@@ -129,7 +129,6 @@ const EmployeesListWithStatus = ({ employees, status }) => {
     );
 };
 
-
 const EmployeesStatusView = ({ role, status = 'pending' }) => {
     console.log('Статус в EmployeesStatusView: ', status);
     const { employees, loading, error } = useEmployees(role, status);
@@ -146,7 +145,7 @@ const EmployeesStatusView = ({ role, status = 'pending' }) => {
                 </Stack>
             ) : role === 'Администратор' ? (
                 <Box sx={{ width: '100%' }}>
-                    <Typography variant="h6" sx={{ ml:2 }}>
+                    <Typography textAlign={'right'} variant="h6" sx={{ ml:2 }}>
                         Солдаты
                     </Typography>
                     <EmployeesListWithStatus employees={employees} status={status} />

@@ -3,14 +3,19 @@ import {
     Dialog, DialogTitle, DialogContent, DialogActions,
     Button, Stack, Radio, FormControlLabel, Typography, Alert
 } from '@mui/material';
+import {useEffect, useState} from "react";
+import { useFreeExecutors } from "../Common/useFreeExecutors.js";
 
-export default function AssignEmployeesDialog({ open, onClose, employees, onSave }) {
+export default function AssignEmployeesDialog({ open, onClose, onSave }) {
     const MAX_SELECTION = 5;
 
-    const [selectedExecutorIds, setSelectedExecutorIds] = React.useState([]);
-    const [mainExecutorId, setMainExecutorId] = React.useState(null);
+    const [selectedExecutorIds, setSelectedExecutorIds] = useState([]);
+    const [mainExecutorId, setMainExecutorId] = useState(null);
 
-    React.useEffect(() => {
+    const freeExecutors = useFreeExecutors();
+    console.log('free executors: ', freeExecutors.executors);
+
+    useEffect(() => {
         if (!open) {
             setSelectedExecutorIds([]);
             setMainExecutorId(null);
@@ -21,7 +26,7 @@ export default function AssignEmployeesDialog({ open, onClose, employees, onSave
         const options = Array.from(event.target.options);
         const selectedIds = options
             .filter(option => option.selected)
-            .map(option => Number(option.value));
+            .map(option => option.value);
 
         if (selectedIds.length > MAX_SELECTION) {
             return;
@@ -64,11 +69,11 @@ export default function AssignEmployeesDialog({ open, onClose, employees, onSave
                     value={selectedExecutorIds.map(String)}
                     onChange={handleSelectChange}
                 >
-                    {employees.map(({ id, name }) => {
-                        const disabled = !selectedExecutorIds.includes(id) && selectedExecutorIds.length >= MAX_SELECTION;
+                    {freeExecutors.executors.map(({ executorId, executorName }) => {
+                        const disabled = !selectedExecutorIds.includes(executorId) && selectedExecutorIds.length >= MAX_SELECTION;
                         return (
-                            <option key={id} value={id} disabled={disabled}>
-                                {name}
+                            <option key={executorId} value={executorId} disabled={disabled}>
+                                {executorName}
                             </option>
                         );
                     })}
@@ -81,7 +86,8 @@ export default function AssignEmployeesDialog({ open, onClose, employees, onSave
                         </Typography>
                         <Stack spacing={1}>
                             {selectedExecutorIds.map(id => {
-                                const employee = employees.find(e => e.id === id);
+                                const employee = freeExecutors.executors.find(e => e.executorId === id);
+                                console.log('employee: ', employee);
                                 return (
                                     <FormControlLabel
                                         key={id}
@@ -97,7 +103,7 @@ export default function AssignEmployeesDialog({ open, onClose, employees, onSave
                                                 onChange={() => handleSelectMain(id)}
                                             />
                                         }
-                                        label={employee?.name || 'Неизвестный'}
+                                        label={employee?.executorName || 'Неизвестный'}
                                     />
                                 );
                             })}

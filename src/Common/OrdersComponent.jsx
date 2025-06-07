@@ -8,15 +8,13 @@ import {Tabs,
     Stack,
     Grid
 } from "@mui/material";
-import { PendingApplyOrderCard } from "./PendingApplyOrderCard.jsx";
+import { getAdminTabsConfig, getSoldierTabsConfig } from './OrgderTabsConfigs.jsx';
+
+
 import { useMemo, useState } from "react";
-import OrderDetailsDialog from "./OrderDetailsDialog.jsx";
-import PendingEmployeesOrderCard from "./PendingEmployeesOrderCard.jsx";
-import AssignEmployeesDialog from "./AssignEmployeesDialog.jsx";
-import {InProgressOrderCard} from "./InProgressOrderCard.jsx";
-import {DoneOrderCard} from "./DoneOrderCard.jsx";
-import {PendingPaymentOrderCard} from "./PendingPaymentOrderCard.jsx";
-import {useBandTasks} from "./useBandTasks.js";
+import OrderDetailsDialog from "../Admin/OrderDetailsDialog.jsx";
+import AssignEmployeesDialog from "../Admin/AssignEmployeesDialog.jsx"
+import {useBandTasks} from "../Admin/useBandTasks.js";
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -231,86 +229,29 @@ export default function OrdersComponent({role}) {
     };
 
 
-    const tabsConfig = useMemo(() => [
-        {
-            index: 0,
-            CardComponent: PendingApplyOrderCard,
-            onReject: (id) => {
-                console.log('Reject order', id);
-            },
-            onMoreInfo: (card) => {
-                console.log('Open order details', card);
-                openOrderDetailsDialog(card);
-            },
-            taskInfos: currentTaskInfos,
-        },
-        {
-            index: 1,
-            CardComponent: PendingPaymentOrderCard,
-            onReject: (id) => {
-                console.log('Cancel deal', id);
-            },
-            onMoreInfo: (card) => {
-                console.log('Open order details', card);
-                openOrderDetailsDialog(card);
-            },
-            onSetPrice: (card) => {
-                console.log('Open setting price', card);
-            },
-            taskInfos: currentTaskInfos,
-        },
-        {
-            index: 2,
-            CardComponent: PendingEmployeesOrderCard,
-            onMoreInfo: (card) => {
-                console.log('Open order details', card);
-                openOrderDetailsDialog(card);
-            },
-            onAssignEmployee: (card) => {
-                console.log('Assign employee', card);
-                openAssignExecutorsDialog(card);
-            },
-            taskInfos: currentTaskInfos,
-        },
-        {
-            index: 3,
-            CardComponent: InProgressOrderCard,
-            onMoreInfo: (card) => {
-                console.log('Open order details', card);
-                openOrderDetailsDialog(card);
-            },
-            onAssignEmployee: (card) => {
-                console.log('Assign employee', card);
-            },
-            taskInfos: currentTaskInfos,
-        },
-        {
-            index: 4,
-            CardComponent: DoneOrderCard,
-            onMoreInfo: (id) => {
-                console.log('Open order details', id);
-                openOrderDetailsDialog(id);
-            },
-            onViewReport: (id) => {
-                console.log('View report', id);
-            },
-            taskInfos: currentTaskInfos,
-        },
-    ], [currentTaskInfos]);
+    const tabsConfig = useMemo(() => {
+        return role === 'Солдат'
+            ? getSoldierTabsConfig(currentTaskInfos, openOrderDetailsDialog)
+            : getAdminTabsConfig(currentTaskInfos, openOrderDetailsDialog, openAssignExecutorsDialog);
+    }, [role, currentTaskInfos]);
+
 
     console.log('wtf', currentTaskInfos);
+    console.log('wtf2', tabsConfig);
     return (
         <Box sx={{ height: '100%', width:'100%' }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs
                     TabIndicatorProps={{ style: { display: 'none' } }}
-                    value={value} onChange={handleChange} aria-label="basic tabs example">
-                    <Tab label="Ожидающие подтверждения" {...a11yProps(0)} />
-                    <Tab label="Ожидающие оплаты" {...a11yProps(1)} />
-                    <Tab label="Ожидающие назначения" {...a11yProps(2)} />
-                    <Tab label="В работе" {...a11yProps(3)} />
-                    <Tab label="Завершенные" {...a11yProps(4)} />
+                    value={value}
+                    onChange={handleChange}
+                    aria-label="tabs by role"
+                >
+                    {tabsConfig.map(({ index, label }) => (
+                        <Tab key={index} label={label} {...a11yProps(index)} />
+                    ))}
                 </Tabs>
+
             </Box>
             {tabsConfig.map(({ index, CardComponent, onReject, onMoreInfo, onSetPrice, onAssignEmployee, onViewReport, taskInfos }) => (
                 <CustomTabPanel key={index} value={value} index={index}>

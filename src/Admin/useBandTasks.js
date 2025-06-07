@@ -14,13 +14,15 @@ export function useBandTasks() {
     const waitingForEmployee = useBandTaskByStatus(TASK_STATUS_LABELS.WAITING_FOR_ASSIGNMENT);
     const inProgress = useBandTaskByStatus(TASK_STATUS_LABELS.IN_WORK);
     const finished = useBandTaskByStatus(TASK_STATUS_LABELS.FINISHED);
-    const assignedToMe = useBandTaskByStatus(TASK_STATUS_LABELS.IN_WORK);
+    const assignedToMe = [];
+    const finishedByMe = [];
     return {
         waitingForAccept,
         waitingForPayment,
         waitingForEmployee,
         inProgress,
         finished,
-        assignedToMe
+        assignedToMe,
+        finishedByMe
     };
 }

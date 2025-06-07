@@ -15,7 +15,7 @@ import PlotsDashboard from "../Don/PlotsDashboard.jsx";
 import {RoleTitle, RoleMenuList} from "./RoleSpecifiedComponents.jsx";
 import {LockDatabaseComponent} from "../Don/LockDbComponent.jsx";
 import EmployeeTabs from "../Don/EmployeesComponent.jsx";
-import OrdersComponent from "../Admin/OrdersComponent.jsx";
+import OrdersComponent from "./OrdersComponent.jsx";
 import {useNavigate} from "react-router-dom";
 
 import GangInfo from "../Soldier/GangInfo.jsx";
