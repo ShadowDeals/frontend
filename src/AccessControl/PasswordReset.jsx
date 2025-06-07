@@ -16,7 +16,6 @@ import {
 import { useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 
 function PasswordResetComponent() {
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -129,9 +128,9 @@ function PasswordResetComponent() {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <ColorSwitchableButton onClick={handleClose} autoFocus>
+                    <Button onClick={handleClose} autoFocus>
                         OK
-                    </ColorSwitchableButton>
+                    </Button>
                 </DialogActions>
             </Dialog>
         </Box>

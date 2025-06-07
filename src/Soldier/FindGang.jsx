@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Card, CardContent, Stack } from '@mui/material';
-import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
+import {Box, Typography, Card, CardContent, Stack, Button} from '@mui/material';
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -76,7 +75,7 @@ const FindGang = () => {
                                 <Typography variant="h6">
                                     {gang}
                                 </Typography>
-                                <ColorSwitchableButton
+                                <Button
                                     variant="contained"
                                     color="primary"
                                     size="small"
@@ -84,7 +83,7 @@ const FindGang = () => {
                                     disabled={submitted.includes(gang)}
                                 >
                                     {submitted.includes(gang) ? 'Заявка отправлена' : 'Отправить заявку'}
-                                </ColorSwitchableButton>
+                                </Button>
                             </Stack>
                         </CardContent>
                     </Card>

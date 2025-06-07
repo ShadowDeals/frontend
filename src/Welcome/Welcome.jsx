@@ -8,9 +8,7 @@ import MuiAccordionSummary, {
 } from '@mui/material/AccordionSummary';
 
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
-import ColorSwitchableButton from '../CommonComponents/Buttons.jsx';
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 const AccordionPanel = {
     Don: 'panel1',

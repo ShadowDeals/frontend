@@ -1,6 +1,5 @@
 import React from 'react';
 import {Box, Button, Paper, Stack, Typography} from '@mui/material';
-import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 

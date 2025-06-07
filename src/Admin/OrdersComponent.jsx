@@ -16,6 +16,7 @@ import AssignEmployeesDialog from "./AssignEmployeesDialog.jsx";
 import {InProgressOrderCard} from "./InProgressOrderCard.jsx";
 import {DoneOrderCard} from "./DoneOrderCard.jsx";
 import {PendingPaymentOrderCard} from "./PendingPaymentOrderCard.jsx";
+import {useBandTasks} from "./useBandTasks.js";
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -46,7 +47,8 @@ function a11yProps(index) {
     };
 }
 
-const initialCards = new Array(20).fill(null).map((_, i) => ({ id: i + 1 }));
+// const initialCards = new Array(20).fill(null).map((_, i) => ({ id: i + 1 }));
+//
 const Employees = [
     { id: 1, name: 'Иван Иванов' },
     { id: 2, name: 'Мария Петрова' },
@@ -71,7 +73,7 @@ const Employees = [
 ];
 
 function OrdersTabPanel({
-                            cards,
+                            taskInfos,
                             CardComponent,
                             onReject,
                             onMoreInfo,
@@ -83,33 +85,37 @@ function OrdersTabPanel({
     return (
         <Box sx={{ width: '100%', height: '100%' }}>
             <Stack spacing={2} sx={{ alignItems: 'center', height: '100%' }}>
-                {/* Обёртка для фиксированной высоты */}
                 <Box
                     sx={{
                         width: '100%',
-                        height: '650px', // фиксированная высота
+                        height: '650px',
                         overflowY: 'auto',
                     }}
                 >
                     <Grid
                         container
                         spacing={2}
-                        columns={4}
+                        padding={2}
+                        columns={12}
+
                         alignItems="stretch"
                     >
-                        {cards.map((card) => (
-                            <Grid item xs={1} key={card.id}>
-                                <CardComponent
-                                    id={card.id}
-                                    card={card}
-                                    onReject={() => onReject && onReject(card.id)}
-                                    onMoreInfo={() => onMoreInfo && onMoreInfo(card)}
-                                    onSetPrice={() => onSetPrice && onSetPrice(card)}
-                                    onAssignEmployee={() => onAssignEmployee && onAssignEmployee(card)}
-                                    onViewReport={() => onViewReport && onViewReport(card)}
-                                />
-                            </Grid>
-                        ))}
+                        {taskInfos.map((taskInfo) => {
+                            console.log('taskInfo нихуя не ясно:', taskInfo);
+                            return (
+                                <Grid key={taskInfo.taskId} size={3}>
+                                    <CardComponent
+                                        taskInfo={taskInfo}
+                                        onReject={() => onReject && onReject(taskInfo.taskId)}
+                                        onMoreInfo={() => onMoreInfo && onMoreInfo(taskInfo)}
+                                        onSetPrice={() => onSetPrice && onSetPrice(taskInfo)}
+                                        onAssignEmployee={() => onAssignEmployee && onAssignEmployee(taskInfo)}
+                                        onViewReport={() => onViewReport && onViewReport(taskInfo)}
+                                    />
+                                </Grid>
+                            );
+                        })}
+
                     </Grid>
                 </Box>
 
@@ -131,11 +137,25 @@ OrdersTabPanel.propTypes = {
 };
 
 export default function OrdersComponent() {
-    const [cards, setCards] = useState(initialCards);
-    // const handleReject = (id) => {
-    //     console.log(`rejected`);
-    //     setCards((prevCards) => prevCards.filter((card) => card.id !== id));
-    // };
+
+    const {
+        waitingForAccept,
+        waitingForPayment,
+        waitingForEmployee,
+        inProgress,
+        finished
+    } = useBandTasks();
+
+    const taskArrays = [
+        waitingForAccept.tasks || [],
+        waitingForPayment.tasks || [],
+        waitingForEmployee.tasks || [],
+        inProgress.tasks || [],
+        finished.tasks || [],
+    ];
+    // console.log('Получили вот такоэ',
+    //     taskArrays
+    // );
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -143,17 +163,32 @@ export default function OrdersComponent() {
     };
 
     const [page, setPage] = useState(1);
-    const cardsPerPage = 12;
+    const taskInfosPerPage = 12;
 
     const handleChangePage = (_, value) => {
         setPage(value);
     };
 
-    const paginatedCards = cards.slice(
-        (page - 1) * cardsPerPage,
-        page * cardsPerPage
+    const currentTaskInfos = taskArrays[value] || [];
+
+    console.log('currentTaskInfos, page', page,
+        currentTaskInfos
     );
 
+    const paginatedTaskInfos = currentTaskInfos.slice(
+        (page - 1) * taskInfosPerPage,
+        page * taskInfosPerPage
+    );
+
+    console.log('Всего задач:', currentTaskInfos.length);
+    console.log('Текущая страница:', page);
+    console.log('Срез с', (page - 1) * taskInfosPerPage, 'по', page * taskInfosPerPage);
+    console.log('Итоговый массив:', paginatedTaskInfos);
+
+
+    console.log('paginatedTaskInfos, page', page,
+        currentTaskInfos
+    );
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [orderDetailsDialogState, setOrderDetailsDialogState] = useState(false);
     const [assignExecutorsDialogState, setAssignExecutorsDialogState] = useState(false);
@@ -176,6 +211,7 @@ export default function OrdersComponent() {
     };
     const saveAssignExecutorsDialog = () => {
         console.log('Нажата кнопка assign executors');
+
     };
 
 
@@ -190,61 +226,61 @@ export default function OrdersComponent() {
                 console.log('Open order details', card);
                 openOrderDetailsDialog(card);
             },
-            cards: paginatedCards,
+            taskInfos: paginatedTaskInfos,
         },
-        {
-            index: 1,
-            CardComponent: PendingPaymentOrderCard,
-            onReject: (id) => {
-                console.log('Cancel deal', id);
-            },
-            onMoreInfo: (card) => {
-                console.log('Open order details', card);
-                openOrderDetailsDialog(card);
-            },
-            onSetPrice: (card) => {
-                console.log('Open setting price', card);
-            },
-            cards: paginatedCards,
-        },
-        {
-            index: 2,
-            CardComponent: PendingEmployeesOrderCard,
-            onMoreInfo: (card) => {
-                console.log('Open order details', card);
-                openOrderDetailsDialog(card);
-            },
-            onAssignEmployee: (card) => {
-                console.log('Assign employee', card);
-                openAssignExecutorsDialog(card);
-            },
-            cards: paginatedCards,
-        },
-        {
-            index: 3,
-            CardComponent: InProgressOrderCard,
-            onMoreInfo: (card) => {
-                console.log('Open order details', card);
-                openOrderDetailsDialog(card);
-            },
-            onAssignEmployee: (card) => {
-                console.log('Assign employee', card);
-            },
-            cards: paginatedCards,
-        },
-        {
-            index: 4,
-            CardComponent: DoneOrderCard,
-            onMoreInfo: (card) => {
-                console.log('Open order details', card);
-                openOrderDetailsDialog(card);
-            },
-            onViewReport: (card) => {
-                console.log('View report', card);
-            },
-            cards: paginatedCards,
-        },
-    ], [paginatedCards]);
+        // {
+        //     index: 1,
+        //     CardComponent: PendingPaymentOrderCard,
+        //     onReject: (id) => {
+        //         console.log('Cancel deal', id);
+        //     },
+        //     onMoreInfo: (card) => {
+        //         console.log('Open order details', card);
+        //         openOrderDetailsDialog(card);
+        //     },
+        //     onSetPrice: (card) => {
+        //         console.log('Open setting price', card);
+        //     },
+        //     cards: paginatedCards,
+        // },
+        // {
+        //     index: 2,
+        //     CardComponent: PendingEmployeesOrderCard,
+        //     onMoreInfo: (card) => {
+        //         console.log('Open order details', card);
+        //         openOrderDetailsDialog(card);
+        //     },
+        //     onAssignEmployee: (card) => {
+        //         console.log('Assign employee', card);
+        //         openAssignExecutorsDialog(card);
+        //     },
+        //     cards: paginatedCards,
+        // },
+        // {
+        //     index: 3,
+        //     CardComponent: InProgressOrderCard,
+        //     onMoreInfo: (card) => {
+        //         console.log('Open order details', card);
+        //         openOrderDetailsDialog(card);
+        //     },
+        //     onAssignEmployee: (card) => {
+        //         console.log('Assign employee', card);
+        //     },
+        //     cards: paginatedCards,
+        // },
+        // {
+        //     index: 4,
+        //     CardComponent: DoneOrderCard,
+        //     onMoreInfo: (id) => {
+        //         console.log('Open order details', id);
+        //         openOrderDetailsDialog(id);
+        //     },
+        //     onViewReport: (id) => {
+        //         console.log('View report', id);
+        //     },
+        //     cards: paginatedCards,
+        // },
+    ], [paginatedTaskInfos]);
 
     return (
         <Box sx={{ height: '100%', width:'100%' }}>
@@ -259,10 +295,10 @@ export default function OrdersComponent() {
                     <Tab label="Завершенные" {...a11yProps(4)} />
                 </Tabs>
             </Box>
-            {tabsConfig.map(({ index, CardComponent, onReject, onMoreInfo, onSetPrice, onAssignEmployee, onViewReport, cards }) => (
+            {tabsConfig.map(({ index, CardComponent, onReject, onMoreInfo, onSetPrice, onAssignEmployee, onViewReport, taskInfos }) => (
                 <CustomTabPanel key={index} value={value} index={index}>
                     <OrdersTabPanel
-                        cards={cards}
+                        taskInfos={taskInfos}
                         CardComponent={CardComponent}
                         onReject={onReject}
                         onMoreInfo={onMoreInfo}

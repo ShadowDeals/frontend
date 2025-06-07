@@ -19,12 +19,12 @@ import OrdersComponent from "../Admin/OrdersComponent.jsx";
 import {useNavigate} from "react-router-dom";
 
 import GangInfo from "../Soldier/GangInfo.jsx";
-import {jwtDecode} from "jwt-decode";
 import FindGang from "../Soldier/FindGang.jsx";
 import TasksComponent from "../Soldier/TasksComponent.jsx";
 import Cookies from "js-cookie";
 import {Button, Typography} from "@mui/material";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useDecodedToken} from "./tokenHooks.js";
 
 const drawerWidth = 240;
 
@@ -82,11 +82,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     justifyContent: 'flex-end',
 }));
 
-function useDecodedToken() {
-    const token = Cookies.get('accessToken');
-    console.log("token decoded: ", token);
-    return token ? jwtDecode(token) : null;
-}
 
 export default function HomeComponent() {
     const decodedToken = useDecodedToken();
@@ -98,11 +93,24 @@ export default function HomeComponent() {
     console.log('Роль текущая: ', currentRole);
     const theme = useTheme();
     const [open, setOpen] = useState(false);
-    const [activePage, setActivePage] = useState(null);
+    const [activePage, setActivePage] = useState('Сведения о банде');
 
     const toggleDrawer = (state) => () => setOpen(state);
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (currentRole === null) {
+            navigate('/login');
+        }
+    }, [currentRole, navigate]);
+
+    if (currentRole === 'Гость') {
+        return <Box
+            sx={{width:'100vw', height:'100vh'}}
+        >
+        </Box>
+    }
 
     return (
         <Box sx={{ width:'100vw', height:'100vh', display: 'flex', overflow:'hidden'}}>

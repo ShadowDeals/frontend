@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {Box, Typography, Card, CardContent, Stack, Paper, Button} from '@mui/material';
-import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 import {useEmployees} from "./useEmployees.js";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -70,7 +69,7 @@ const EmployeesListWithStatus = ({ employees, status }) => {
                 width: '100%',
                 height: '600px',
                 overflowY: 'auto',
-                border: '1px solid black',
+                border: '1px solid #5C3A0E',
                 padding: 2,
             }}
         >
