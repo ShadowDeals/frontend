@@ -2,21 +2,15 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import OrderCard from './OrderCard.jsx';
 
-export function PendingApplyOrderCard({ id, onReject, onMoreInfo, onSetPrice }) {
+export function InProgressOrderCard({ id, onMoreInfo }) {
     return (
         <OrderCard
             id={id}
             sender="annihilator-zxc"
             description="Описание: требуется сделать то-то и то-то"
             actions={[
-                <Button key="reject" size="small" color="error" onClick={onReject}>
-                    Отклонить
-                </Button>,
                 <Button key="info" size="small" color="info" onClick={onMoreInfo}>
                     Подробнее
-                </Button>,
-                <Button key="set-price" size="small" color="success" onClick={onSetPrice}>
-                    Назначить оплату
                 </Button>,
             ]}
         />

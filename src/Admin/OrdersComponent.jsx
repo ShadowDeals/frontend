@@ -9,10 +9,13 @@ import {Tabs,
     Grid
 } from "@mui/material";
 import {PendingApplyOrderCard} from "./PendingApplyOrderCard.jsx";
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import OrderDetailsDialog from "./OrderDetailsDialog.jsx";
-import {PendingEmployeesOrderCard} from "./PendingEmployeesOrderCard.jsx";
+import PendingEmployeesOrderCard from "./PendingEmployeesOrderCard.jsx";
 import AssignEmployeesDialog from "./AssignEmployeesDialog.jsx";
+import {InProgressOrderCard} from "./InProgressOrderCard.jsx";
+import {DoneOrderCard} from "./DoneOrderCard.jsx";
+import {PendingPaymentOrderCard} from "./PendingPaymentOrderCard.jsx";
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -67,13 +70,72 @@ const Employees = [
 
 ];
 
+function OrdersTabPanel({
+                            cards,
+                            CardComponent,
+                            onReject,
+                            onMoreInfo,
+                            onSetPrice,
+                            onAssignEmployee,
+                            onViewReport,
+                            onPageChange,
+                        }) {
+    return (
+        <Box sx={{ width: '100%', height: '100%' }}>
+            <Stack spacing={2} sx={{ alignItems: 'center', height: '100%' }}>
+                {/* Обёртка для фиксированной высоты */}
+                <Box
+                    sx={{
+                        width: '100%',
+                        height: '650px', // фиксированная высота
+                        overflowY: 'auto',
+                    }}
+                >
+                    <Grid
+                        container
+                        spacing={2}
+                        columns={4}
+                        alignItems="stretch"
+                    >
+                        {cards.map((card) => (
+                            <Grid item xs={1} key={card.id}>
+                                <CardComponent
+                                    id={card.id}
+                                    card={card}
+                                    onReject={() => onReject && onReject(card.id)}
+                                    onMoreInfo={() => onMoreInfo && onMoreInfo(card)}
+                                    onSetPrice={() => onSetPrice && onSetPrice(card)}
+                                    onAssignEmployee={() => onAssignEmployee && onAssignEmployee(card)}
+                                    onViewReport={() => onViewReport && onViewReport(card)}
+                                />
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Box>
+
+                <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+                    <Pagination count={3} variant="outlined" onChange={onPageChange} shape="rounded" />
+                </Box>
+            </Stack>
+        </Box>
+    );
+}
+
+OrdersTabPanel.propTypes = {
+    cards: PropTypes.array.isRequired,
+    CardComponent: PropTypes.elementType.isRequired,
+    onReject: PropTypes.func,
+    onMoreInfo: PropTypes.func,
+    onAssignEmployee: PropTypes.func,
+    onPageChange: PropTypes.func.isRequired,
+};
 
 export default function OrdersComponent() {
     const [cards, setCards] = useState(initialCards);
-    const handleReject = (id) => {
-        console.log(`rejected`);
-        setCards((prevCards) => prevCards.filter((card) => card.id !== id));
-    };
+    // const handleReject = (id) => {
+    //     console.log(`rejected`);
+    //     setCards((prevCards) => prevCards.filter((card) => card.id !== id));
+    // };
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -93,29 +155,96 @@ export default function OrdersComponent() {
     );
 
     const [selectedOrder, setSelectedOrder] = useState(null);
-    const [orderDetailsDialogOpen, setOrderDetailsDialogOpen] = useState(false);
+    const [orderDetailsDialogState, setOrderDetailsDialogState] = useState(false);
+    const [assignExecutorsDialogState, setAssignExecutorsDialogState] = useState(false);
 
-    const handleOpenOrderDetailsDialog = (order) => {
+    const openOrderDetailsDialog = (order) => {
         setSelectedOrder(order);
-        setOrderDetailsDialogOpen(true);
+        setOrderDetailsDialogState(true);
     };
-    const handleCloseOrderDetailsDialog = () => {
-        setOrderDetailsDialogOpen(false);
+    const closeOrderDetailsDialog = () => {
+        setOrderDetailsDialogState(false);
         setSelectedOrder(null);
     };
-
-    const [assignExecutorsDialogOpen, setAssignExecutorsDialogOpen] = useState(false);
-    const handleOpeAssignExecutorsDialog = (order) => {
+    const openAssignExecutorsDialog = (order) => {
         setSelectedOrder(order);
-        setAssignExecutorsDialogOpen(true);
+        setAssignExecutorsDialogState(true);
     };
-    const handleCloseAssignExecutorsDialog = () => {
-        setAssignExecutorsDialogOpen(false);
+    const closeAssignExecutorsDialog = () => {
+        setAssignExecutorsDialogState(false);
         setSelectedOrder(null);
     };
-    const handleSaveAssignExecutorsDialog = () => {
+    const saveAssignExecutorsDialog = () => {
         console.log('Нажата кнопка assign executors');
     };
+
+
+    const tabsConfig = useMemo(() => [
+        {
+            index: 0,
+            CardComponent: PendingApplyOrderCard,
+            onReject: (id) => {
+                console.log('Reject order', id);
+            },
+            onMoreInfo: (card) => {
+                console.log('Open order details', card);
+                openOrderDetailsDialog(card);
+            },
+            cards: paginatedCards,
+        },
+        {
+            index: 1,
+            CardComponent: PendingPaymentOrderCard,
+            onReject: (id) => {
+                console.log('Cancel deal', id);
+            },
+            onMoreInfo: (card) => {
+                console.log('Open order details', card);
+                openOrderDetailsDialog(card);
+            },
+            onSetPrice: (card) => {
+                console.log('Open setting price', card);
+            },
+            cards: paginatedCards,
+        },
+        {
+            index: 2,
+            CardComponent: PendingEmployeesOrderCard,
+            onMoreInfo: (card) => {
+                console.log('Open order details', card);
+                openOrderDetailsDialog(card);
+            },
+            onAssignEmployee: (card) => {
+                console.log('Assign employee', card);
+                openAssignExecutorsDialog(card);
+            },
+            cards: paginatedCards,
+        },
+        {
+            index: 3,
+            CardComponent: InProgressOrderCard,
+            onMoreInfo: (card) => {
+                console.log('Open order details', card);
+                openOrderDetailsDialog(card);
+            },
+            onAssignEmployee: (card) => {
+                console.log('Assign employee', card);
+            },
+            cards: paginatedCards,
+        },
+        {
+            index: 4,
+            CardComponent: DoneOrderCard,
+            onMoreInfo: (card) => {
+                console.log('Open order details', card);
+                openOrderDetailsDialog(card);
+            },
+            onViewReport: (card) => {
+                console.log('View report', card);
+            },
+            cards: paginatedCards,
+        },
+    ], [paginatedCards]);
 
     return (
         <Box sx={{ height: '100%', width:'100%' }}>
@@ -130,70 +259,29 @@ export default function OrdersComponent() {
                     <Tab label="Завершенные" {...a11yProps(4)} />
                 </Tabs>
             </Box>
-            <CustomTabPanel value={value} index={0}>
-                <Box sx={{width: '100%', height:'100%'}}>
-                    <Stack spacing={2} sx={{alignItems:'center'}}>
-                        <Grid
-                            container
-                            spacing={2}
-                            columns={4}
-                            sx={{ width: '100%', height: '100%'}}
-                        >
-                            {paginatedCards.map((card) => (
-                                <Grid size={1} key={card.id}>
-                                    <PendingApplyOrderCard id={card.id} card={card}
-                                                           onReject={() => handleReject(card.id)}
-                                                           onMoreInfo={() => handleOpenOrderDetailsDialog(card)}/>
-                                </Grid>
-                            ))}
-                        </Grid>
-
-                        <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-                            <Pagination count={3} variant="outlined" onChange={handleChangePage} shape="rounded" />
-                        </Box>
-                    </Stack>
-                </Box>
-            </CustomTabPanel>
-            <CustomTabPanel value={value} index={1}>
-            </CustomTabPanel>
-            <CustomTabPanel value={value} index={2}>
-                <Box sx={{width: '100%', height:'100%'}}>
-                    <Stack spacing={2} sx={{alignItems:'center'}}>
-                        <Grid
-                            container
-                            spacing={2}
-                            columns={4}
-                            sx={{ width: '100%', height: '100%' }}
-                        >
-                            {paginatedCards.map((card) => (
-                                <Grid size={1} key={card.id}>
-                                    <PendingEmployeesOrderCard id={card.id} card={card}
-                                                           onReject={() => handleReject(card.id)}
-                                                           onAssignEmployee={() => handleOpeAssignExecutorsDialog(card)}/>
-                                </Grid>
-                            ))}
-                        </Grid>
-
-                        <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-                            <Pagination count={3} variant="outlined" onChange={handleChangePage} shape="rounded" />
-                        </Box>
-                    </Stack>
-                </Box>
-            </CustomTabPanel>
-            <CustomTabPanel value={value} index={3}>
-            </CustomTabPanel>
-            <CustomTabPanel value={value} index={4}>
-                <Typography>zxc</Typography>
-            </CustomTabPanel>
+            {tabsConfig.map(({ index, CardComponent, onReject, onMoreInfo, onSetPrice, onAssignEmployee, onViewReport, cards }) => (
+                <CustomTabPanel key={index} value={value} index={index}>
+                    <OrdersTabPanel
+                        cards={cards}
+                        CardComponent={CardComponent}
+                        onReject={onReject}
+                        onMoreInfo={onMoreInfo}
+                        onSetPrice={onSetPrice}
+                        onAssignEmployee={onAssignEmployee}
+                        onViewReport={onViewReport}
+                        onPageChange={handleChangePage}
+                    />
+                </CustomTabPanel>
+            ))}
             <AssignEmployeesDialog employees={Employees}
-                                   open={assignExecutorsDialogOpen}
-                                   onSave={handleSaveAssignExecutorsDialog}
-                                   onClose={handleCloseAssignExecutorsDialog}
+                                   open={assignExecutorsDialogState}
+                                   onSave={saveAssignExecutorsDialog}
+                                   onClose={closeAssignExecutorsDialog}
                                    order={selectedOrder}
             ></AssignEmployeesDialog>
             <OrderDetailsDialog
-                open={orderDetailsDialogOpen}
-                onClose={handleCloseOrderDetailsDialog}
+                open={orderDetailsDialogState}
+                onClose={closeOrderDetailsDialog}
                 order={selectedOrder} />
         </Box>
     );

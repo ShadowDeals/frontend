@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import OrderCard from './OrderCard.jsx';
 
-export function PendingApplyOrderCard({ id, onReject, onMoreInfo, onSetPrice }) {
+export function PendingPaymentOrderCard({ id, onReject, onMoreInfo, onSetPrice }) {
     return (
         <OrderCard
             id={id}
