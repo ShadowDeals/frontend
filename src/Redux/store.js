@@ -1,5 +1,4 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { useSelector, useDispatch } from 'react-redux';
 
 const authSlice = createSlice({
     name: 'auth',

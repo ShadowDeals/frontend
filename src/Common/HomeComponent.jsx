@@ -6,7 +6,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 
-import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -18,16 +17,14 @@ import {LockDatabaseComponent} from "../Don/LockDbComponent.jsx";
 import EmployeeTabs from "../Don/EmployeesComponent.jsx";
 import OrdersComponent from "../Admin/OrdersComponent.jsx";
 import {useNavigate} from "react-router-dom";
-import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 
-import { useDispatch } from 'react-redux';
-import { clearCredentials } from '../Redux/store.js';
 import GangInfo from "../Soldier/GangInfo.jsx";
 import {jwtDecode} from "jwt-decode";
 import FindGang from "../Soldier/FindGang.jsx";
 import TasksComponent from "../Soldier/TasksComponent.jsx";
 import Cookies from "js-cookie";
-import {Typography} from "@mui/material";
+import {Button, Typography} from "@mui/material";
+import {useState} from "react";
 
 const drawerWidth = 240;
 
@@ -100,24 +97,17 @@ export default function HomeComponent() {
     const bandId = decodedToken?.bandId || null;
     console.log('Роль текущая: ', currentRole);
     const theme = useTheme();
-    const [open, setOpen] = React.useState(false);
-    const [activePage, setActivePage] = React.useState(null);
-    const dispatch = useDispatch();
+    const [open, setOpen] = useState(false);
+    const [activePage, setActivePage] = useState(null);
 
     const toggleDrawer = (state) => () => setOpen(state);
 
     const navigate = useNavigate();
-    const handleLogout = () => {
-        dispatch(clearCredentials());
-        Cookies.remove('accessToken');
-        navigate('/welcome');
-    };
-
 
     return (
-        <Box sx={{ width:'100vw', height:'100vh', backgroundColor:'black', display: 'flex', overflow: 'hidden'}}>
+        <Box sx={{ width:'100vw', height:'100vh', display: 'flex', overflow:'hidden'}}>
             <CssBaseline />
-            <AppBar position="fixed" open={open}>
+            <AppBar elevation={0} position="fixed" open={open}>
                 <Toolbar>
                     <IconButton
                         color="inherit"
@@ -135,16 +125,13 @@ export default function HomeComponent() {
                     </IconButton>
                     <RoleTitle role={currentRole}/>
                     <Box sx={{ ml: 'auto' }}>
-                        <ColorSwitchableButton onClick={handleLogout}
-                                               sx={{ backgroundColor: '#990000',
-                                                       color: 'black',
-                                                       '&:hover': {
-                                                   backgroundColor: 'black',
-                                                           color: '#990000',
-                                                       }
-                        }}>
+                        <Button variant='contained' onClick={() => {
+                            Cookies.remove('accessToken');
+                            navigate('/welcome');}
+                        }
+                        >
                             Выйти
-                        </ColorSwitchableButton>
+                        </Button>
                     </Box>
 
                 </Toolbar>
@@ -162,22 +149,19 @@ export default function HomeComponent() {
                 anchor="left"
                 open={open}
             >
-                <DrawerHeader sx = {{
-                    backgroundColor:'black',
-                    color: 'black',
-                }}>
+                <DrawerHeader>
                     <IconButton onClick={toggleDrawer(false)}>
                         {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                     </IconButton>
                 </DrawerHeader>
-                <Divider />
+
                 <RoleMenuList role={currentRole}
                               activePage={activePage}
                               setActivePage={setActivePage}/>
             </Drawer>
             <Main open={open}>
-                <DrawerHeader sx={{ overflow:'hidden' }}/>
-                <Box sx={{width:'100%', height:'100%', backgroundColor:'black', display: 'flex', justifyContent:'center', alignItems: 'center', overflow: 'hidden'}}>
+                <DrawerHeader/>
+                <Box sx={{width:'100%', height:'100%', display: 'flex', justifyContent:'center', alignItems: 'center'}}>
                     {activePage === 'Сведения о банде'  && ((
                         bandId ? <GangInfo role={currentRole} /> : <FindGang />
                     ))}
@@ -185,7 +169,7 @@ export default function HomeComponent() {
                     {activePage === 'Доступ к БД' && <LockDatabaseComponent></LockDatabaseComponent>}
 
                     {['Сотрудники', 'Заказы', 'Задания'].includes(activePage) && bandId === null && (
-                        <Typography color="white" variant="h4" sx={{ textAlign: 'center', width: '100%',color:'#990000'}}>
+                        <Typography variant="h5" sx={{ textAlign: 'center', width: '100%'}}>
                             Дождитесь вступления в банду
                         </Typography>
                     )}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import {Box, Button, Paper, Stack, Typography} from '@mui/material';
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
@@ -10,37 +10,30 @@ const GangInfo = ({role}) => {
 
     console.log("Decoded token:", decodedToken);
 
-    const exitBand = ()=> {
-        console.log("хэндлер выхода из банды активирован");
-    };
     return (
-        <Box
-            sx={{
-                padding: 4,
-                backgroundColor: '#990000',
-                borderRadius: 2,
-                boxShadow: 2,
-                maxWidth: 600,
-                margin: '0 auto',
-                textAlign: 'center',
-            }}
+        <Paper
+            elevation={5} sx={{ width: '40%', alignItems: 'center', padding: 3 }}
         >
-            <Typography variant="h5" sx={{color:'black'}} gutterBottom>
-                Вы состоите в банде!
-            </Typography>
-            <Typography variant="body1" sx={{ color:'black', mb: 3 }}>
-                ID вашей банды: {decodedToken.bandId}
-            </Typography>
-            {
-                role !== 'Дон'&& (
-                <ColorSwitchableButton
-                    variant="contained"
-                    onClick={exitBand}
-                >
-                    Выйти
-                </ColorSwitchableButton>)
-            }
-        </Box>
+            <Stack spacing={2} alignItems='center'>
+                <Typography variant="h5" gutterBottom>
+                    Вы состоите в банде!
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 3 }}>
+                    ID вашей банды: {decodedToken.bandId}
+                </Typography>
+                {
+                    role !== 'Дон'&& (
+                        <Button
+                            variant="contained"
+                            onClick={()=> {
+                                console.log("хэндлер выхода из банды активирован");
+                            }}
+                        >
+                            Выйти
+                        </Button>)
+                }
+            </Stack>
+        </Paper>
     );
 };
 

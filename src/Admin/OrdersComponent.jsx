@@ -121,6 +121,7 @@ export default function OrdersComponent() {
         <Box sx={{ height: '100%', width:'100%' }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs
+                    TabIndicatorProps={{ style: { display: 'none' } }}
                     value={value} onChange={handleChange} aria-label="basic tabs example">
                     <Tab label="Ожидающие подтверждения" {...a11yProps(0)} />
                     <Tab label="Ожидающие оплаты" {...a11yProps(1)} />
@@ -130,13 +131,13 @@ export default function OrdersComponent() {
                 </Tabs>
             </Box>
             <CustomTabPanel value={value} index={0}>
-                <Box sx={{width: '100%', height:'100%' ,bgcolor:'black'}}>
+                <Box sx={{width: '100%', height:'100%'}}>
                     <Stack spacing={2} sx={{alignItems:'center'}}>
                         <Grid
                             container
                             spacing={2}
                             columns={4}
-                            sx={{ width: '100%', height: '100%', bgcolor: 'black' }}
+                            sx={{ width: '100%', height: '100%'}}
                         >
                             {paginatedCards.map((card) => (
                                 <Grid size={1} key={card.id}>
@@ -148,7 +149,7 @@ export default function OrdersComponent() {
                         </Grid>
 
                         <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-                            <Pagination count={10} variant="outlined" onChange={handleChangePage} shape="rounded" />
+                            <Pagination count={3} variant="outlined" onChange={handleChangePage} shape="rounded" />
                         </Box>
                     </Stack>
                 </Box>
@@ -156,13 +157,13 @@ export default function OrdersComponent() {
             <CustomTabPanel value={value} index={1}>
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
-                <Box sx={{width: '100%', height:'100%' ,bgcolor:'black'}}>
+                <Box sx={{width: '100%', height:'100%'}}>
                     <Stack spacing={2} sx={{alignItems:'center'}}>
                         <Grid
                             container
                             spacing={2}
                             columns={4}
-                            sx={{ width: '100%', height: '100%', bgcolor: 'black' }}
+                            sx={{ width: '100%', height: '100%' }}
                         >
                             {paginatedCards.map((card) => (
                                 <Grid size={1} key={card.id}>
@@ -174,7 +175,7 @@ export default function OrdersComponent() {
                         </Grid>
 
                         <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-                            <Pagination count={10} variant="outlined" onChange={handleChangePage} shape="rounded" />
+                            <Pagination count={3} variant="outlined" onChange={handleChangePage} shape="rounded" />
                         </Box>
                     </Stack>
                 </Box>

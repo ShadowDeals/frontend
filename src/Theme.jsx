@@ -29,6 +29,54 @@ const TheShadowDealsTheme = createTheme({
         },
     },
     components: {
+        MuiRadio: {
+            styleOverrides: {
+                root: {
+                    color: '#7a2e00',
+                    '&.Mui-checked': {
+                        color: '#d84315',
+                    },
+                },
+            },
+        },
+        MuiTab: {
+            defaultProps: {
+                disableRipple: true,
+            },
+            styleOverrides: {
+                root: {
+                    borderBottom: 'none !important',
+                    transition: 'none !important',
+                    outline: 'none',
+                    boxShadow: 'none',
+                    '&:focus': {
+                        outline: 'none',
+                        boxShadow: 'none',
+                    },
+                    '&:active': {
+                        backgroundColor: 'transparent',
+                    },
+                    '&.Mui-selected': {
+                        color: '#d84315',
+                        fontWeight: 'bold',
+                        position: 'relative',
+                        '&::after': {
+                            content: '""',
+                            position: 'absolute',
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            height: 2,
+                            backgroundColor: '#d84315',
+                            transition: 'none !important',
+                        },
+                    },
+                },
+                indicator: {
+                    display: 'none !important',
+                },
+            },
+        },
         MuiMenuItem: {
             styleOverrides: {
                 root: {
@@ -241,18 +289,17 @@ const TheShadowDealsTheme = createTheme({
                 },
                 ul: {
                     '& .MuiPaginationItem-root': {
-                        backgroundColor: 'black',
                         color: '#5C3A0E',
-                        borderColor: '#5C3A0E',
+                        bgcolor: '#F2E6C4',
+                        borderColor: '#F2E6C4',
                         '&:hover': {
                             backgroundColor: '#5C3A0E',
-                            color: 'black',
+                            color: '#F2E6C4',
                         },
                     },
                     '& .Mui-selected': {
-                        backgroundColor: '#990000 !important',
-                        color: 'black !important',
                         borderColor: '#5C3A0E',
+                        color: '#F2E6C4',
                     },
                 },
             },

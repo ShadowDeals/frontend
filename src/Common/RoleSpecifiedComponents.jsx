@@ -22,7 +22,7 @@ const roleDescriptions = {
 };
 
 export const RoleTitle = ({ role }) => {
-    const roleDescription = roleDescriptions[role] || 'Гость';
+    const roleDescription = roleDescriptions[role] || 'гостя';
 
     return (
         <Typography variant="h6" noWrap component="div">
@@ -47,7 +47,6 @@ export const menuItemsByRole = {
         { text: 'Сведения о банде', icon: <ExploreIcon /> },
         { text: 'Задания', icon: <TaskIcon /> },
     ],
-
     'Пользователь': [
         { text: 'Профиль', icon: <PersonIcon /> },
         { text: 'Сообщения', icon: <MessageIcon /> },
@@ -70,10 +69,10 @@ export function RoleMenuList({ role, activePage, setActivePage }) {
                         selected={isActive}
                         sx={{
                             '&:hover .MuiListItemText-primary': {
-                                color: 'black',
+                                color: '#F2E6C4',
                             },
                             '&:hover .MuiListItemIcon-root': {
-                                color: 'black',
+                                color: '#F2E6C4',
                             },
                         }}
                         onClick={() => {

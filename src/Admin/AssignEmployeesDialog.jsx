@@ -50,12 +50,10 @@ export default function AssignEmployeesDialog({ open, onClose, employees, onSave
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
             <DialogTitle
-            sx ={{bgcolor:'black'}}
             >
                 Назначение исполнителей
             </DialogTitle>
             <DialogContent dividers
-                           sx ={{bgcolor:'black'}}
             >
                 <Typography variant="body2" mb={1}>
                     Выберите исполнителей (Ctrl+Click для множественного выбора, не больше {MAX_SELECTION}):
@@ -63,7 +61,7 @@ export default function AssignEmployeesDialog({ open, onClose, employees, onSave
                 <select
                     multiple
                     size={8}
-                    style={{ width: '100%', padding: 8, fontSize: 16 }}
+                    style={{ width: '100%', padding: 8, fontSize: 16, backgroundColor:'#F2E6C4', border: '1px solid #5C3A0E' }}
                     value={selectedExecutorIds.map(String)}
                     onChange={handleSelectChange}
                 >
@@ -90,6 +88,12 @@ export default function AssignEmployeesDialog({ open, onClose, employees, onSave
                                         key={id}
                                         control={
                                             <Radio
+                                                sx={{
+                                                    color: '#7a2e00',
+                                                    '&.Mui-checked': {
+                                                        color: '#d84315',
+                                                    },
+                                                }}
                                                 checked={mainExecutorId === id}
                                                 onChange={() => handleSelectMain(id)}
                                             />
@@ -113,25 +117,18 @@ export default function AssignEmployeesDialog({ open, onClose, employees, onSave
                     </Typography>
                 )}
             </DialogContent>
-            <DialogActions
-                sx ={{bgcolor:'black'}}
-            >
-                <ColorSwitchableButton
+            <DialogActions>
+                <Button
+                    variant="contained"
                     onClick={onClose}>Отмена
-                </ColorSwitchableButton>
-                <ColorSwitchableButton
+                </Button>
+                <Button
                     onClick={handleSave}
                     disabled={selectedExecutorIds.length === 0 || !mainExecutorId}
-                    sx={{
-                        '&.Mui-disabled': {
-                            backgroundColor: '#000000',
-                            color: '#000000',
-                        },
-                    }}
                     variant="contained"
                 >
                     Сохранить
-                </ColorSwitchableButton>
+                </Button>
             </DialogActions>
         </Dialog>
     );

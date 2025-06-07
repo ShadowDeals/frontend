@@ -66,7 +66,6 @@ const FindGang = () => {
                         key={gang.id || gang}
                         sx={{
                             minWidth: 200,
-                            backgroundColor: '#990000',
                             borderRadius: 2,
                             boxShadow: 2,
                             margin: '1% 0',
@@ -74,19 +73,13 @@ const FindGang = () => {
                     >
                         <CardContent>
                             <Stack direction="row" justifyContent="space-between" alignItems="center">
-                                <Typography color="black" variant="h6">
+                                <Typography variant="h6">
                                     {gang}
                                 </Typography>
                                 <ColorSwitchableButton
                                     variant="contained"
                                     color="primary"
                                     size="small"
-                                    sx={{
-                                        '&.Mui-disabled': {
-                                            backgroundColor: '#990000',
-                                            color: 'black',
-                                        },
-                                    }}
                                     onClick={() => handleApply(gang)}
                                     disabled={submitted.includes(gang)}
                                 >

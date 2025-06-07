@@ -39,7 +39,7 @@ export default function OrderDetailsDialog({ open, onClose, order }) {
                 </Stack>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} color="primary">Закрыть</Button>
+                <Button variant='contained' onClick={onClose} color="primary">Закрыть</Button>
             </DialogActions>
         </Dialog>
     );

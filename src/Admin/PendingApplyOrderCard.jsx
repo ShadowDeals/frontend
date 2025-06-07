@@ -14,7 +14,7 @@ export function PendingApplyOrderCard({id, onReject, onMoreInfo}) {
     };
 
     return (
-        <Card sx={{ minWidth: 275 }}>
+        <Card sx={{ minWidth: 275,}} elevation={5}>
             <CardContent>
                 <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
                     Заказ: ID 306784509
@@ -27,7 +27,7 @@ export function PendingApplyOrderCard({id, onReject, onMoreInfo}) {
                     Описание: требуется сделать то-то и то-то
                 </Typography>
             </CardContent>
-            <Stack direction="row" spacing={2} sx={{ width: '100%', justifyContent: 'space-between' }}>
+            <Stack padding={'2%'} direction="row" spacing={2} sx={{ width: '100%', justifyContent: 'space-between' }}>
                 <Button size="small" color="error" onClick={onReject}>
                     Отклонить
                 </Button>

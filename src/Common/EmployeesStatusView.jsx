@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import {Box, Typography, Card, CardContent, Stack, Paper} from '@mui/material';
+import {Box, Typography, Card, CardContent, Stack, Paper, Button} from '@mui/material';
 import ColorSwitchableButton from "../CommonComponents/Buttons.jsx";
-import {useEmployees} from "./EmployeesHook.jsx";
+import {useEmployees} from "./useEmployees.js";
 import axios from "axios";
 import Cookies from "js-cookie";
-import {jwtDecode} from "jwt-decode";
-
 
 const EmployeesListWithStatus = ({ employees, status }) => {
     const [actioned, setActioned] = useState({});
@@ -81,7 +79,6 @@ const EmployeesListWithStatus = ({ employees, status }) => {
                     key={employee.id}
                     sx={{
                         minWidth: 200,
-                        backgroundColor: '#990000',
                         borderRadius: 2,
                         boxShadow: 2,
                         margin: '1% 0',
@@ -116,21 +113,15 @@ const EmployeesListWithStatus = ({ employees, status }) => {
                                     ) : (<></>)
                                 }
                             </Box>
-                            <ColorSwitchableButton
+                            <Button
                                 variant="contained"
                                 color="primary"
                                 size="small"
-                                sx={{
-                                    '&.Mui-disabled': {
-                                        backgroundColor: '#990000',
-                                        color: 'black',
-                                    },
-                                }}
                                 onClick={() => handleAction(employee)}
                                 disabled={actioned[employee.id]}
                             >
                                 {actioned[employee.id] ? labelDone : labelActive}
-                            </ColorSwitchableButton>
+                            </Button>
                         </Stack>
                     </CardContent>
                 </Card>
@@ -148,14 +139,12 @@ const EmployeesStatusView = ({ role, status = 'pending' }) => {
         <Box sx={{ width: '100%', height: '100%', padding: 4 }}>
 
             {role === 'Дон' ? (
-                <Box>
-                    <Box sx={{ width: '100%', height: '100%' }}>
-                        <Typography variant="h6" sx={{ marginBottom: 2 }}>
-                            Администраторы
-                        </Typography>
-                        <EmployeesListWithStatus employees={employees} status={status} />
-                    </Box>
-                </Box>
+                <Stack spacing={2}>
+                    <Typography variant="h6" sx={{ marginBottom: 2, textAlign: 'right' }}>
+                        Администраторы
+                    </Typography>
+                    <EmployeesListWithStatus employees={employees} status={status} />
+                </Stack>
             ) : role === 'Администратор' ? (
                 <Box sx={{ width: '100%' }}>
                     <Typography variant="h6" sx={{ ml:2 }}>

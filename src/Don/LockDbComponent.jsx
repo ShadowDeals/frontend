@@ -1,12 +1,13 @@
 import ColorSwitchableButton from '../CommonComponents/Buttons.jsx'
-import {Box,
+import {
+    Box,
     Button,
     Stack,
     Typography,
     Dialog,
     DialogTitle,
     DialogContent,
-    DialogActions
+    DialogActions, TextField
 } from '@mui/material';
 import React, { useState } from 'react';
 import { Formik, useFormik } from 'formik';
@@ -32,10 +33,10 @@ export function PasswordDialog({ open, onClose, onConfirm }) {
 
     return (
         <Dialog open={open} onClose={onClose} sx={{ bgcolor: 'black' }}>
-            <DialogTitle sx={{ color: 'black', bgcolor: '#990000' }}>
+            <DialogTitle>
                 Введите пароль
             </DialogTitle>
-            <DialogContent sx={{ bgcolor: '#990000', color: 'black' }}>
+            <DialogContent>
                 <form onSubmit={formik.handleSubmit} id="password-form">
                     <TextField
                         sx={{
@@ -58,28 +59,23 @@ export function PasswordDialog({ open, onClose, onConfirm }) {
                     />
                 </form>
             </DialogContent>
-            <DialogActions sx={{ color: '#990000', bgcolor: '#990000' }}>
-                <ColorSwitchableButton onClick={() => {
+            <DialogActions >
+                <Button
+                    variant='contained'
+                    onClick={() => {
                     formik.resetForm();
                     onClose();
                 }}>
                     Отмена
-                </ColorSwitchableButton>
-                <ColorSwitchableButton
+                </Button>
+                <Button
                     type="submit"
+                    variant='contained'
                     form="password-form"
-                    sx={{
-                        bgcolor: 'black',
-                        color: '#990000',
-                        '&.Mui-disabled': {
-                            bgcolor: '#990000',
-                            color: '#990000',
-                        },
-                    }}
                     disabled={!formik.isValid || !formik.dirty}
                 >
                     Подтвердить
-                </ColorSwitchableButton>
+                </Button>
             </DialogActions>
         </Dialog>
     );
@@ -105,9 +101,8 @@ export function LockDatabaseComponent() {
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
-            height="100vh"
-            width="100vw"
-            bgcolor="black"
+            height="100%"
+            width="100%"
         >
             <Stack spacing={10}>
                 <Typography
@@ -124,7 +119,6 @@ export function LockDatabaseComponent() {
                     sx={{
                         fontSize: '1.5rem',
                         padding: '1rem 3rem',
-                        color: 'black',
                         bgcolor: isLocked ? '#009900' : '#990000'
                     }}
                 >

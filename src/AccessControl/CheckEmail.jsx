@@ -1,4 +1,3 @@
-import React, {useState} from 'react';
 import {Typography, Paper, Box, Link, Stack} from '@mui/material';
 import {useLocation, useNavigate} from "react-router-dom";
 
@@ -14,7 +13,6 @@ export default function CheckEmailComponent() {
     return (
         <Box
             sx={{
-                bgcolor: 'black',
                 width: '100vw',
                 height: '100vh',
                 display: 'flex',
@@ -23,32 +21,25 @@ export default function CheckEmailComponent() {
             }}
         >
             <Paper
-                elevation={3}
+                elevation={5}
                 sx={{
                     p: 4,
                     textAlign: 'center',
-                    width: '40%',
-                    bgcolor: '#990000',
-                    color: 'black',
-                }}
+                    width: '40%',}}
             >
                 <Stack>
                     <Link
                         underline="hover"
                         sx={{
-                            alignSelf: 'flex-start',
-                            cursor: 'pointer',
-                            color: 'black',
-                            fontSize: '0.9rem',
-                        }}
+                            alignSelf: 'flex-start'}}
                         onClick={navigateWelcome}
                     >
                         На главную
                     </Link>
-                    <Typography variant="h4" component="h1" sx={{color: 'black'}} gutterBottom>
+                    <Typography variant="h4" component="h1" gutterBottom>
                         Регистрация успешна!
                     </Typography>
-                    <Typography variant="body1" sx={{ color: 'black' }}>
+                    <Typography variant="body1">
                         Проверь почту {email || '...'} для подтверждения письма.
                     </Typography>
                 </Stack>
