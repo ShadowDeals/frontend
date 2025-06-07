@@ -8,8 +8,8 @@ import {Tabs,
     Stack,
     Grid
 } from "@mui/material";
-import {PendingApplyOrderCard} from "./PendingApplyOrderCard.jsx";
-import {useMemo, useState} from "react";
+import { PendingApplyOrderCard } from "./PendingApplyOrderCard.jsx";
+import { useMemo, useState } from "react";
 import OrderDetailsDialog from "./OrderDetailsDialog.jsx";
 import PendingEmployeesOrderCard from "./PendingEmployeesOrderCard.jsx";
 import AssignEmployeesDialog from "./AssignEmployeesDialog.jsx";
@@ -47,8 +47,6 @@ function a11yProps(index) {
     };
 }
 
-// const initialCards = new Array(20).fill(null).map((_, i) => ({ id: i + 1 }));
-//
 const Employees = [
     { id: 1, name: 'Иван Иванов' },
     { id: 2, name: 'Мария Петрова' },
@@ -80,8 +78,22 @@ function OrdersTabPanel({
                             onSetPrice,
                             onAssignEmployee,
                             onViewReport,
-                            onPageChange,
                         }) {
+
+
+    console.log('a сюда что дошло', taskInfos);
+
+    const [page, setPage] = useState(1);
+    const taskInfosPerPage = 12;
+
+    const pageCount = Math.ceil(taskInfos.length / taskInfosPerPage);
+
+
+    const paginatedTaskInfos = taskInfos.slice(
+        (page - 1) * taskInfosPerPage,
+        page * taskInfosPerPage
+    );
+    console.log('Количество страниц:', pageCount, taskInfos.length);
     return (
         <Box sx={{ width: '100%', height: '100%' }}>
             <Stack spacing={2} sx={{ alignItems: 'center', height: '100%' }}>
@@ -100,8 +112,7 @@ function OrdersTabPanel({
 
                         alignItems="stretch"
                     >
-                        {taskInfos.map((taskInfo) => {
-                            console.log('taskInfo нихуя не ясно:', taskInfo);
+                        {paginatedTaskInfos.map((taskInfo) => {
                             return (
                                 <Grid key={taskInfo.taskId} size={3}>
                                     <CardComponent
@@ -120,7 +131,9 @@ function OrdersTabPanel({
                 </Box>
 
                 <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-                    <Pagination count={3} variant="outlined" onChange={onPageChange} shape="rounded" />
+                    <Pagination count={pageCount} variant="outlined" onChange={(_, value) => {
+                        setPage(value);
+                    }} shape="rounded" />
                 </Box>
             </Stack>
         </Box>
@@ -136,26 +149,35 @@ OrdersTabPanel.propTypes = {
     onPageChange: PropTypes.func.isRequired,
 };
 
-export default function OrdersComponent() {
+export default function OrdersComponent({role}) {
 
     const {
         waitingForAccept,
         waitingForPayment,
         waitingForEmployee,
         inProgress,
-        finished
+        finished,
+        assignedToMe,
+        finishedByMe
     } = useBandTasks();
 
-    const taskArrays = [
+    const taskArrays = React.useMemo(() => [
         waitingForAccept.tasks || [],
         waitingForPayment.tasks || [],
         waitingForEmployee.tasks || [],
         inProgress.tasks || [],
         finished.tasks || [],
-    ];
-    // console.log('Получили вот такоэ',
-    //     taskArrays
-    // );
+        assignedToMe.tasks || [],
+        finishedByMe.tasks || []
+    ], [waitingForAccept.tasks,
+        waitingForPayment.tasks,
+        waitingForEmployee.tasks,
+        inProgress.tasks,
+        finished.tasks,
+        assignedToMe.tasks,
+        finishedByMe.tasks]);
+
+    console.log('Роль в компоненте: ', role);
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -165,28 +187,23 @@ export default function OrdersComponent() {
     const [page, setPage] = useState(1);
     const taskInfosPerPage = 12;
 
-    const handleChangePage = (_, value) => {
-        setPage(value);
-    };
 
-    const currentTaskInfos = taskArrays[value] || [];
+    const currentTaskInfos = React.useMemo(() => {
+        return taskArrays[value] || [];
+    }, [taskArrays, value]);
 
     console.log('currentTaskInfos, page', page,
         currentTaskInfos
     );
 
-    const paginatedTaskInfos = currentTaskInfos.slice(
-        (page - 1) * taskInfosPerPage,
-        page * taskInfosPerPage
-    );
 
     console.log('Всего задач:', currentTaskInfos.length);
     console.log('Текущая страница:', page);
     console.log('Срез с', (page - 1) * taskInfosPerPage, 'по', page * taskInfosPerPage);
-    console.log('Итоговый массив:', paginatedTaskInfos);
+    console.log('Итоговый массив:', currentTaskInfos);
 
 
-    console.log('paginatedTaskInfos, page', page,
+    console.log('currentTaskInfos, page', page,
         currentTaskInfos
     );
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -211,7 +228,6 @@ export default function OrdersComponent() {
     };
     const saveAssignExecutorsDialog = () => {
         console.log('Нажата кнопка assign executors');
-
     };
 
 
@@ -226,62 +242,63 @@ export default function OrdersComponent() {
                 console.log('Open order details', card);
                 openOrderDetailsDialog(card);
             },
-            taskInfos: paginatedTaskInfos,
+            taskInfos: currentTaskInfos,
         },
-        // {
-        //     index: 1,
-        //     CardComponent: PendingPaymentOrderCard,
-        //     onReject: (id) => {
-        //         console.log('Cancel deal', id);
-        //     },
-        //     onMoreInfo: (card) => {
-        //         console.log('Open order details', card);
-        //         openOrderDetailsDialog(card);
-        //     },
-        //     onSetPrice: (card) => {
-        //         console.log('Open setting price', card);
-        //     },
-        //     cards: paginatedCards,
-        // },
-        // {
-        //     index: 2,
-        //     CardComponent: PendingEmployeesOrderCard,
-        //     onMoreInfo: (card) => {
-        //         console.log('Open order details', card);
-        //         openOrderDetailsDialog(card);
-        //     },
-        //     onAssignEmployee: (card) => {
-        //         console.log('Assign employee', card);
-        //         openAssignExecutorsDialog(card);
-        //     },
-        //     cards: paginatedCards,
-        // },
-        // {
-        //     index: 3,
-        //     CardComponent: InProgressOrderCard,
-        //     onMoreInfo: (card) => {
-        //         console.log('Open order details', card);
-        //         openOrderDetailsDialog(card);
-        //     },
-        //     onAssignEmployee: (card) => {
-        //         console.log('Assign employee', card);
-        //     },
-        //     cards: paginatedCards,
-        // },
-        // {
-        //     index: 4,
-        //     CardComponent: DoneOrderCard,
-        //     onMoreInfo: (id) => {
-        //         console.log('Open order details', id);
-        //         openOrderDetailsDialog(id);
-        //     },
-        //     onViewReport: (id) => {
-        //         console.log('View report', id);
-        //     },
-        //     cards: paginatedCards,
-        // },
-    ], [paginatedTaskInfos]);
+        {
+            index: 1,
+            CardComponent: PendingPaymentOrderCard,
+            onReject: (id) => {
+                console.log('Cancel deal', id);
+            },
+            onMoreInfo: (card) => {
+                console.log('Open order details', card);
+                openOrderDetailsDialog(card);
+            },
+            onSetPrice: (card) => {
+                console.log('Open setting price', card);
+            },
+            taskInfos: currentTaskInfos,
+        },
+        {
+            index: 2,
+            CardComponent: PendingEmployeesOrderCard,
+            onMoreInfo: (card) => {
+                console.log('Open order details', card);
+                openOrderDetailsDialog(card);
+            },
+            onAssignEmployee: (card) => {
+                console.log('Assign employee', card);
+                openAssignExecutorsDialog(card);
+            },
+            taskInfos: currentTaskInfos,
+        },
+        {
+            index: 3,
+            CardComponent: InProgressOrderCard,
+            onMoreInfo: (card) => {
+                console.log('Open order details', card);
+                openOrderDetailsDialog(card);
+            },
+            onAssignEmployee: (card) => {
+                console.log('Assign employee', card);
+            },
+            taskInfos: currentTaskInfos,
+        },
+        {
+            index: 4,
+            CardComponent: DoneOrderCard,
+            onMoreInfo: (id) => {
+                console.log('Open order details', id);
+                openOrderDetailsDialog(id);
+            },
+            onViewReport: (id) => {
+                console.log('View report', id);
+            },
+            taskInfos: currentTaskInfos,
+        },
+    ], [currentTaskInfos]);
 
+    console.log('wtf', currentTaskInfos);
     return (
         <Box sx={{ height: '100%', width:'100%' }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -305,7 +322,6 @@ export default function OrdersComponent() {
                         onSetPrice={onSetPrice}
                         onAssignEmployee={onAssignEmployee}
                         onViewReport={onViewReport}
-                        onPageChange={handleChangePage}
                     />
                 </CustomTabPanel>
             ))}
@@ -313,12 +329,12 @@ export default function OrdersComponent() {
                                    open={assignExecutorsDialogState}
                                    onSave={saveAssignExecutorsDialog}
                                    onClose={closeAssignExecutorsDialog}
-                                   order={selectedOrder}
+                                   taskInfo={selectedOrder}
             ></AssignEmployeesDialog>
             <OrderDetailsDialog
                 open={orderDetailsDialogState}
                 onClose={closeOrderDetailsDialog}
-                order={selectedOrder} />
+                taskInfo={selectedOrder} />
         </Box>
     );
 }

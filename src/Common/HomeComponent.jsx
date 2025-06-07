@@ -183,7 +183,7 @@ export default function HomeComponent() {
                     )}
                     {bandId !== null && activePage === 'Сотрудники' && <EmployeeTabs role={currentRole}></EmployeeTabs>}
                     {bandId !== null && activePage === 'Заказы' && <OrdersComponent></OrdersComponent>}
-                    {bandId !== null && activePage === 'Задания' && <TasksComponent></TasksComponent>}
+                    {bandId !== null && activePage === 'Задания' && <OrdersComponent role={currentRole}></OrdersComponent>}
                 </Box>
             </Main>
         </Box>

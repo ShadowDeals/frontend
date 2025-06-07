@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Box, Card, CardContent, Typography, Stack } from '@mui/material';
+import { Card, CardContent, Typography, Stack } from '@mui/material';
 
-function formatDate(dateString) {
+export function formatDate(dateString) {
     if (!dateString) return '';
 
     const date = new Date(dateString);
@@ -12,6 +12,14 @@ function formatDate(dateString) {
 
     return `${datePart} ${timePart}`;
 }
+export const taskTypeLabels = {
+    HIJACKING: 'Угон',
+    MURDER: 'Убийство',
+    ROBBERY: 'Ограбление',
+    SCARING: 'Запугивание',
+    DELIVERY: 'Доставка',
+};
+
 
 export default function OrderCard({ taskInfo, actions }) {
 
@@ -19,26 +27,25 @@ export default function OrderCard({ taskInfo, actions }) {
     return (
         <Card sx={{ width: '100%', height:'100%' }} elevation={5}>
             <CardContent>
-                <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
-                    ID: {taskInfo.taskId}
-                </Typography>
-                <Typography sx={{ color: 'text.secondary', fontSize: 14 }} component="div">
-                    Адрес: {taskInfo.address}
-                </Typography>
-                <Typography variant="h5" textAlign={'center'}>{taskInfo.taskType}</Typography>
-                <Typography variant="body1">
-                    {formatDate(taskInfo.dateCreated)}
-                </Typography>
+                <Stack spacing={1}>
+                    <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+                        ID: {taskInfo.taskId}
+                    </Typography>
+                    <Typography sx={{ color: 'text.secondary', fontSize: 14 }} component="div">
+                        Адрес: {taskInfo.address}
+                    </Typography>
+                    <Typography sx={{ color: 'text.secondary', fontSize: 14 }} variant="body1">
+                        Дата заявки: {formatDate(taskInfo.dateCreated)}
+                    </Typography>
+                    <Typography variant="h5" textAlign={'center'}>{taskTypeLabels[taskInfo.taskType]}</Typography>
+                </Stack>
+                <Stack
+                    direction="row"
+                    sx={{ width: '100%', height:'100%', justifyContent: 'space-between' }}
+                >
+                    {actions}
+                </Stack>
             </CardContent>
-
-            <Stack
-                padding={'2%'}
-                direction="row"
-                spacing={2}
-                sx={{ width: '100%', justifyContent: 'space-between' }}
-            >
-                {actions}
-            </Stack>
         </Card>
     );
 }

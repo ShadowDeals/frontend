@@ -2,10 +2,10 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import OrderCard from './OrderCard.jsx';
 
-export function PendingPaymentOrderCard({ id, onReject, onMoreInfo, onSetPrice }) {
+export function PendingPaymentOrderCard({ taskInfo, onReject, onMoreInfo, onSetPrice }) {
     return (
         <OrderCard
-            id={id}
+            taskInfo={taskInfo}
             sender="annihilator-zxc"
             description="Описание: требуется сделать то-то и то-то"
             actions={[

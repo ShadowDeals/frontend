@@ -5,9 +5,9 @@ import OrderCard from './OrderCard.jsx';
 export default function PendingEmployeesOrderCard({ taskInfo, onAssignEmployee, onMoreInfo }) {
     return (
         <OrderCard
-            id={taskInfo.taskId}
+            taskInfo={taskInfo}
             sender="annihilator-zxc"
-            orderType={getOrderType(id)}
+            orderType={'qwe'}
             description="Описание: требуется сделать то-то и то-то"
             actions={[
                 <Button key="info" size="small" color="info" onClick={onMoreInfo}>

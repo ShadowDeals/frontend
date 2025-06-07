@@ -47,7 +47,7 @@ const FindGang = () => {
 
     return (
         <Box sx={{ width: '100%', height: '100%', padding: 4 }}>
-            <Typography variant="h5" sx={{ marginBottom: 2 }}>
+            <Typography variant="h5" textAlign={'right'} sx={{ marginBottom: 2 }}>
                 Найди свою банду
             </Typography>
 

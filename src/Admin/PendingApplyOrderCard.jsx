@@ -6,8 +6,6 @@ export function PendingApplyOrderCard({ taskInfo, onReject, onMoreInfo, onSetPri
     return (
         <OrderCard
             taskInfo={taskInfo}
-            sender="annihilator-zxc"
-            description="Описание: требуется сделать то-то и то-то"
             actions={[
                 <Button key="reject" size="small" color="error" onClick={onReject}>
                     Отклонить

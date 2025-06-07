@@ -10,7 +10,6 @@ export function useBandTaskByStatus(taskStatus) {
     const bandId = decodedToken?.bandId;
 
     const authHeaders = useAuthHeaders();
-    console.log(authHeaders);
     useEffect(() => {
         if (!bandId) {
             setError('useBandTaskByStatus ошибка: bandId отсутствует');
