@@ -42,7 +42,7 @@ export const formConfigs = {
         }),
     },
 
-    administrator: {
+    admin: {
         initialValues: {
             surname: '',
             name: '',

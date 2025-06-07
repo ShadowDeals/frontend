@@ -107,11 +107,11 @@ function PasswordResetComponent() {
                         <Button
                             fullWidth
                             type="submit"
-                            variant='outlined'
+                            variant='contained'
                             sx={{ marginTop: '10%' }}
                             disabled={formik.isSubmitting}
                         >
-                            Подтвердить
+                            Отправить инструкции
                         </Button>
                     </Stack>
                 </Paper>

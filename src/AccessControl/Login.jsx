@@ -135,7 +135,7 @@ function LoginComponent() {
 
                         <Button
                             type="submit"
-                            variant="outlined"
+                            variant="contained"
                             fullWidth
                             disabled={formik.isSubmitting}
                         >

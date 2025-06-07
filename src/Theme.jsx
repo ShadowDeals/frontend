@@ -42,6 +42,14 @@ const TheShadowDealsTheme = createTheme({
                             backgroundColor: '#5C3A0E',
                         },
                     },
+                    '&.Mui-focusVisible': {
+                        backgroundColor: '#5C3A0E',
+                        color: '#F2E6C4',
+                    },
+                    '&.Mui-selected.Mui-focusVisible': {
+                        backgroundColor: '#5C3A0E',
+                        color: '#F2E6C4',
+                    },
                 },
             },
         },
