@@ -256,7 +256,12 @@ function RegisterComponent() {
                         >
                             {(regionsBandExist.length === 0
                                     ? ['don']
-                                    : ['don', 'admin', 'soldier', 'user']
+                                    : [
+                                        ...(regionsBandNotExist.length > 0 ? ['don'] : []),
+                                        'admin',
+                                        'soldier',
+                                        'user'
+                                    ]
                             ).map((role) => (
                                 <MenuItem key={role} value={role}>
                                     {getRoleLabel(role)}
