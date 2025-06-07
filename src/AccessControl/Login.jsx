@@ -11,6 +11,9 @@ import Cookies from 'js-cookie';
 import {Formik, useFormik} from 'formik';
 import * as Yup from 'yup';
 import axios from "axios";
+import {useErrorSnackbar} from "../Common/useErrorSnackbar.js";
+import ErrorSnackbar from "../Common/ErrorSnackbar.jsx";
+import React from "react";
 
 const validationSchema = Yup.object({
     email: Yup.string().email('Неверный формат email').required('Введите почту'),
@@ -20,15 +23,6 @@ const validationSchema = Yup.object({
 
 function LoginComponent() {
     const navigate = useNavigate();
-
-    const navigatePasswordReset = () => {
-        navigate('/password-reset', { state: { fromLogin: true } });
-    };
-
-    const navigateWelcome = () => {
-        navigate('/welcome');
-    };
-
     const formik = useFormik({
         initialValues: { email: '', password: '' },
         validationSchema,
@@ -53,15 +47,24 @@ function LoginComponent() {
                 navigate("/home");
             } catch (error) {
                 if (error.response) {
-                    console.error('Ошибка логина:', error.response.data.message || 'Неизвестная ошибка');
+                    showError({
+                        errcode: error.response.status,
+                        text: error.response.data?.message || 'Ошибка логина',
+                    });
                 } else {
-                    console.error('Ошибка сети или сервера:', error.message);
+                    showError({
+                        errcode: 'NETWORK',
+                        text: error.message || 'Ошибка сети',
+                    });
                 }
             } finally {
                 setSubmitting(false);
             }
         },
     });
+
+
+    const { open, error, showError, hideError } = useErrorSnackbar();
 
     return(
         <Box
@@ -84,7 +87,7 @@ function LoginComponent() {
                 <Stack spacing={2}>
                     <Link
                         underline="hover"
-                        onClick={navigateWelcome}
+                        onClick={() => navigate('/welcome')}
                     >
                         На главную
                     </Link>
@@ -127,7 +130,7 @@ function LoginComponent() {
                             <Link
                                 underline="hover"
                                 sx={{ fontSize: '0.9rem', cursor: 'pointer' }}
-                                onClick={navigatePasswordReset}
+                                onClick={()=> navigate('/password-reset', { state: { fromLogin: true } })}
                             >
                                 Забыли пароль?
                             </Link>
@@ -144,6 +147,11 @@ function LoginComponent() {
                     </form>
                 </Stack>
             </Paper>
+            <ErrorSnackbar
+                open={open}
+                error={error}
+                onClose={hideError}
+            ></ErrorSnackbar>
         </Box>
     );
 }

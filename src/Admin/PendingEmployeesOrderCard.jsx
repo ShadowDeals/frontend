@@ -13,7 +13,7 @@ export default function PendingEmployeesOrderCard({ id, onAssignEmployee, onMore
             id={id}
             sender="annihilator-zxc"
             orderType={getOrderType(id)}
-            description="требуется сделать то-то и то-то"
+            description="Описание: требуется сделать то-то и то-то"
             actions={[
                 <Button key="info" size="small" color="info" onClick={onMoreInfo}>
                     Подробнее

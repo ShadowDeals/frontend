@@ -304,6 +304,44 @@ const TheShadowDealsTheme = createTheme({
                 },
             },
         },
+        MuiAlert: {
+            styleOverrides: {
+                root: {
+                    borderRadius: 8,
+                    fontWeight: 500,
+                    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                    border: '1px solid',
+                    maxWidth: 400,
+                    margin: '0 auto',
+                },
+                filledError: {
+                    backgroundColor: '#f44336',
+                    color: '#F2E6C4',
+                    borderColor: '#d32f2f',
+                },
+                filledSuccess: {
+                    backgroundColor: '#2e7d32',
+                    color: '#fff',
+                    borderColor: '#1b5e20',
+                },
+                filledInfo: {
+                    backgroundColor: '#0288d1',
+                    color: '#F2E6C4',
+                    borderColor: '#01579b',
+                },
+                filledWarning: {
+                    backgroundColor: '#ed6c02',
+                    color: '#F2E6C4',
+                    borderColor: '#e65100',
+                },
+                icon: {
+                    color: '#F2E6C4',
+                },
+            },
+            defaultProps: {
+                variant: 'filled',
+            },
+        },
     }
 });
 

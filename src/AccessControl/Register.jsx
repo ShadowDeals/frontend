@@ -21,6 +21,8 @@ import { useFormik } from 'formik';
 import { formConfigs } from "./ValidationSchemas.jsx";
 import { v4 as uuidv4 } from 'uuid';
 import useRegions from "./useRegions.js";
+import ErrorSnackbar from "../Common/ErrorSnackbar.jsx";
+import {useErrorSnackbar} from "../Common/useErrorSnackbar.js";
 
 
 
@@ -96,17 +98,10 @@ const onRoleChange = (role, setSelectedRole, setFormConfig) => {
 function RegisterComponent() {
     const navigate = useNavigate();
     const [selectedRole, setSelectedRole] = useState('');
-    const [snackbarPresented, setSnackbarPresented] = useState(false);
-    const [snackbarError, setSnackbarError] = useState({ errcode: null, text: '' });
+    const { open, error, showError, hideError } = useErrorSnackbar();
 
     const [formConfig, setFormConfig] = useState(null);
     const { regionsBandExist, regionsBandNotExist } = useRegions();
-
-
-    const handleRegisterError = ({ errcode, text }) => {
-        setSnackbarError({ errcode, text });
-        setSnackbarPresented(true);
-    };
 
     const formik = useFormik({
         initialValues: formConfig ? formConfig.initialValues : {},
@@ -115,7 +110,10 @@ function RegisterComponent() {
         onSubmit: async (values, { setSubmitting }) => {
             try {
                 const body = {
-                    ...values,
+                    nickname: selectedRole !== 'user' ? null : values.username,
+                    firstName: selectedRole !== 'user' ? values.name : null,
+                    lastName: selectedRole !== 'user' ? values.surname : null,
+                    password: values.password,
                     role: selectedRole.toUpperCase(),
                     region:
                         selectedRole === 'don'
@@ -123,6 +121,7 @@ function RegisterComponent() {
                             : values.specifyRegion
                                 ? values.region || null
                                 : null,
+                    email: values.email,
                 };
 
                 console.log('Request body:', body);
@@ -137,10 +136,10 @@ function RegisterComponent() {
                     navigate('/check-email', { state: { email: values.email } });
                 } else {
                     const errorData = await res.json();
-                    handleRegisterError({ errcode: res.status, text: errorData.message || 'Ошибка регистрации' });
+                    showError({ errcode: res.status, text: errorData.message || 'Ошибка регистрации' });
                 }
             } catch (err) {
-                handleRegisterError({ errcode: 'network', text: err.message || err.toString() });
+                showError({ errcode: 'network', text: err.message || err.toString() });
             } finally {
                 setSubmitting(false);
             }
@@ -292,26 +291,11 @@ function RegisterComponent() {
                 </Stack>
             </Paper>
 
-            <Snackbar
-                open={snackbarPresented}
-                autoHideDuration={5000}
-                onClose={
-                (event, reason) => {
-                    if (reason === 'clickaway') return;
-                    setSnackbarPresented(false);
-                }}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            >
-                <Alert
-                    onClose={
-                    (event, reason) => {
-                        if (reason === 'clickaway') return;
-                        setSnackbarPresented(false);
-                    }}
-                    severity="error" sx={{ width: '100%' }}>
-                    Ошибка {snackbarError.errcode}: {snackbarError.text}
-                </Alert>
-            </Snackbar>
+            <ErrorSnackbar
+                open={open}
+                error={error}
+                onClose={hideError}
+            ></ErrorSnackbar>
         </Box>
     );
 }
