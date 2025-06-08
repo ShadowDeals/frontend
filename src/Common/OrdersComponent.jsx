@@ -91,11 +91,11 @@ function OrderTabs({
                                 <Grid key={taskInfo.taskId} size={3}>
                                     <CardComponent
                                         taskInfo={taskInfo}
-                                        onReject={() => onReject && onReject(taskInfo.taskId)}
-                                        onMoreInfo={() => onMoreInfo && onMoreInfo(taskInfo)}
-                                        onSetPrice={() => onSetPrice && onSetPrice(taskInfo)}
-                                        onAssignEmployee={() => onAssignEmployee && onAssignEmployee(taskInfo)}
-                                        onViewReport={() => onViewReport && onViewReport(taskInfo)}
+                                        onReject={() => onReject?.(taskInfo.taskId)}
+                                        onMoreInfo={() =>  onMoreInfo?.(taskInfo)}
+                                        onSetPrice={() =>  onSetPrice?.(taskInfo)}
+                                        onAssignEmployee={() => onAssignEmployee?.(taskInfo)}
+                                        onViewReport={() => onViewReport?.(taskInfo)}
                                     />
                                 </Grid>
                             );
