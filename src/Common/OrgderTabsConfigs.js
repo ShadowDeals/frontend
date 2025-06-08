@@ -17,7 +17,7 @@ export function getAdminTabsConfig(currentTaskInfos, openOrderDetailsDialog, ope
         },
         {
             index: 1,
-            label: 'Оплата',
+            label: 'Ожидающие оплаты',
             CardComponent: PendingPaymentOrderCard,
             onReject: (id) => console.log('Cancel deal', id),
             onMoreInfo: openOrderDetailsDialog,
@@ -86,7 +86,7 @@ export function getUserTabsConfig(currentTaskInfos, openOrderDetailsDialog) {
         },
         {
             index: 1,
-            label: 'Оплата',
+            label: 'Ожидающие оплаты',
             CardComponent: PendingPaymentOrderCard,
             onReject: (id) => console.log('Cancel deal', id),
             onMoreInfo: openOrderDetailsDialog,

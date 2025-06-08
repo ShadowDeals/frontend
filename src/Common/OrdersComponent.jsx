@@ -67,8 +67,10 @@ function OrderTabs({
     const [page, setPage] = useState(1);
     const taskInfosPerPage = 12;
 
-    const pageCount = Math.ceil(taskInfos?.length || 0 / taskInfosPerPage);
+    const pageCount = Math.ceil((taskInfos?.length || 0) / taskInfosPerPage);
 
+
+    console.log('pageCount', taskInfos?.length, pageCount);
 
     const paginatedTaskInfos = taskInfos.slice(
         (page - 1) * taskInfosPerPage,

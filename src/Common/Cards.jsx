@@ -89,30 +89,9 @@ export function PendingPaymentOrderCard({ taskInfo, onReject, onMoreInfo, onSetP
         </Button>,
     ];
 
-    if (role === 'Администратор') {
-        const isDisabled = taskInfo.taskStatus === taskStatusLabels.WAITING_FOR_PAYMENT;
-        actions.push(
-            <Tooltip title={isDisabled ? 'Пользователь должен оплатить' : ''}>
-            <span>
-                <Button
-                    key="set-price"
-                    size="small"
-                    color="success"
-                    onClick={onSetPrice}
-                    disabled={isDisabled}
-                >
-                    Назначить оплату
-                </Button>
-            </span>
-            </Tooltip>
-        );
-    }
-
     if (role === 'Пользователь') {
         const isDisabled = taskInfo.taskStatus === taskStatusLabels.WAITING_FOR_PRICE_ASSIGNMENT;
         actions.push(
-            <Tooltip key="pay-tooltip" title={isDisabled ? 'Ожидайте назначения оплаты администратором' : ''}>
-            <span>
                 <Button
                     key="pay"
                     size="small"
@@ -122,8 +101,6 @@ export function PendingPaymentOrderCard({ taskInfo, onReject, onMoreInfo, onSetP
                 >
                     Оплатить
                 </Button>
-            </span>
-            </Tooltip>
         );
     }
 
