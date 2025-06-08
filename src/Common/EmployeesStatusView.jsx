@@ -75,7 +75,7 @@ const EmployeesListWithStatus = ({ employees, status }) => {
         >
             {employees.map((employee) => (
                 <Card
-                    key={employee.id}
+                    key={employee.workerId}
                     sx={{
                         minWidth: 200,
                         borderRadius: 2,

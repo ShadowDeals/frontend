@@ -43,7 +43,7 @@ export default function EmployeeTabs({role}) {
 
     console.log("Действующая роль: ", role)
     return (
-        <Box sx={{ height: '100%', width:'100%' }}>
+        <Box sx={{ height: '100%', alignItems:'center', width:'100%' }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs
                     TabIndicatorProps={{ style: { display: 'none' } }}

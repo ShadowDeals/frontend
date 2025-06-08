@@ -1,8 +1,9 @@
-import { PendingApplyOrderCard } from "../Admin/PendingApplyOrderCard.jsx";
-import PendingEmployeesOrderCard from "../Admin/PendingEmployeesOrderCard.jsx";
-import { InProgressOrderCard } from "../Admin/InProgressOrderCard.jsx";
-import { DoneOrderCard } from "../Admin/DoneOrderCard.jsx";
-import { PendingPaymentOrderCard } from "../Admin/PendingPaymentOrderCard.jsx";
+import {
+    PendingApplyOrderCard,
+    PendingPaymentOrderCard,
+    PendingEmployeesOrderCard,
+    InProgressOrderCard, DoneOrderCard
+} from "./Cards.jsx";
 
 export function getAdminTabsConfig(currentTaskInfos, openOrderDetailsDialog, openAssignExecutorsDialog) {
     return [
@@ -36,7 +37,8 @@ export function getAdminTabsConfig(currentTaskInfos, openOrderDetailsDialog, ope
             label: 'В работе',
             CardComponent: InProgressOrderCard,
             onMoreInfo: openOrderDetailsDialog,
-            onAssignEmployee: () => {},
+            onAssignEmployee: () => {
+            },
             taskInfos: currentTaskInfos,
         },
         {
@@ -62,6 +64,50 @@ export function getSoldierTabsConfig(currentTaskInfos, openOrderDetailsDialog) {
         {
             index: 1,
             label: 'Завершенные мной',
+            CardComponent: DoneOrderCard,
+            onMoreInfo: openOrderDetailsDialog,
+            onViewReport: (card) => console.log('View report', card),
+            taskInfos: currentTaskInfos,
+        },
+    ];
+}
+
+export function getUserTabsConfig(currentTaskInfos, openOrderDetailsDialog) {
+    return [
+        {
+            index: 0,
+            label: 'Ожидающие подтверждения',
+            CardComponent: PendingApplyOrderCard,
+            onReject: (id) => console.log('Reject order', id),
+            onMoreInfo: openOrderDetailsDialog,
+            taskInfos: currentTaskInfos,
+        },
+        {
+            index: 1,
+            label: 'Ожидающие оплаты',
+            CardComponent: PendingPaymentOrderCard,
+            onReject: (id) => console.log('Cancel deal', id),
+            onMoreInfo: openOrderDetailsDialog,
+            onSetPrice: (card) => console.log('Set price', card),
+            taskInfos: currentTaskInfos,
+        },
+        {
+            index: 2,
+            label: 'Ожидающие назначения',
+            CardComponent: PendingEmployeesOrderCard,
+            onMoreInfo: openOrderDetailsDialog,
+            taskInfos: currentTaskInfos,
+        },
+        {
+            index: 3,
+            label: 'В работе',
+            CardComponent: InProgressOrderCard,
+            onMoreInfo: openOrderDetailsDialog,
+            taskInfos: currentTaskInfos,
+        },
+        {
+            index: 4,
+            label: 'Завершенные',
             CardComponent: DoneOrderCard,
             onMoreInfo: openOrderDetailsDialog,
             onViewReport: (card) => console.log('View report', card),

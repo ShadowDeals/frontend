@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {useAuthHeaders, useDecodedToken} from "../Common/tokenHooks.js";
+import {useAuthHeaders, useDecodedToken} from "./tokenHooks.js";
 import axios from "axios";
 
 export function useBandTaskByStatus(taskStatus) {

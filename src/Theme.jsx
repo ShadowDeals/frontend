@@ -314,6 +314,14 @@ const TheShadowDealsTheme = createTheme({
                     maxWidth: 400,
                     margin: '0 auto',
                 },
+                action: {
+                    '& .MuiIconButton-root': {
+                        color: '#F2E6C4',
+                        '&:hover': {
+                            color: '#0288d1',
+                        },
+                    },
+                },
                 filledError: {
                     backgroundColor: '#f44336',
                     color: '#F2E6C4',

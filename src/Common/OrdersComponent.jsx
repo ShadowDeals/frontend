@@ -4,17 +4,16 @@ import {Tabs,
     Tab,
     Box,
     Pagination,
-    Typography,
     Stack,
     Grid
 } from "@mui/material";
-import { getAdminTabsConfig, getSoldierTabsConfig } from './OrgderTabsConfigs.jsx';
+import {getAdminTabsConfig, getSoldierTabsConfig, getUserTabsConfig} from './OrgderTabsConfigs.js';
 
 
 import { useMemo, useState } from "react";
 import OrderDetailsDialog from "../Admin/OrderDetailsDialog.jsx";
 import AssignEmployeesDialog from "../Admin/AssignEmployeesDialog.jsx"
-import {useBandTasks} from "../Admin/useBandTasks.js";
+import {useBandTasks} from "./useBandTasks.js";
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -45,30 +44,7 @@ function a11yProps(index) {
     };
 }
 
-const Employees = [
-    { id: 1, name: 'Иван Иванов' },
-    { id: 2, name: 'Мария Петрова' },
-    { id: 3, name: 'Алексей Смирнов' },
-    { id: 4, name: 'Елена Кузнецова' },
-    { id: 5, name: 'Дмитрий Орлов' },
-    { id: 6, name: 'Дмитрий Орлов' },
-    { id: 7, name: 'X' },
-    { id: 8, name: 'Y' },
-    { id: 9, name: 'Z' },
-    { id: 10, name: 'W' },
-    { id: 11, name: 'A' },
-    { id: 12, name: 'B' },
-    { id: 13, name: 'C' },
-    { id: 14, name: 'D' },
-    { id: 15, name: 'E' },
-    { id: 16, name: 'F' },
-    { id: 17, name: 'G' },
-    { id: 18, name: 'H' },
-    { id: 19, name: 'I' },
-
-];
-
-function OrdersTabPanel({
+function OrderTabs({
                             taskInfos,
                             CardComponent,
                             onReject,
@@ -129,16 +105,21 @@ function OrdersTabPanel({
                 </Box>
 
                 <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-                    <Pagination count={pageCount} variant="outlined" onChange={(_, value) => {
-                        setPage(value);
-                    }} shape="rounded" />
+                    {Number(pageCount) > 0 && (
+                        <Pagination
+                            count={Number(pageCount)}
+                            variant="outlined"
+                            onChange={(_, value) => setPage(value)}
+                            shape="rounded"
+                        />
+                    )}
                 </Box>
             </Stack>
         </Box>
     );
 }
 
-OrdersTabPanel.propTypes = {
+OrderTabs.propTypes = {
     cards: PropTypes.array.isRequired,
     CardComponent: PropTypes.elementType.isRequired,
     onReject: PropTypes.func,
@@ -230,9 +211,13 @@ export default function OrdersComponent({role}) {
 
 
     const tabsConfig = useMemo(() => {
-        return role === 'Солдат'
-            ? getSoldierTabsConfig(currentTaskInfos, openOrderDetailsDialog)
-            : getAdminTabsConfig(currentTaskInfos, openOrderDetailsDialog, openAssignExecutorsDialog);
+        if (role === 'Солдат') {
+            return getSoldierTabsConfig(currentTaskInfos, openOrderDetailsDialog);
+        } else if (role === 'Пользователь') {
+            return getUserTabsConfig(currentTaskInfos, openOrderDetailsDialog);
+        } else if (role === 'Администратор') {
+            return getAdminTabsConfig(currentTaskInfos, openOrderDetailsDialog, openAssignExecutorsDialog);
+        }
     }, [role, currentTaskInfos]);
 
 
@@ -255,7 +240,7 @@ export default function OrdersComponent({role}) {
             </Box>
             {tabsConfig.map(({ index, CardComponent, onReject, onMoreInfo, onSetPrice, onAssignEmployee, onViewReport, taskInfos }) => (
                 <CustomTabPanel key={index} value={value} index={index}>
-                    <OrdersTabPanel
+                    <OrderTabs
                         taskInfos={taskInfos}
                         CardComponent={CardComponent}
                         onReject={onReject}
@@ -266,8 +251,7 @@ export default function OrdersComponent({role}) {
                     />
                 </CustomTabPanel>
             ))}
-            <AssignEmployeesDialog employees={Employees}
-                                   open={assignExecutorsDialogState}
+            <AssignEmployeesDialog open={assignExecutorsDialogState}
                                    onSave={saveAssignExecutorsDialog}
                                    onClose={closeAssignExecutorsDialog}
                                    taskInfo={selectedOrder}

@@ -31,7 +31,7 @@ export function PasswordDialog({ open, onClose, onConfirm }) {
     });
 
     return (
-        <Dialog open={open} onClose={onClose} sx={{ bgcolor: 'black' }}>
+        <Dialog open={open} onClose={onClose} sx = {{bgcolor:'#F2E6C4'}}>
             <DialogTitle>
                 Введите пароль
             </DialogTitle>
@@ -125,7 +125,7 @@ export function LockDatabaseComponent() {
                 </Button>
             </Stack>
             <PasswordDialog
-                sx = {{bgcolor:'black'}}
+                sx = {{bgcolor:'#F2E6C4'}}
                 open={dialogOpen}
                 onClose={() => setDialogOpen(false)}
                 onConfirm={handleConfirm}

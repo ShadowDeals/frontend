@@ -1,5 +1,5 @@
 import React from 'react';
-import {Grid, Stack, Typography} from '@mui/material';
+import {Box, Grid, Stack, Typography} from '@mui/material';
 import { BarChart, LineChart, Unstable_RadarChart as RadarChart } from '@mui/x-charts';
 
 export function ChartsOverviewDemo() {
@@ -47,32 +47,40 @@ export function BasicRadar() {
 
 const PlotsDashboard = () => {
     return (
-        <Grid container rowSpacing={3} size={'sm'} columnSpacing={{padding:3, xs: 1, sm: 2, md: 3 }}>
-            <Grid size={6}>
-                <Stack>
-                    <Typography variant="h5" sx={{textAlign:'center'}} color="textSecondary">Выполнено заказов</Typography>
-                    <ChartsOverviewDemo/>
-                </Stack>
+        <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="100%"
+            width="100%"
+        >
+            <Grid container rowSpacing={3} size={'sm'} columnSpacing={{padding:3, xs: 1, sm: 2, md: 3 }}>
+                <Grid size={6}>
+                    <Stack>
+                        <Typography variant="h5" sx={{textAlign:'center'}} color="textSecondary">Выполнено заказов</Typography>
+                        <ChartsOverviewDemo/>
+                    </Stack>
+                </Grid>
+                <Grid size={6}>
+                    <Stack>
+                        <Typography variant="h5" sx={{textAlign:'center'}} color="textSecondary">Выручка, $</Typography>
+                        <BasicLineChart/>
+                    </Stack>
+                </Grid>
+                <Grid size={6}>
+                    <Stack>
+                        <Typography variant="h5" sx={{textAlign:'center'}} color="textSecondary">Доходы по категориям</Typography>
+                        <BasicRadar/>
+                    </Stack>
+                </Grid>
+                <Grid size={6}>
+                    <Stack>
+                        <Typography variant="h5" sx={{textAlign:'center'}} color="textSecondary">Всего сотрудников</Typography>
+                        <ChartsOverviewDemo/>
+                    </Stack>
+                </Grid>
             </Grid>
-            <Grid size={6}>
-                <Stack>
-                    <Typography variant="h5" sx={{textAlign:'center'}} color="textSecondary">Выручка, $</Typography>
-                    <BasicLineChart/>
-                </Stack>
-            </Grid>
-            <Grid size={6}>
-                <Stack>
-                    <Typography variant="h5" sx={{textAlign:'center'}} color="textSecondary">Доходы по категориям</Typography>
-                    <BasicRadar/>
-                </Stack>
-            </Grid>
-            <Grid size={6}>
-                <Stack>
-                    <Typography variant="h5" sx={{textAlign:'center'}} color="textSecondary">Всего сотрудников</Typography>
-                    <ChartsOverviewDemo/>
-                </Stack>
-            </Grid>
-        </Grid>
+        </Box>
     );
 };
 

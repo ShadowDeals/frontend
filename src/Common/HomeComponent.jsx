@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import {styled, useTheme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -11,22 +11,19 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-import PlotsDashboard from "../Don/PlotsDashboard.jsx";
-import {RoleTitle, RoleMenuList} from "./RoleSpecifiedComponents.jsx";
-import {LockDatabaseComponent} from "../Don/LockDbComponent.jsx";
-import EmployeeTabs from "../Don/EmployeesComponent.jsx";
-import OrdersComponent from "./OrdersComponent.jsx";
+import {pageComponentsByRole} from "./RolePageComponents.jsx";
+
 import {useNavigate} from "react-router-dom";
 
-import GangInfo from "../Soldier/GangInfo.jsx";
-import FindGang from "../Soldier/FindGang.jsx";
-import TasksComponent from "../Soldier/TasksComponent.jsx";
 import Cookies from "js-cookie";
-import {Button, Typography} from "@mui/material";
+import {Button, Stack, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
 import {useDecodedToken} from "./tokenHooks.js";
+import {RoleMenuList} from "./RoleMenuItem.jsx";
+import RoleTitle from "./RoleTitle.jsx";
 
 const drawerWidth = 240;
+
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme }) => ({
@@ -84,20 +81,17 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 
 export default function HomeComponent() {
-    const decodedToken = useDecodedToken();
-    console.log('Токен из куки на home component:', decodedToken);
-    const currentRole = decodedToken?.roles?.[0] || null;
-
-
-    const bandId = decodedToken?.bandId || null;
+    const { bandId = null, sub = '', roles= [] } = useDecodedToken() || {};
+    const currentRole = roles[0] || '';
     console.log('Роль текущая: ', currentRole);
+
     const theme = useTheme();
     const [open, setOpen] = useState(false);
     const [activePage, setActivePage] = useState('Сведения о банде');
 
     const toggleDrawer = (state) => () => setOpen(state);
-
     const navigate = useNavigate();
+
 
     useEffect(() => {
         if (currentRole === null) {
@@ -111,6 +105,10 @@ export default function HomeComponent() {
         >
         </Box>
     }
+
+    const rolePages = pageComponentsByRole[currentRole] || {};
+    const PageComponent = rolePages[activePage];
+
 
     return (
         <Box sx={{ width:'100vw', height:'100vh', display: 'flex', overflow:'hidden'}}>
@@ -131,15 +129,24 @@ export default function HomeComponent() {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <RoleTitle role={currentRole}/>
+                    <RoleTitle role={currentRole}></RoleTitle>
                     <Box sx={{ ml: 'auto' }}>
-                        <Button variant='contained' onClick={() => {
-                            Cookies.remove('accessToken');
-                            navigate('/welcome');}
-                        }
-                        >
-                            Выйти
-                        </Button>
+                        <Stack direction="row" spacing={2} alignItems="center">
+                            {sub && (
+                                <Typography variant="body1" color="inherit">
+                                    {sub}
+                                </Typography>
+                            )}
+                            <Button
+                                variant="contained"
+                                onClick={() => {
+                                    Cookies.remove('accessToken');
+                                    navigate('/welcome');
+                                }}
+                            >
+                                Выйти
+                            </Button>
+                        </Stack>
                     </Box>
 
                 </Toolbar>
@@ -168,23 +175,14 @@ export default function HomeComponent() {
                               setActivePage={setActivePage}/>
             </Drawer>
             <Main open={open}>
-                <DrawerHeader/>
-                <Box sx={{width:'100%', height:'100%', display: 'flex', justifyContent:'center', alignItems: 'center'}}>
-                    {activePage === 'Сведения о банде'  && ((
-                        bandId ? <GangInfo role={currentRole} /> : <FindGang />
-                    ))}
-                    {activePage === 'Статистика' && <PlotsDashboard />}
-                    {activePage === 'Доступ к БД' && <LockDatabaseComponent></LockDatabaseComponent>}
-
-                    {['Сотрудники', 'Заказы', 'Задания'].includes(activePage) && bandId === null && (
-                        <Typography variant="h5" sx={{ textAlign: 'center', width: '100%'}}>
-                            Дождитесь вступления в банду
-                        </Typography>
-                    )}
-                    {bandId !== null && activePage === 'Сотрудники' && <EmployeeTabs role={currentRole}></EmployeeTabs>}
-                    {bandId !== null && activePage === 'Заказы' && <OrdersComponent></OrdersComponent>}
-                    {bandId !== null && activePage === 'Задания' && <OrdersComponent role={currentRole}></OrdersComponent>}
-                </Box>
+                <DrawerHeader />
+                {PageComponent ? (
+                        <PageComponent bandId={bandId} role={currentRole} />
+                ) : (
+                    <Typography variant="h5" sx={{ textAlign: 'center' }}>
+                        Страница не найдена
+                    </Typography>
+                )}
             </Main>
         </Box>
     );
