@@ -82,29 +82,27 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function HomeComponent() {
     const { bandId = null, sub = '', roles= [] } = useDecodedToken() || {};
-    const currentRole = roles[0] || '';
-    console.log('Роль текущая: ', currentRole);
 
     const theme = useTheme();
     const [open, setOpen] = useState(false);
     const [activePage, setActivePage] = useState('Сведения о банде');
 
     const toggleDrawer = (state) => () => setOpen(state);
+
     const navigate = useNavigate();
+    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
-
+    const currentRole = roles[0] || '';
+    console.log('Роль текущая: ', currentRole);
     useEffect(() => {
-        if (currentRole === null) {
-            navigate('/login');
+        if (!currentRole) {
+            navigate('/login', { replace: true });
+        } else {
+            setIsCheckingAuth(false);
         }
     }, [currentRole, navigate]);
 
-    if (currentRole === 'Гость') {
-        return <Box
-            sx={{width:'100vw', height:'100vh'}}
-        >
-        </Box>
-    }
+    if (isCheckingAuth) return null;
 
     const rolePages = pageComponentsByRole[currentRole] || {};
     const PageComponent = rolePages[activePage];

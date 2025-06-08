@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '@mui/material/Button';
-import {Card, CardContent, Typography, Stack} from '@mui/material';
+import {Card, CardContent, Typography, Stack, Tooltip} from '@mui/material';
 
 export function formatDate(dateString) {
     if (!dateString) return '';
@@ -20,6 +20,15 @@ export const taskTypeLabels = {
     ROBBERY: 'Ограбление',
     SCARING: 'Запугивание',
     DELIVERY: 'Доставка',
+};
+
+export const taskStatusLabels = {
+    IN_WORK: "IN_WORK",
+    FINISHED: "FINISHED",
+    WAITING_FOR_ACCEPT: "WAITING_FOR_ACCEPT",
+    WAITING_FOR_PAYMENT: "WAITING_FOR_PAYMENT",
+    WAITING_FOR_ASSIGNMENT: "WAITING_FOR_ASSIGNMENT",
+    WAITING_FOR_PRICE_ASSIGNMENT: "WAITING_FOR_PRICE_ASSIGNMENT"
 };
 
 export function OrderCard({taskInfo, actions}) {
@@ -49,71 +58,103 @@ export function OrderCard({taskInfo, actions}) {
     );
 }
 
-export function PendingApplyOrderCard({taskInfo, onReject, onMoreInfo, onSetPrice}) {
-    return (
-        <OrderCard
-            taskInfo={taskInfo}
-            actions={[
-                <Button key="reject" size="small" color="error" onClick={onReject}>
-                    Отклонить
-                </Button>,
-                <Button key="info" size="small" color="info" onClick={onMoreInfo}>
-                    Подробнее
-                </Button>,
-                <Button key="set-price" size="small" color="success" onClick={onSetPrice}>
+export function PendingApplyOrderCard({ taskInfo, onReject, onMoreInfo, onSetPrice, role }) {
+    const actions = [
+        <Button key="reject" size="small" color="error" onClick={onReject}>
+            {role === 'Администратор' ? 'Отклонить' : 'Отозвать'}
+        </Button>,
+        <Button key="info" size="small" color="info" onClick={onMoreInfo}>
+            Подробнее
+        </Button>,
+    ];
+
+    if (role === 'Администратор' && onSetPrice) {
+        actions.push(
+            <Button key="set-price" size="small" color="success" onClick={onSetPrice}>
+                Назначить оплату
+            </Button>
+        );
+    }
+
+    return <OrderCard taskInfo={taskInfo} actions={actions} />;
+}
+
+export function PendingPaymentOrderCard({ taskInfo, onReject, onMoreInfo, onSetPrice, role }) {
+    const actions = [
+        <Button key="reject" size="small" color="error" onClick={onReject}>
+            {role === 'Администратор' ? 'Отклонить' : 'Отозвать'}
+        </Button>,
+        <Button key="info" size="small" color="info" onClick={onMoreInfo}>
+            Подробнее
+        </Button>,
+    ];
+
+    if (role === 'Администратор') {
+        const isDisabled = taskInfo.taskStatus === taskStatusLabels.WAITING_FOR_PAYMENT;
+        actions.push(
+            <Tooltip title={isDisabled ? 'Пользователь должен оплатить' : ''}>
+            <span>
+                <Button
+                    key="set-price"
+                    size="small"
+                    color="success"
+                    onClick={onSetPrice}
+                    disabled={isDisabled}
+                >
                     Назначить оплату
-                </Button>,
-            ]}
-        />
-    );
+                </Button>
+            </span>
+            </Tooltip>
+        );
+    }
+
+    if (role === 'Пользователь') {
+        const isDisabled = taskInfo.taskStatus === taskStatusLabels.WAITING_FOR_PRICE_ASSIGNMENT;
+        actions.push(
+            <Tooltip key="pay-tooltip" title={isDisabled ? 'Ожидайте назначения оплаты администратором' : ''}>
+            <span>
+                <Button
+                    key="pay"
+                    size="small"
+                    color="success"
+                    onClick={onSetPrice}
+                    disabled={isDisabled}
+                >
+                    Оплатить
+                </Button>
+            </span>
+            </Tooltip>
+        );
+    }
+
+
+
+    return <OrderCard taskInfo={taskInfo} actions={actions} />;
 }
 
-export function PendingPaymentOrderCard({taskInfo, onReject, onMoreInfo, onSetPrice}) {
+export function PendingEmployeesOrderCard({ taskInfo, onAssignEmployee, onMoreInfo, role }) {
+    const actions = [
+        <Button key="info" size="small" color="info" onClick={onMoreInfo}>
+            Подробнее
+        </Button>,
+    ];
+
+    if (role !== 'Пользователь') {
+        actions.push(
+            <Button key="assign" size="small" color="success" onClick={onAssignEmployee}>
+                Назначить солдат
+            </Button>
+        );
+    }
+
+    return <OrderCard taskInfo={taskInfo} actions={actions} />;
+}
+
+
+export function InProgressOrderCard({taskInfo, onMoreInfo, role}) {
     return (
         <OrderCard
             taskInfo={taskInfo}
-            sender="annihilator-zxc"
-            description="Описание: требуется сделать то-то и то-то"
-            actions={[
-                <Button key="reject" size="small" color="error" onClick={onReject}>
-                    Отклонить
-                </Button>,
-                <Button key="info" size="small" color="info" onClick={onMoreInfo}>
-                    Подробнее
-                </Button>,
-                <Button key="set-price" size="small" color="success" onClick={onSetPrice}>
-                    Назначить оплату
-                </Button>,
-            ]}
-        />
-    );
-}
-
-export function PendingEmployeesOrderCard({taskInfo, onAssignEmployee, onMoreInfo}) {
-    return (
-        <OrderCard
-            taskInfo={taskInfo}
-            sender="annihilator-zxc"
-            orderType={'qwe'}
-            description="Описание: требуется сделать то-то и то-то"
-            actions={[
-                <Button key="info" size="small" color="info" onClick={onMoreInfo}>
-                    Подробнее
-                </Button>,
-                <Button key="assign" size="small" color="success" onClick={onAssignEmployee}>
-                    Назначить солдат
-                </Button>,
-            ]}
-        />
-    );
-}
-
-export function InProgressOrderCard({taskInfo, onMoreInfo}) {
-    return (
-        <OrderCard
-            taskInfo={taskInfo}
-            sender="annihilator-zxc"
-            description="Описание: требуется сделать то-то и то-то"
             actions={[
                 <Button key="info" size="small" color="info" onClick={onMoreInfo}>
                     Подробнее
@@ -128,8 +169,6 @@ export function DoneOrderCard({taskInfo, onMoreInfo, onViewReport, role}) {
         <OrderCard
             role={role}
             taskInfo={taskInfo}
-            sender="annihilator-zxc"
-            description="Описание: требуется сделать то-то и то-то"
             actions={[
                 <Button key="info" size="small" color="info" onClick={onMoreInfo}>
                     Подробнее

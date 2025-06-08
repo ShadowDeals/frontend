@@ -304,6 +304,21 @@ const TheShadowDealsTheme = createTheme({
                 },
             },
         },
+        MuiTooltip: {
+            styleOverrides: {
+                tooltip: {
+                    backgroundColor: '#5C3A0E',
+                    color: '#F2E6C4',
+                    fontSize: '0.70rem',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)',
+                },
+                arrow: {
+                    color: '#333333', // Цвет стрелки (тот же, что фон)
+                },
+            },
+        },
         MuiAlert: {
             styleOverrides: {
                 root: {

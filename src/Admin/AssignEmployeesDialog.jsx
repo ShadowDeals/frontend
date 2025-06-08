@@ -39,18 +39,6 @@ export default function AssignEmployeesDialog({ open, onClose, onSave }) {
         }
     };
 
-    const handleSelectMain = (id) => {
-        setMainExecutorId(id);
-        if (!selectedExecutorIds.includes(id)) {
-            setSelectedExecutorIds(prev => [...prev, id]);
-        }
-    };
-
-    const handleSave = () => {
-        onSave(selectedExecutorIds, mainExecutorId);
-        onClose();
-    };
-
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
             <DialogTitle
@@ -100,7 +88,12 @@ export default function AssignEmployeesDialog({ open, onClose, onSave }) {
                                                     },
                                                 }}
                                                 checked={mainExecutorId === id}
-                                                onChange={() => handleSelectMain(id)}
+                                                onChange={(id) => {
+                                                    setMainExecutorId(id);
+                                                    if (!selectedExecutorIds.includes(id)) {
+                                                        setSelectedExecutorIds(prev => [...prev, id]);
+                                                    }
+                                                }}
                                             />
                                         }
                                         label={employee?.executorName || 'Неизвестный'}
@@ -128,7 +121,10 @@ export default function AssignEmployeesDialog({ open, onClose, onSave }) {
                     onClick={onClose}>Отмена
                 </Button>
                 <Button
-                    onClick={handleSave}
+                    onClick={() => {
+                        onSave(selectedExecutorIds, mainExecutorId);
+                        onClose();
+                    }}
                     disabled={selectedExecutorIds.length === 0 || !mainExecutorId}
                     variant="contained"
                 >
