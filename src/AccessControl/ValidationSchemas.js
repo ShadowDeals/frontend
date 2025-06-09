@@ -31,8 +31,8 @@ export const registerFormConfigs = {
         initialValues: {
             username: '',
             email: '',
-            specifyRegion: false,
-            region: '',
+            // specifyRegion: false,
+            // region: '',
             password: '',
             passwordConfirm: '',
         },
