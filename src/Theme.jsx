@@ -29,6 +29,19 @@ const TheShadowDealsTheme = createTheme({
         },
     },
     components: {
+        MuiFormLabel: {
+            styleOverrides: {
+                root: {
+                    color: '#5C3A0E',
+                    '&.Mui-focused': {
+                        color: '#5C3A0E'
+                    },
+                    '&.Mui-error': {
+                        color: '#d32f2f',
+                    },
+                },
+            },
+        },
         MuiRadio: {
             styleOverrides: {
                 root: {

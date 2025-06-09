@@ -79,7 +79,7 @@ export function PendingApplyOrderCard({ taskInfo, onReject, onMoreInfo, onSetPri
     return <OrderCard taskInfo={taskInfo} actions={actions} />;
 }
 
-export function PendingPaymentOrderCard({ taskInfo, onReject, onMoreInfo, onSetPrice, role }) {
+export function PendingPaymentOrderCard({ taskInfo, onReject, onMoreInfo, onPay, role }) {
     const actions = [
         <Button key="reject" size="small" color="error" onClick={onReject}>
             {role === 'Администратор' ? 'Отклонить' : 'Отозвать'}
@@ -96,7 +96,7 @@ export function PendingPaymentOrderCard({ taskInfo, onReject, onMoreInfo, onSetP
                     key="pay"
                     size="small"
                     color="success"
-                    onClick={onSetPrice}
+                    onClick={onPay}
                     disabled={isDisabled}
                 >
                     Оплатить
@@ -128,18 +128,24 @@ export function PendingEmployeesOrderCard({ taskInfo, onAssignEmployee, onMoreIn
 }
 
 
-export function InProgressOrderCard({taskInfo, onMoreInfo, role}) {
-    return (
-        <OrderCard
-            taskInfo={taskInfo}
-            actions={[
-                <Button key="info" size="small" color="info" onClick={onMoreInfo}>
-                    Подробнее
-                </Button>,
-            ]}
-        />
-    );
+export function InProgressOrderCard({ taskInfo, onMoreInfo, onReportCompletion, role }) {
+    const actions = [
+        <Button key="info" size="small" color="info" onClick={onMoreInfo}>
+            Подробнее
+        </Button>,
+    ];
+
+    if (role === 'Солдат' && onReportCompletion) {
+        actions.push(
+            <Button key="report" size="small" color="primary" onClick={onReportCompletion}>
+                Отчитаться о выполнении
+            </Button>
+        );
+    }
+
+    return <OrderCard taskInfo={taskInfo} actions={actions} />;
 }
+
 
 export function DoneOrderCard({taskInfo, onMoreInfo, onViewReport, role}) {
     return (

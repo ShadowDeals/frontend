@@ -6,7 +6,7 @@ import {
     Box,
     Pagination,
     Stack,
-    Grid
+    Grid, Button
 } from "@mui/material";
 import {getAdminTabsConfig, getSoldierTabsConfig, getUserTabsConfig} from './OrgderTabsConfigs.js';
 
@@ -15,6 +15,8 @@ import {useMemo, useState} from "react";
 import OrderDetailsDialog from "../Admin/OrderDetailsDialog.jsx";
 import AssignEmployeesDialog from "../Admin/AssignEmployeesDialog.jsx"
 import {useTasks} from "./useTasks.js";
+import ReportDialog from "../Soldier/ReportDialog.jsx";
+import CreateTaskDialog from "../User/CreateTaskDialog.jsx";
 
 function CustomTabPanel(props) {
     const {children, value, index, ...other} = props;
@@ -52,7 +54,9 @@ function OrderTabs({
                        onReject,
                        onMoreInfo,
                        onSetPrice,
+                       onPay,
                        onAssignEmployee,
+                       onReportCompletion,
                        onViewReport,
                    }
 ) {
@@ -104,6 +108,8 @@ function OrderTabs({
                                         onReject={() => onReject?.(taskInfo.taskId)}
                                         onMoreInfo={() => onMoreInfo?.(taskInfo)}
                                         onSetPrice={() => onSetPrice?.(taskInfo)}
+                                        onPay={() => onPay?.(taskInfo.taskId)}
+                                        onReportCompletion={() => onReportCompletion?.(taskInfo)}
                                         onAssignEmployee={() => onAssignEmployee?.(taskInfo)}
                                         onViewReport={() => onViewReport?.(taskInfo)}
                                     />
@@ -190,36 +196,45 @@ export default function OrdersComponent({role}) {
     }, [roleTabsMap, role, tabNum]);
 
     const [selectedOrder, setSelectedOrder] = useState(null);
-    const [orderDetailsDialogState, setOrderDetailsDialogState] = useState(false);
-    const [assignExecutorsDialogState, setAssignExecutorsDialogState] = useState(false);
 
-    const openOrderDetailsDialog = (order) => {
+    const [dialogsState, setDialogsState] = useState({
+        orderDetails: false,
+        assignExecutors: false,
+        report: false,
+        createOrder: false,
+    });
+
+    const openDialog = (dialogName, order) => {
+        console.log('Открываем диалог: ', dialogName);
         setSelectedOrder(order);
-        setOrderDetailsDialogState(true);
+        setDialogsState((prev) => ({...prev, [dialogName]: true}));
     };
 
-    const openAssignExecutorsDialog = (order) => {
-        setSelectedOrder(order);
-        setAssignExecutorsDialogState(true);
+    const closeDialog = (dialogName) => {
+        setDialogsState((prev) => ({...prev, [dialogName]: false}));
     };
-
 
     const tabsConfig = useMemo(() => {
         if (role === 'Солдат') {
-            return getSoldierTabsConfig(currentTaskInfos, openOrderDetailsDialog);
+            return getSoldierTabsConfig(currentTaskInfos,
+                (order) => openDialog('orderDetails', order),
+                (order) => openDialog('reportDialog', order));
         } else if (role === 'Пользователь') {
-            return getUserTabsConfig(currentTaskInfos, openOrderDetailsDialog);
+            return getUserTabsConfig(currentTaskInfos,
+                (order) => openDialog('orderDetails', order));
         } else if (role === 'Администратор') {
-            return getAdminTabsConfig(currentTaskInfos, openOrderDetailsDialog, openAssignExecutorsDialog);
+            return getAdminTabsConfig(currentTaskInfos, (order) => openDialog('orderDetails', order),
+                (order) => openDialog('assignExecutors', order));
         }
     }, [role, currentTaskInfos]);
 
 
     console.log('wtf', currentTaskInfos);
     console.log('wtf2', tabsConfig);
+
     return (
         <Box sx={{height: '100%', width: '100%'}}>
-            <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
+            <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                 <Tabs
                     TabIndicatorProps={{style: {display: 'none'}}}
                     value={tabNum}
@@ -232,7 +247,17 @@ export default function OrdersComponent({role}) {
                         <Tab key={index} label={label} {...a11yProps(index)} />
                     ))}
                 </Tabs>
-
+                {role === 'Пользователь' && (
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            openDialog('createTask')
+                        }}
+                        sx={{whiteSpace: 'nowrap', ml: 2}}
+                    >
+                        Создать заказ
+                    </Button>
+                )}
             </Box>
             {tabsConfig.map(({
                                  index,
@@ -240,7 +265,9 @@ export default function OrdersComponent({role}) {
                                  onReject,
                                  onMoreInfo,
                                  onSetPrice,
+                                 onPay,
                                  onAssignEmployee,
+                                 onReportCompletion,
                                  onViewReport,
                                  taskInfos
                              }) => (
@@ -252,28 +279,40 @@ export default function OrdersComponent({role}) {
                         onReject={onReject}
                         onMoreInfo={onMoreInfo}
                         onSetPrice={onSetPrice}
+                        onPay={onPay}
                         onAssignEmployee={onAssignEmployee}
+                        onReportCompletion={onReportCompletion}
                         onViewReport={onViewReport}
                     />
                 </CustomTabPanel>
             ))}
-            <AssignEmployeesDialog open={assignExecutorsDialogState}
+            <AssignEmployeesDialog open={dialogsState['assignExecutors']}
                                    onSave={() => {
                                        console.log('Нажата кнопка assign executors');
                                    }}
-                                   onClose={() => {
-                                       setAssignExecutorsDialogState(false);
-                                       setSelectedOrder(null);
-                                   }}
+                                   onClose={() => closeDialog('assignExecutors')}
                                    taskInfo={selectedOrder}
-            ></AssignEmployeesDialog>
+            >
+            </AssignEmployeesDialog>
             <OrderDetailsDialog
-                open={orderDetailsDialogState}
-                onClose={() => {
-                    setOrderDetailsDialogState(false);
-                    setSelectedOrder(null);
-                }}
+                open={dialogsState['orderDetails']}
+                onClose={() => closeDialog('orderDetails')}
                 taskInfo={selectedOrder}/>
+            <ReportDialog
+                open={dialogsState['report']}
+                onClose={() => closeDialog('report')}
+                onSubmit={() => {
+                    console.log('form submitted')
+                    dialogsState['report'] = false;
+                }}
+                taskInfo={selectedOrder}
+            />
+            {role === 'Пользователь' &&
+                <CreateTaskDialog
+                    open={dialogsState['createTask']}
+                    onSubmit={()=>{console.log('task created!')}}
+                    onClose={() => closeDialog('createTask')}
+                ></CreateTaskDialog>}
         </Box>
     );
 }

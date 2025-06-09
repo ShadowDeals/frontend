@@ -85,7 +85,6 @@ export default function HomeComponent() {
 
     const theme = useTheme();
     const [open, setOpen] = useState(false);
-    const [activePage, setActivePage] = useState('Сведения о банде');
 
     const toggleDrawer = (state) => () => setOpen(state);
 
@@ -93,6 +92,7 @@ export default function HomeComponent() {
     const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
     const currentRole = roles[0] || '';
+    const [activePage, setActivePage] = useState(currentRole !== 'Пользователь' ? 'Сведения о банде' : 'Заказы');
     console.log('Роль текущая: ', currentRole);
     useEffect(() => {
         if (!currentRole) {

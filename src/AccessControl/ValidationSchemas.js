@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import {taskTypeLabels} from "../Common/Cards.jsx";
 
 const commonFields = {
     email: Yup.string()
@@ -25,7 +26,7 @@ const requiredRegionField = {
     region: Yup.string().required('Выберите регион'),
 };
 
-export const formConfigs = {
+export const registerFormConfigs = {
     user: {
         initialValues: {
             username: '',
@@ -41,7 +42,6 @@ export const formConfigs = {
             ...optionalRegionField,
         }),
     },
-
     admin: {
         initialValues: {
             surname: '',
@@ -76,7 +76,6 @@ export const formConfigs = {
             ...optionalRegionField,
         }),
     },
-
     don: {
         initialValues: {
             surname: '',
@@ -96,4 +95,32 @@ export const formConfigs = {
             ...requiredRegionField,
         }),
     },
+};
+export const reportFormConfig = {
+    initialValues: {
+        status: 'success',
+        description: '',
+    },
+    validationSchema: Yup.object({
+        status: Yup.string().oneOf(['success', 'failed']).required('Выберите статус'),
+        description: Yup.string().trim().required('Заполните это поле'),
+    }),
+};
+
+
+export const createTaskFormConfig = {
+    initialValues: {
+        address: '',
+        description: '',
+        taskType: '',
+        region: '',
+    },
+    validationSchema: Yup.object({
+        address: Yup.string().trim().required('Введите адрес'),
+        description: Yup.string().trim().required('Введите описание'),
+        taskType: Yup.string()
+            .oneOf(Object.values(taskTypeLabels), 'Недопустимый тип задания')
+            .required('Выберите тип задания'),
+        region: Yup.string().trim().optional(),
+    }),
 };

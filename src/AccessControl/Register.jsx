@@ -9,8 +9,6 @@ import {
     Typography,
     Checkbox,
     FormControlLabel,
-    Alert,
-    Snackbar,
     TextField,
     Button, MenuItem, FormHelperText
 } from "@mui/material";
@@ -18,7 +16,7 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from 'formik';
-import { formConfigs } from "./ValidationSchemas.jsx";
+import { registerFormConfigs } from "./ValidationSchemas.js";
 import { v4 as uuidv4 } from 'uuid';
 import useRegions from "./useRegions.js";
 import ErrorSnackbar from "../Common/ErrorSnackbar.jsx";
@@ -87,9 +85,9 @@ const getRoleLabel = (role) => {
 const onRoleChange = (role, setSelectedRole, setFormConfig) => {
     console.log('onRoleChange', role);
     setSelectedRole(role);
-    if (role && formConfigs[role]) {
-        console.log('выбрана схема: ', formConfigs[role]);
-        setFormConfig(formConfigs[role]);
+    if (role && registerFormConfigs[role]) {
+        console.log('выбрана схема: ', registerFormConfigs[role]);
+        setFormConfig(registerFormConfigs[role]);
     } else {
         setFormConfig(null);
     }

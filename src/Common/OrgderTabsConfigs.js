@@ -13,6 +13,7 @@ export function getAdminTabsConfig(currentTaskInfos, openOrderDetailsDialog, ope
             CardComponent: PendingApplyOrderCard,
             onReject: (id) => console.log('Reject order', id),
             onMoreInfo: openOrderDetailsDialog,
+            onSetPrice: (id) => console.log('Price Set', id),
             taskInfos: currentTaskInfos,
         },
         {
@@ -52,14 +53,14 @@ export function getAdminTabsConfig(currentTaskInfos, openOrderDetailsDialog, ope
     ];
 }
 
-export function getSoldierTabsConfig(currentTaskInfos, openOrderDetailsDialog) {
+export function getSoldierTabsConfig(currentTaskInfos, openOrderDetailsDialog, openReportDialog) {
     return [
         {
             index: 0,
             label: 'Назначенные мне',
             CardComponent: InProgressOrderCard,
             onMoreInfo: openOrderDetailsDialog,
-            onViewReport: (card) => console.log('View report', card),
+            onReportCompletion: openReportDialog,
             taskInfos: currentTaskInfos,
         },
         {
