@@ -1,8 +1,9 @@
-import { useAuthHeaders } from './tokenHooks.js';
+import {useAuthHeaders, useDecodedToken} from './tokenHooks.js';
+import axios from 'axios';
 
 export function useDialogSubmitConfig() {
     const authHeaders = useAuthHeaders();
-
+    const decodedToken = useDecodedToken();
     return {
         orderDetails: async (data) => {
             console.log('submit orderDetails', data);
@@ -18,28 +19,56 @@ export function useDialogSubmitConfig() {
         },
         createOrder: async (data) => {
             try {
-                const res = await fetch('http://localhost:8080/task', {
-                    method: 'POST',
+                const res = await axios.post('http://localhost:8080/task', data, {
                     headers: {
                         'Content-Type': 'application/json',
                         ...authHeaders,
                     },
-                    body: JSON.stringify(data),
                 });
-                if (!res.ok) {
-                    const errData = await res.json();
-                    console.error('Ошибка создания задания:', errData);
-                    return;
-                }
-                const result = await res.json();
-                console.log('Задание создано:', result);
+                console.log('Задание создано:', res.data);
             } catch (err) {
-                console.error('Ошибка сети:', err);
+                if (err.response) {
+                    console.error('Ошибка создания задания:', err.response.data);
+                } else {
+                    console.error('Ошибка сети:', err.message);
+                }
             }
         },
-        setPrice: async (data) => {
-            console.log('price is set', data);
-            // ...
+        setPrice: async (taskInfo, price) => {
+            try {
+                const bandId = decodedToken?.bandId || null;
+
+                const params = {
+                    taskId: taskInfo.taskId,
+                    bandId: bandId,
+                    taskStatus: 'WAITING_FOR_PAYMENT',
+                };
+
+                const url = 'http://localhost:8080/task';
+
+                console.log('bandId:', bandId);
+                console.log('taskId:', taskInfo.taskId);
+                console.log('URL запроса:', `${url}?${new URLSearchParams(params).toString()}`);
+
+                const res = await axios.put(url, null, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...authHeaders,
+                    },
+                    params,
+                });
+
+                console.log('Цена установлена:', res.data);
+
+            } catch (err) {
+                if (err.response) {
+                    // Сервер вернул ошибку
+                    console.error('Ошибка установки цены:', err.response.data);
+                } else {
+                    // Ошибка сети или что-то другое
+                    console.error('Ошибка сети при установке цены:', err.message);
+                }
+            }
         },
     };
 }

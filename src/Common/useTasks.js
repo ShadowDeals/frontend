@@ -11,14 +11,12 @@ const mockedTasks = [{
 }]
 
 export function useTaskByStatus(taskStatus) {
-    console.log('useTasks by status call');
     const [tasks, setTasks] = useState(mockedTasks);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const decodedToken = useDecodedToken();
-    const bandId = decodedToken?.bandId;
+    const bandId = decodedToken?.bandId || null;
 
-    console.log('bandId', bandId);
     const authHeaders = useAuthHeaders();
     useEffect(() => {
         if (!bandId) {
@@ -71,7 +69,6 @@ export const TASK_STATUS_LABELS = {
 };
 
 export function useTasks() {
-    console.log('useTasks call');
     const waitingForAccept = useTaskByStatus(TASK_STATUS_LABELS.WAITING_FOR_ACCEPT) || mockedTasks;
     const waitingForPayment = useTaskByStatus(TASK_STATUS_LABELS.WAITING_FOR_PAYMENT) || mockedTasks;
     const waitingForEmployee = useTaskByStatus(TASK_STATUS_LABELS.WAITING_FOR_ASSIGNMENT) || mockedTasks;

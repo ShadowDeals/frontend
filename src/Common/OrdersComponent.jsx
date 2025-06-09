@@ -218,10 +218,10 @@ export default function OrdersComponent({role}) {
     };
 
     const dialogSubmitConfig = useDialogSubmitConfig();
-    const submitDialog = (dialogName, data) => {
+    const submitDialog = (dialogName, ...args) => {
         const onSubmit = dialogSubmitConfig[dialogName];
         if (typeof onSubmit === 'function') {
-            onSubmit(data);
+            onSubmit(...args);
         } else {
             console.warn(`onSubmit для диалога ${dialogName} не определён`);
         }
@@ -330,8 +330,9 @@ export default function OrdersComponent({role}) {
             {role === 'Администратор' &&
             <PriceSetDialog
                 open={dialogsState['setPrice']}
-                onSubmit={(formData) => submitDialog('setPrice', formData)}
+                onSubmit={(formData) => submitDialog('setPrice', selectedOrder, formData)}
                 onClose={() => closeDialog('setPrice')}
+                taskInfo={selectedOrder}
             />
             }
         </Box>
