@@ -17,13 +17,13 @@ import {
 
 import { reportFormConfig } from '../AccessControl/ValidationSchemas.js';
 
-function ReportDialog({ open, onClose, onSubmit }) {
+function ReportDialog({ open, onClose, onSubmit, taskInfo }) {
     const formik = useFormik({
         initialValues: reportFormConfig.initialValues,
         validationSchema: reportFormConfig.validationSchema,
-        onSubmit: (values, { resetForm }) => {
-            onSubmit(values);
-            resetForm(); // опционально: сброс после отправки
+        onSubmit: (reportInfo) => {
+            onSubmit({ reportInfo });
+            onClose();
         },
     });
 
@@ -58,7 +58,21 @@ function ReportDialog({ open, onClose, onSubmit }) {
                             {formik.touched.status && formik.errors.status ? formik.errors.status : ' '}
                         </FormHelperText>
                     </FormControl>
-
+                    <TextField
+                        label="Затраченное время (часы)"
+                        name="timeSpent"
+                        value={formik.values.timeSpent}
+                        onBlur={formik.handleBlur}
+                        onChange={(e) => formik.handleChange(e)}
+                        onFocus={() => {
+                            if (formik.errors.timeSpent) {
+                                formik.setFieldError('timeSpent', '');
+                            }
+                        }}
+                        fullWidth
+                        error={formik.touched.timeSpent && Boolean(formik.errors.timeSpent)}
+                        helperText={formik.touched.timeSpent && formik.errors.timeSpent ? formik.errors.timeSpent : ' '}
+                    />
                     <TextField
                         label="Краткое описание"
                         multiline

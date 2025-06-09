@@ -167,16 +167,33 @@ export default function OrdersComponent({role}) {
         waitingForEmployee,
         inProgress,
         finished,
+        cancelledByAdmin,
+        cancelledByUser,
         refetch
     } = useTasks(role);
 
     const roleTabsMap = React.useMemo(() => {
+        const finishedCombined = [
+            ...(finished?.tasks || []),
+            ...(cancelledByAdmin?.tasks || []),
+            ...(cancelledByUser?.tasks || []),
+        ];
+        console.log('finished: ', finished);
+        console.log('cancelledByAdmin: ', cancelledByAdmin);
+        console.log('cancelledByUser: ', cancelledByUser);
+
+        // const finishedUnique = Array.from(
+        //     new Map(finishedCombined.map(task => [task.id, task])).values()
+        // );
+
+        console.log('finishedCombined: ', finishedCombined);
+
         const commonTabs = [
             waitingForAccept?.tasks || [],
             waitingForPayment?.tasks || [],
             waitingForEmployee?.tasks || [],
             inProgress?.tasks || [],
-            finished?.tasks || []
+            finishedCombined
         ];
 
         return {
@@ -184,7 +201,7 @@ export default function OrdersComponent({role}) {
             'Администратор': commonTabs,
             'Солдат': [
                 inProgress?.tasks || [],
-                finished?.tasks || []
+                finishedCombined
             ]
         };
     }, [
@@ -192,7 +209,9 @@ export default function OrdersComponent({role}) {
         waitingForPayment?.tasks,
         waitingForEmployee?.tasks,
         inProgress?.tasks,
-        finished?.tasks
+        finished?.tasks,
+        cancelledByAdmin?.tasks,
+        cancelledByUser?.tasks,
     ]);
 
     const [tabNum, setTabNum] = React.useState(0);
@@ -257,7 +276,7 @@ export default function OrdersComponent({role}) {
         if (role === 'Солдат') {
             return getSoldierTabsConfig(currentTaskInfos,
                 (order) => openDialog('orderDetails', order),
-                (order) => openDialog('reportDialog', order),
+                (order) => openDialog('report', order),
                 (order) => openDialog('reject', order));
         } else if (role === 'Пользователь') {
             return getUserTabsConfig(currentTaskInfos,
@@ -333,9 +352,13 @@ export default function OrdersComponent({role}) {
                 </CustomTabPanel>
             ))}
             <AssignEmployeesDialog open={dialogsState['assignExecutors']}
-                                   onSave={() => {
-                                       console.log('Нажата кнопка assign executors');
-                                   }}
+                                   onSubmit={
+                                       ({selectedExecutorIds, mainExecutorId}) => submitDialog('assignExecutors',
+                                           {
+                                               selectedOrder,
+                                               selectedExecutorIds, mainExecutorId
+                                           })
+                                   }
                                    onClose={() => closeDialog('assignExecutors')}
                                    taskInfo={selectedOrder}
             >
@@ -347,10 +370,7 @@ export default function OrdersComponent({role}) {
             <ReportDialog
                 open={dialogsState['report']}
                 onClose={() => closeDialog('report')}
-                onSubmit={() => {
-                    console.log('form submitted')
-                    dialogsState['report'] = false;
-                }}
+                onSubmit={({ reportInfo }) => submitDialog('report', {selectedOrder, reportInfo})}
                 taskInfo={selectedOrder}
             />
             {role === 'Пользователь' &&
@@ -362,7 +382,7 @@ export default function OrdersComponent({role}) {
             {role === 'Администратор' &&
                 <PriceSetDialog
                     open={dialogsState['setPrice']}
-                    onSubmit={(price) => submitDialog('setPrice', { selectedOrder, price })}
+                    onSubmit={(price) => submitDialog('setPrice', {selectedOrder, price})}
                     onClose={() => closeDialog('setPrice')}
                     taskInfo={selectedOrder}
                 />
@@ -370,7 +390,7 @@ export default function OrdersComponent({role}) {
             {role === 'Пользователь' &&
                 <PaymentDialog
                     open={dialogsState['payment']}
-                    onSubmit={async () => await submitDialog('payment', { selectedOrder})}
+                    onSubmit={async () => await submitDialog('payment', {selectedOrder})}
                     onClose={() => closeDialog('payment')}
                     taskInfo={selectedOrder}
                 />}

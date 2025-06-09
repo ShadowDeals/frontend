@@ -5,20 +5,102 @@ export function useDialogSubmitConfig() {
     const authHeaders = useAuthHeaders();
     const decodedToken = useDecodedToken();
     return {
-        orderDetails: async (data) => {
-            console.log('submit orderDetails', data);
-            // ...
+        assignExecutors: async ({
+                                    selectedOrder,
+                                    selectedExecutorIds,
+                                    mainExecutorId
+                                }) => {
+            console.log(
+                'submit assignExecutors:',
+                'selectedOrder', selectedOrder,
+                'selectedExecutorIds', selectedExecutorIds,
+                'mainExecutorId', mainExecutorId
+            );
+
+            try {
+                const taskId = selectedOrder?.taskId;
+                const officerId = mainExecutorId;
+
+                if (!taskId || !officerId || !Array.isArray(selectedExecutorIds) || selectedExecutorIds.length === 0) {
+                    console.error('Недостаточно данных для назначения исполнителей');
+                    return {
+                        success: false,
+                        message: 'Не удалось назначить исполнителей: проверьте taskId, officerId и список исполнителей',
+                    };
+                }
+
+                const url = 'http://localhost:8080/task/executors';
+                const params = { taskId, officerId };
+
+                const res = await axios.post(url, selectedExecutorIds, {
+                    params,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...authHeaders,
+                    },
+                });
+
+                console.log('Исполнители назначены:', res.data);
+
+                return {
+                    success: true,
+                    message: 'Исполнители успешно назначены',
+                };
+            } catch (err) {
+                console.error('Ошибка при назначении исполнителей:', err?.response?.data || err.message);
+                return {
+                    success: false,
+                    message: 'при назначении исполнителей',
+                };
+            }
         },
-        assignExecutors: async (data) => {
-            console.log('submit assignExecutors', data);
-            // ...
-        },
-        report: async (data) => {
-            console.log('submit report', data);
-            // ...
+
+        report: async ({ reportInfo, selectedOrder }) => {
+            console.log('submit reportInfo', reportInfo, selectedOrder);
+
+            try {
+                const taskId = selectedOrder?.taskId;
+                if (!taskId) {
+                    console.error('Нет taskId для отчёта');
+                    return {
+                        success: false,
+                        message: 'ID задания отсутствует',
+                    };
+                }
+
+                const url = `http://localhost:8080/task/report`;
+                const params = { taskId };
+
+                const body = {
+                    // status: reportInfo.status,
+                    description: reportInfo.description,
+                    timeSpent: reportInfo.timeSpent,
+                };
+
+                const res = await axios.post(url, body, {
+                    params,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...authHeaders,
+                    },
+                });
+
+                console.log('Отчёт успешно отправлен:', res.data);
+
+                return {
+                    success: true,
+                    message: 'Отчёт успешно отправлен',
+                };
+            } catch (err) {
+                console.error('Ошибка при отправке отчёта:', err?.response?.data || err.message);
+                return {
+                    success: false,
+                    message: 'при отправке отчёта',
+                };
+            }
         },
         createOrder: async ({newTask}) => {
-            console.log('createOrder: ', );
+            console.log('createOrder: ', newTask);
             try {
                 const res = await axios.post('http://localhost:8080/task', newTask, {
                     headers: {
@@ -39,7 +121,7 @@ export function useDialogSubmitConfig() {
                 }
                 return {
                     success: false,
-                    message: 'Ошибка создания задания',
+                    message: 'создания задания',
                 };
             }
         },
@@ -77,7 +159,7 @@ export function useDialogSubmitConfig() {
                 console.error('Ошибка установки цены:', err?.response?.data || err.message);
                 return {
                     success: false,
-                    message: 'Ошибка при установке цены',
+                    message: 'при установке цены',
                 };
             }
         },
@@ -85,23 +167,20 @@ export function useDialogSubmitConfig() {
             console.log('payment destr: ', selectedOrder);
             try {
                 const taskId = selectedOrder?.taskId;
-                const bandId = decodedToken?.bandId;
 
-                if (!taskId || !bandId) {
-                    console.error('Отсутствуют необходимые параметры: taskId или bandId');
+                if (!taskId) {
+                    console.error('Отсутствуют необходимые параметры: taskId');
                     return {
                         success: false,
-                        message: 'Не удалось выполнить оплату: отсутствует taskId или bandId',
+                        message: 'Не удалось выполнить оплату: отсутствует taskId',
                     };
                 }
 
                 const params = {
                     taskId,
-                    bandId,
-                    taskStatus: 'WAITING_FOR_ASSIGNMENT',
                 };
 
-                const url = 'http://localhost:8080/task';
+                const url = 'http://localhost:8080/task/payment';
 
                 const res = await axios.put(url, null, {
                     params,
@@ -121,7 +200,7 @@ export function useDialogSubmitConfig() {
                 console.error('Ошибка при оплате задания:', err?.response?.data || err.message);
                 return {
                     success: false,
-                    message: 'Ошибка при оплате задания',
+                    message: 'при оплате задания',
                 };
             }
         },
@@ -158,7 +237,7 @@ export function useDialogSubmitConfig() {
                 console.error('Ошибка отмены задания:', err?.response?.data || err.message);
                 return {
                     success: false,
-                    message: 'Ошибка при отмене задания',
+                    message: 'при отмене задания',
                 };
             }
         },

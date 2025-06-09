@@ -6,7 +6,7 @@ import {
 import {useEffect, useState} from "react";
 import { useFreeExecutors } from "../Common/useFreeExecutors.js";
 
-export default function AssignEmployeesDialog({ open, onClose, onSave }) {
+export default function AssignEmployeesDialog({ open, onClose, onSubmit, taskInfo }) {
     const MAX_SELECTION = 5;
 
     const [selectedExecutorIds, setSelectedExecutorIds] = useState([]);
@@ -136,7 +136,8 @@ export default function AssignEmployeesDialog({ open, onClose, onSave }) {
                 </Button>
                 <Button
                     onClick={() => {
-                        onSave(selectedExecutorIds, mainExecutorId);
+                        console.log('selectedExecutorIds, mainExecutorId ---> ', selectedExecutorIds, mainExecutorId);
+                        onSubmit({ selectedExecutorIds, mainExecutorId });
                         onClose();
                     }}
                     disabled={selectedExecutorIds.length === 0 || !mainExecutorId}

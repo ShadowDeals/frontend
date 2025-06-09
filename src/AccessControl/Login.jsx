@@ -54,6 +54,7 @@ function LoginComponent() {
                     });
                 } else {
                     showSnackbar({
+                        type: 'error',
                         errcode: 'NETWORK',
                         text: error.message || 'Ошибка сети',
                     });

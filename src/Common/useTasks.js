@@ -21,8 +21,8 @@ export function useTaskByStatus(taskStatus) {
     const authHeaders = useAuthHeaders();
 
     const fetchData = useCallback(async () => {
-        if (!bandId || !authHeaders.Authorization) {
-            setError('bandId или authHeaders отсутствует');
+        if (!authHeaders.Authorization) {
+            setError('authHeaders отсутствует');
             return;
         }
 
@@ -61,6 +61,9 @@ export const TASK_STATUS_LABELS = {
     WAITING_FOR_ACCEPT: "WAITING_FOR_ACCEPT",
     WAITING_FOR_PAYMENT: "WAITING_FOR_PAYMENT",
     WAITING_FOR_ASSIGNMENT: "WAITING_FOR_ASSIGNMENT",
+    CANCELED_BY_ADMIN: "CANCELED_BY_ADMIN",
+    CANCELED_BY_USER: "CANCELED_BY_USER",
+
 };
 
 
@@ -70,6 +73,8 @@ export function useTasks() {
     const waitingForEmployee = useTaskByStatus(TASK_STATUS_LABELS.WAITING_FOR_ASSIGNMENT);
     const inProgress = useTaskByStatus(TASK_STATUS_LABELS.IN_WORK);
     const finished = useTaskByStatus(TASK_STATUS_LABELS.FINISHED);
+    const cancelledByAdmin = useTaskByStatus(TASK_STATUS_LABELS.CANCELED_BY_ADMIN);
+    const cancelledByUser = useTaskByStatus(TASK_STATUS_LABELS.CANCELED_BY_USER);
 
     const refetchAll = () => {
         console.log('Вызвался refetch ВСЕХ заданий!');
@@ -78,6 +83,8 @@ export function useTasks() {
         waitingForEmployee.refetch();
         inProgress.refetch();
         finished.refetch();
+        cancelledByAdmin.refetch();
+        cancelledByUser.refetch();
     };
 
     return {
@@ -85,7 +92,9 @@ export function useTasks() {
         waitingForPayment,
         waitingForEmployee,
         inProgress,
-        finished,
+        finished: finished,
+        cancelledByAdmin: cancelledByAdmin,
+        cancelledByUser: cancelledByUser,
         refetch: refetchAll
     };
 }

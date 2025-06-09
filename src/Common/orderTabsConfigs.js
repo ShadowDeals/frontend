@@ -8,7 +8,8 @@ import {
 export function getAdminTabsConfig(currentTaskInfos,
                                    openOrderDetailsDialog,
                                    openAssignExecutorsDialog,
-                                   openSetPriceDialog, openRejectDialog) {
+                                   openSetPriceDialog,
+                                   openRejectDialog) {
     return [
         {
             index: 0,
@@ -23,9 +24,8 @@ export function getAdminTabsConfig(currentTaskInfos,
             index: 1,
             label: 'Ожидающие оплаты',
             CardComponent: PendingPaymentOrderCard,
-            onReject: (id) => console.log('Cancel deal', id),
+            onReject: openRejectDialog,
             onMoreInfo: openOrderDetailsDialog,
-            onSetPrice: (card) => console.log('Set price', card),
             taskInfos: currentTaskInfos,
         },
         {
@@ -41,8 +41,6 @@ export function getAdminTabsConfig(currentTaskInfos,
             label: 'В работе',
             CardComponent: InProgressOrderCard,
             onMoreInfo: openOrderDetailsDialog,
-            onAssignEmployee: () => {
-            },
             taskInfos: currentTaskInfos,
         },
         {

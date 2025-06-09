@@ -100,11 +100,16 @@ export const registerFormConfigs = {
 export const reportFormConfig = {
     initialValues: {
         status: 'success',
+        timeSpent: 0,
         description: '',
     },
     validationSchema: Yup.object({
         status: Yup.string().oneOf(['success', 'failed']).required('Выберите статус'),
         description: Yup.string().trim().required('Заполните это поле'),
+        timeSpent: Yup.number()
+            .typeError('Введите число')
+            .required('Укажите количество часов')
+            .min(0, 'Часы не могут быть отрицательными'),
     }),
 };
 
