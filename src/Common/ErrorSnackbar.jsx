@@ -2,7 +2,9 @@ import React from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
-export default function ErrorSnackbar({ open, onClose, error }) {
+export default function StatusSnackbar({ open, onClose, snackbar }) {
+    const { type = 'info', errcode, text } = snackbar || {};
+
     return (
         <Snackbar
             open={open}
@@ -18,10 +20,11 @@ export default function ErrorSnackbar({ open, onClose, error }) {
                     if (reason === 'clickaway') return;
                     onClose();
                 }}
-                severity="error"
+                severity={type}
                 sx={{ width: '100%' }}
             >
-                Ошибка {error?.errcode}: {error?.text}
+                {type === 'error' && `Ошибка ${errcode ? errcode + ': ' : ''}`}
+                {text}
             </Alert>
         </Snackbar>
     );

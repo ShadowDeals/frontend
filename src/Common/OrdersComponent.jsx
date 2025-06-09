@@ -236,37 +236,21 @@ export default function OrdersComponent({role}) {
                 (order) => openDialog('reportDialog', order));
         } else if (role === 'Пользователь') {
             return getUserTabsConfig(currentTaskInfos,
-                (order) => {
-                    console.log('[Пользователь], currentTaskInfos: ', currentTaskInfos);
-                    console.log('[Пользователь] Открытие деталей. order =', order, typeof order);
-                    openDialog('orderDetails', order);
-                },
-                (order) => {
-                    console.log('[Пользователь], currentTaskInfos: ', currentTaskInfos);
-                    console.log('[Пользователь] Открытие оплаты. order =', order, typeof order);
-                    openDialog('payment', order);
-                });
+                (order) =>
+                    openDialog('orderDetails', order),
+                (order) => openDialog('payment', order));
         } else if (role === 'Администратор') {
             return getAdminTabsConfig(currentTaskInfos,
-                (order) => {
-                    console.log('[Админ] Детали заказа:', order, typeof order);
-                    openDialog('orderDetails', order, typeof order);
-                },
-                (order) => {
-                    console.log('[Админ] Назначение исполнителей:', order, typeof order);
-                    openDialog('assignExecutors', order, typeof order);
-                },
-                (order) => {
-                    console.log('[Админ] Установка цены:', order, typeof order);
-                    openDialog('setPrice', order, typeof order);
-                });
+                (order) => openDialog('orderDetails', order),
+                (order) => openDialog('assignExecutors', order),
+                (order) => openDialog('setPrice', order));
         }
     }, [role, currentTaskInfos]);
 
 
     // console.log('wtf', currentTaskInfos);
     // console.log('wtf2', tabsConfig);
-    console.log('selected order в orderComponent: ', selectedOrder);
+    // console.log('selected order в orderComponent: ', selectedOrder);
     return (
         <Box sx={{height: '100%', width: '100%'}}>
             <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -359,8 +343,8 @@ export default function OrdersComponent({role}) {
             {role === 'Пользователь' &&
                 <PaymentDialog
                     open={dialogsState['payment']}
-                    // onSubmit={(formData) => submitDialog('payment', selectedOrder, formData)}
-                    // onClose={() => closeDialog('payment')}
+                    onSubmit={(formData) => submitDialog('payment', selectedOrder, formData)}
+                    onClose={() => closeDialog('payment')}
                     taskInfo={selectedOrder}
                 />}
         </Box>

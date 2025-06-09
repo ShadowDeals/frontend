@@ -20,7 +20,7 @@ import { registerFormConfigs } from "./ValidationSchemas.js";
 import { v4 as uuidv4 } from 'uuid';
 import useRegions from "./useRegions.js";
 import ErrorSnackbar from "../Common/ErrorSnackbar.jsx";
-import {useErrorSnackbar} from "../Common/useErrorSnackbar.js";
+import {useSnackbar} from "../Common/useSnackbar.js";
 
 
 
@@ -96,7 +96,7 @@ const onRoleChange = (role, setSelectedRole, setFormConfig) => {
 function RegisterComponent() {
     const navigate = useNavigate();
     const [selectedRole, setSelectedRole] = useState('');
-    const { open, error, showError, hideError } = useErrorSnackbar();
+    const { open, error, showError, hideError } = useSnackbar();
 
     const [formConfig, setFormConfig] = useState(null);
     const { regionsBandExist, regionsBandNotExist } = useRegions();

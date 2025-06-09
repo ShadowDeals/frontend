@@ -11,9 +11,10 @@ import Cookies from 'js-cookie';
 import {Formik, useFormik} from 'formik';
 import * as Yup from 'yup';
 import axios from "axios";
-import {useErrorSnackbar} from "../Common/useErrorSnackbar.js";
+import {useSnackbar} from "../Common/useSnackbar.js";
 import ErrorSnackbar from "../Common/ErrorSnackbar.jsx";
 import React from "react";
+import StatusSnackbar from "../Common/ErrorSnackbar.jsx";
 
 const validationSchema = Yup.object({
     email: Yup.string().email('Неверный формат email').required('Введите почту'),
@@ -47,9 +48,10 @@ function LoginComponent() {
                 navigate("/home");
             } catch (error) {
                 if (error.response) {
-                    showError({
-                        errcode: error.response.status,
+                    showSnackbar({
+                        type: 'error',
                         text: error.response.data?.message || 'Ошибка логина',
+                        errcode: error.response.status,
                     });
                 } else {
                     showError({
@@ -64,7 +66,12 @@ function LoginComponent() {
     });
 
 
-    const { open, error, showError, hideError } = useErrorSnackbar();
+    const {
+        open,
+        snackbar,
+        showSnackbar,
+        hideSnackbar,
+    } = useSnackbar();
 
     return(
         <Box
@@ -147,11 +154,11 @@ function LoginComponent() {
                     </form>
                 </Stack>
             </Paper>
-            <ErrorSnackbar
+            <StatusSnackbar
                 open={open}
-                error={error}
-                onClose={hideError}
-            ></ErrorSnackbar>
+                snackbar={snackbar}
+                onClose={hideSnackbar}
+            ></StatusSnackbar>
         </Box>
     );
 }
