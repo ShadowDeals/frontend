@@ -62,10 +62,8 @@ export function useDialogSubmitConfig() {
 
             } catch (err) {
                 if (err.response) {
-                    // Сервер вернул ошибку
                     console.error('Ошибка установки цены:', err.response.data);
                 } else {
-                    // Ошибка сети или что-то другое
                     console.error('Ошибка сети при установке цены:', err.message);
                 }
             }
@@ -75,7 +73,7 @@ export function useDialogSubmitConfig() {
 
             return {
                 success: true,
-                result: 'snackbar payment message!',
+                message: 'snackbar payment message!',
             };
         },
     };

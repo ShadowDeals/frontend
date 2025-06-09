@@ -166,6 +166,7 @@ export default function OrdersComponent({role}) {
         waitingForEmployee,
         inProgress,
         finished,
+        refetch
     } = useTasks(role);
 
     const roleTabsMap = React.useMemo(() => {
@@ -225,28 +226,20 @@ export default function OrdersComponent({role}) {
 
     const submitDialog = async (dialogName, ...args) => {
         const onSubmit = dialogSubmitConfig[dialogName];
-        if (typeof onSubmit === 'function') {
-            try {
-                const result = await onSubmit(...args);
-                return { success: true, result };
-            } catch (err) {
-                return {
-                    success: false,
-                    error: {
-                        type: 'error',
-                        text: err?.message || 'Неизвестная ошибка',
-                        errcode: err?.response?.status,
-                    },
-                };
-            }
+        if (typeof onSubmit !== 'function') {
+            showSnackbar({ type: 'error', text: `onSubmit для диалога ${dialogName} не определён` });
+            return;
+        }
+
+        const result = await onSubmit(...args);
+
+        if (result.success) {
+            showSnackbar({ type: 'success', text: result.message });
+            refetch();
+            closeDialog(dialogName);
         } else {
-            return {
-                success: false,
-                error: {
-                    type: 'warning',
-                    text: `onSubmit для диалога ${dialogName} не определён`,
-                },
-            };
+            showSnackbar({ type: 'error', text: result.message });
+            refetch();
         }
     };
 
@@ -287,6 +280,7 @@ export default function OrdersComponent({role}) {
                     value={tabNum}
                     onChange={(event, newValue) => {
                         setTabNum(newValue);
+                            refetch();
                     }}
                     aria-label="tabs by role"
                 >
@@ -371,20 +365,7 @@ export default function OrdersComponent({role}) {
             {role === 'Пользователь' &&
                 <PaymentDialog
                     open={dialogsState['payment']}
-                    onSubmit={async (formData) => {
-                        const result = await submitDialog('payment', selectedOrder, formData);
-
-                        if (result?.success) {
-                            showSnackbar({ type: 'success', text: 'Оплата прошла успешно' });
-                        } else {
-                            showSnackbar(result?.error ?? {
-                                type: 'error',
-                                text: 'Произошла неизвестная ошибка при оплате',
-                            });
-                        }
-
-                        closeDialog('payment');
-                    }}
+                    onSubmit={async (formData) =>  await submitDialog('payment', selectedOrder, formData)}
                     onClose={() => closeDialog('payment')}
                     taskInfo={selectedOrder}
                 />}
