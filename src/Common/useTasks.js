@@ -12,7 +12,7 @@ const mockedTasks = [{
 }];
 
 export function useTaskByStatus(taskStatus) {
-    const [tasks, setTasks] = useState(mockedTasks);
+    const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -33,7 +33,8 @@ export function useTaskByStatus(taskStatus) {
                 params: { bandId, taskStatus },
             });
 
-            setTasks(data.length === 0 ? mockedTasks : data);
+            setTasks(data.length === 0 ? [] : data);
+            // setTasks(data.length === 0 ? mockedTasks : data);
         } catch (err) {
             console.log('useTaskByStatusError:', err);
             setError(err);
@@ -63,26 +64,49 @@ export const TASK_STATUS_LABELS = {
     WAITING_FOR_ASSIGNMENT: "WAITING_FOR_ASSIGNMENT",
     CANCELED_BY_ADMIN: "CANCELED_BY_ADMIN",
     CANCELED_BY_USER: "CANCELED_BY_USER",
+    FAILED: "FAILED"
 
 };
 
+function useTaskByStatusWithRole(status, role) {
+    const cancelledStatuses = [
+        TASK_STATUS_LABELS.CANCELED_BY_ADMIN,
+        TASK_STATUS_LABELS.CANCELED_BY_USER,
+    ];
 
-export function useTasks() {
-    const waitingForAccept = useTaskByStatus(TASK_STATUS_LABELS.WAITING_FOR_ACCEPT);
-    const waitingForPayment = useTaskByStatus(TASK_STATUS_LABELS.WAITING_FOR_PAYMENT);
-    const waitingForEmployee = useTaskByStatus(TASK_STATUS_LABELS.WAITING_FOR_ASSIGNMENT);
-    const inProgress = useTaskByStatus(TASK_STATUS_LABELS.IN_WORK);
-    const finished = useTaskByStatus(TASK_STATUS_LABELS.FINISHED);
-    const cancelledByAdmin = useTaskByStatus(TASK_STATUS_LABELS.CANCELED_BY_ADMIN);
-    const cancelledByUser = useTaskByStatus(TASK_STATUS_LABELS.CANCELED_BY_USER);
+    const isCancelledStatus = cancelledStatuses.includes(status);
+    const isSoldier = role === 'Солдат';
+
+    const result = useTaskByStatus(status);
+
+    if (isCancelledStatus && isSoldier) {
+        return {
+            ...result,
+            tasks: [],
+            refetch: () => {},
+        };
+    }
+
+    return result;
+}
+
+export function useTasks({ role }) {
+    const waitingForAccept = useTaskByStatusWithRole(TASK_STATUS_LABELS.WAITING_FOR_ACCEPT, role);
+    const waitingForPayment = useTaskByStatusWithRole(TASK_STATUS_LABELS.WAITING_FOR_PAYMENT, role);
+    const waitingForEmployee = useTaskByStatusWithRole(TASK_STATUS_LABELS.WAITING_FOR_ASSIGNMENT, role);
+    const inProgress = useTaskByStatusWithRole(TASK_STATUS_LABELS.IN_WORK, role);
+    const finished = useTaskByStatusWithRole(TASK_STATUS_LABELS.FINISHED, role);
+    const failed = useTaskByStatusWithRole(TASK_STATUS_LABELS.FAILED, role);
+    const cancelledByAdmin = useTaskByStatusWithRole(TASK_STATUS_LABELS.CANCELED_BY_ADMIN, role);
+    const cancelledByUser = useTaskByStatusWithRole(TASK_STATUS_LABELS.CANCELED_BY_USER, role);
 
     const refetchAll = () => {
-        console.log('Вызвался refetch ВСЕХ заданий!');
         waitingForAccept.refetch();
         waitingForPayment.refetch();
         waitingForEmployee.refetch();
         inProgress.refetch();
         finished.refetch();
+        failed.refetch();
         cancelledByAdmin.refetch();
         cancelledByUser.refetch();
     };
@@ -92,14 +116,13 @@ export function useTasks() {
         waitingForPayment,
         waitingForEmployee,
         inProgress,
-        finished: finished,
-        cancelledByAdmin: cancelledByAdmin,
-        cancelledByUser: cancelledByUser,
-        refetch: refetchAll
+        finished,
+        failed,
+        cancelledByAdmin,
+        cancelledByUser,
+        refetch: refetchAll,
     };
 }
-
-
 // console.log('waitingForAccept:222', waitingForAccept?.tasks);
 // console.log('waitingForPayment:222', waitingForPayment?.tasks);
 // console.log('waitingForEmployee222:', waitingForEmployee?.tasks);

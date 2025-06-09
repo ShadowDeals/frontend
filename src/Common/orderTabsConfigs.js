@@ -9,7 +9,8 @@ export function getAdminTabsConfig(currentTaskInfos,
                                    openOrderDetailsDialog,
                                    openAssignExecutorsDialog,
                                    openSetPriceDialog,
-                                   openRejectDialog) {
+                                   openRejectDialog,
+                                   openReportViewDialog) {
     return [
         {
             index: 0,
@@ -48,13 +49,13 @@ export function getAdminTabsConfig(currentTaskInfos,
             label: 'Завершенные',
             CardComponent: DoneOrderCard,
             onMoreInfo: openOrderDetailsDialog,
-            onViewReport: (card) => console.log('View report', card),
+            onViewReport: openReportViewDialog,
             taskInfos: currentTaskInfos,
         },
     ];
 }
 
-export function getSoldierTabsConfig(currentTaskInfos, openOrderDetailsDialog, openReportDialog) {
+export function getSoldierTabsConfig(currentTaskInfos, openOrderDetailsDialog, openReportDialog, openReportViewDialog) {
     return [
         {
             index: 0,
@@ -69,20 +70,23 @@ export function getSoldierTabsConfig(currentTaskInfos, openOrderDetailsDialog, o
             label: 'Завершенные мной',
             CardComponent: DoneOrderCard,
             onMoreInfo: openOrderDetailsDialog,
-            onViewReport: (card) => console.log('View report', card),
+            onViewReport: openReportViewDialog,
             taskInfos: currentTaskInfos,
         },
     ];
 }
 
-export function getUserTabsConfig(currentTaskInfos, openOrderDetailsDialog, openPaymentDialog) {
-    console.log('tracing currTI', currentTaskInfos);
+export function getUserTabsConfig(currentTaskInfos,
+                                  openOrderDetailsDialog,
+                                  openPaymentDialog,
+                                  openRejectDialog,
+                                  openReportViewDialog) {
     return [
         {
             index: 0,
             label: 'Ожидающие подтверждения',
             CardComponent: PendingApplyOrderCard,
-            onReject: (id) => console.log('Reject order', id),
+            onReject: openRejectDialog,
             onMoreInfo: openOrderDetailsDialog,
             taskInfos: currentTaskInfos,
         },
@@ -90,7 +94,7 @@ export function getUserTabsConfig(currentTaskInfos, openOrderDetailsDialog, open
             index: 1,
             label: 'Ожидающие оплаты',
             CardComponent: PendingPaymentOrderCard,
-            onReject: (id) => console.log('Cancel deal', id),
+            onReject: openRejectDialog,
             onMoreInfo: openOrderDetailsDialog,
             onPay: openPaymentDialog,
             taskInfos: currentTaskInfos,
@@ -114,7 +118,7 @@ export function getUserTabsConfig(currentTaskInfos, openOrderDetailsDialog, open
             label: 'Завершенные',
             CardComponent: DoneOrderCard,
             onMoreInfo: openOrderDetailsDialog,
-            onViewReport: (card) => console.log('View report', card),
+            onViewReport: openReportViewDialog,
             taskInfos: currentTaskInfos,
         },
     ];

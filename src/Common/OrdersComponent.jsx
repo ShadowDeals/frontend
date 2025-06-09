@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import {getAdminTabsConfig, getSoldierTabsConfig, getUserTabsConfig} from './orderTabsConfigs.js';
 
-
 import {useMemo, useState} from "react";
 import OrderDetailsDialog from "./OrderDetailsDialog.jsx";
 import AssignEmployeesDialog from "../Admin/AssignEmployeesDialog.jsx"
@@ -23,6 +22,7 @@ import PaymentDialog from "../User/PaymentDialog.jsx";
 import {useSnackbar} from "./useSnackbar.js";
 import StatusSnackbar from "./StatusSnackbar.jsx";
 import RejectDialog from "./RejectDialog.jsx";
+import ReportViewDialog from "./ReportViewDialog.jsx";
 
 export function CustomTabPanel(props) {
     const {children, value, index, ...other} = props;
@@ -167,6 +167,7 @@ export default function OrdersComponent({role}) {
         waitingForEmployee,
         inProgress,
         finished,
+        failed,
         cancelledByAdmin,
         cancelledByUser,
         refetch
@@ -177,10 +178,13 @@ export default function OrdersComponent({role}) {
             ...(finished?.tasks || []),
             ...(cancelledByAdmin?.tasks || []),
             ...(cancelledByUser?.tasks || []),
+            ...(failed?.tasks || []),
         ];
+
         console.log('finished: ', finished);
         console.log('cancelledByAdmin: ', cancelledByAdmin);
         console.log('cancelledByUser: ', cancelledByUser);
+        console.log('failed: ', failed);
 
         // const finishedUnique = Array.from(
         //     new Map(finishedCombined.map(task => [task.id, task])).values()
@@ -205,13 +209,14 @@ export default function OrdersComponent({role}) {
             ]
         };
     }, [
-        waitingForAccept?.tasks,
-        waitingForPayment?.tasks,
-        waitingForEmployee?.tasks,
-        inProgress?.tasks,
-        finished?.tasks,
-        cancelledByAdmin?.tasks,
-        cancelledByUser?.tasks,
+        waitingForAccept,
+        waitingForPayment,
+        waitingForEmployee,
+        inProgress,
+        finished,
+        failed,
+        cancelledByAdmin,
+        cancelledByUser,
     ]);
 
     const [tabNum, setTabNum] = React.useState(0);
@@ -230,7 +235,7 @@ export default function OrdersComponent({role}) {
         setPrice: false,
         payment: false,
         reject: false,
-
+        reportView: false,
     });
 
     const openDialog = (dialogName, order) => {
@@ -277,25 +282,34 @@ export default function OrdersComponent({role}) {
             return getSoldierTabsConfig(currentTaskInfos,
                 (order) => openDialog('orderDetails', order),
                 (order) => openDialog('report', order),
-                (order) => openDialog('reject', order));
+                (order) => {
+                    console.log('Эта хрень вызвалась: ');
+                    openDialog('reportView', order)
+                });
         } else if (role === 'Пользователь') {
             return getUserTabsConfig(currentTaskInfos,
                 (order) =>
                     openDialog('orderDetails', order),
-                (order) => openDialog('payment', order),);
+                (order) => openDialog('payment', order),
+                (order) => openDialog('reject', order),
+                (order) => openDialog('reportView', order));
         } else if (role === 'Администратор') {
             return getAdminTabsConfig(currentTaskInfos,
                 (order) => openDialog('orderDetails', order),
                 (order) => openDialog('assignExecutors', order),
                 (order) => openDialog('setPrice', order),
-                (order) => openDialog('reject', order));
+                (order) => openDialog('reject', order),
+                (order) => {
+                    console.log('Эта хрень вызвалась: ');
+                    openDialog('reportView', order)
+                });
         }
     }, [role, currentTaskInfos]);
-
 
     // console.log('wtf', currentTaskInfos);
     // console.log('wtf2', tabsConfig);
     // console.log('selected order в orderComponent: ', selectedOrder);
+
     return (
         <Box sx={{height: '100%', width: '100%'}}>
             <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -351,28 +365,46 @@ export default function OrdersComponent({role}) {
                     />
                 </CustomTabPanel>
             ))}
-            <AssignEmployeesDialog open={dialogsState['assignExecutors']}
-                                   onSubmit={
-                                       ({selectedExecutorIds, mainExecutorId}) => submitDialog('assignExecutors',
-                                           {
-                                               selectedOrder,
-                                               selectedExecutorIds, mainExecutorId
-                                           })
-                                   }
-                                   onClose={() => closeDialog('assignExecutors')}
-                                   taskInfo={selectedOrder}
-            >
-            </AssignEmployeesDialog>
-            <OrderDetailsDialog
-                open={dialogsState['orderDetails']}
-                onClose={() => closeDialog('orderDetails')}
-                taskInfo={selectedOrder}/>
-            <ReportDialog
-                open={dialogsState['report']}
-                onClose={() => closeDialog('report')}
-                onSubmit={({ reportInfo }) => submitDialog('report', {selectedOrder, reportInfo})}
-                taskInfo={selectedOrder}
-            />
+            {role === 'Администратор' && (
+                <AssignEmployeesDialog open={dialogsState['assignExecutors']}
+                                       onSubmit={
+                                           ({selectedExecutorIds, mainExecutorId}) => submitDialog('assignExecutors',
+                                               {
+                                                   selectedOrder,
+                                                   selectedExecutorIds, mainExecutorId
+                                               })
+                                       }
+                                       onClose={() => closeDialog('assignExecutors')}
+                                       taskInfo={selectedOrder}
+                >
+                </AssignEmployeesDialog>
+            )}
+
+            {(role === 'Пользователь' || role === 'Администратор' || role === 'Солдат') &&
+                [
+                    <ReportViewDialog
+                        key="reportView"
+                        open={dialogsState['reportView']}
+                        onClose={() => closeDialog('reportView')}
+                        taskInfo={selectedOrder}
+                    />,
+                    <OrderDetailsDialog
+                        key="orderDetails"
+                        open={dialogsState['orderDetails']}
+                        onClose={() => closeDialog('orderDetails')}
+                        taskInfo={selectedOrder}
+                    />
+                ]
+            }
+
+            {role === 'Солдат' && (
+                <ReportDialog
+                    open={dialogsState['report']}
+                    onClose={() => closeDialog('report')}
+                    onSubmit={({reportInfo}) => submitDialog('report', {selectedOrder, reportInfo})}
+                    taskInfo={selectedOrder}
+                />
+            )}
             {role === 'Пользователь' &&
                 <CreateOrderDialog
                     open={dialogsState['createOrder']}

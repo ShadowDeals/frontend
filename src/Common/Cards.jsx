@@ -58,7 +58,7 @@ export function OrderCard({taskInfo, actions}) {
     );
 }
 
-export function PendingApplyOrderCard({ taskInfo, onReject, onMoreInfo, onSetPrice, role }) {
+export function PendingApplyOrderCard({taskInfo, onReject, onMoreInfo, onSetPrice, role}) {
     const actions = [
         <Button key="reject" size="small" color="error" onClick={onReject}>
             {role === 'Администратор' ? 'Отклонить' : 'Отозвать'}
@@ -76,10 +76,10 @@ export function PendingApplyOrderCard({ taskInfo, onReject, onMoreInfo, onSetPri
         );
     }
 
-    return <OrderCard taskInfo={taskInfo} actions={actions} />;
+    return <OrderCard taskInfo={taskInfo} actions={actions}/>;
 }
 
-export function PendingPaymentOrderCard({ taskInfo, onReject, onMoreInfo, onPay, role }) {
+export function PendingPaymentOrderCard({taskInfo, onReject, onMoreInfo, onPay, role}) {
     const actions = [
         <Button key="reject" size="small" color="error" onClick={onReject}>
             {role === 'Администратор' ? 'Отклонить' : 'Отозвать'}
@@ -92,25 +92,25 @@ export function PendingPaymentOrderCard({ taskInfo, onReject, onMoreInfo, onPay,
     if (role === 'Пользователь') {
         const isDisabled = taskInfo.taskStatus === taskStatusLabels.WAITING_FOR_PRICE_ASSIGNMENT;
         actions.push(
-                <Button
-                    key="pay"
-                    size="small"
-                    color="success"
-                    onClick={() => {
-                        console.log('[PendingPaymentOrderCard] Кнопка "Оплатить" нажата, taskInfo:', taskInfo, 'typeof:', typeof taskInfo);
-                        onPay(taskInfo);
-                    }}
-                    disabled={isDisabled}
-                >
-                    Оплатить
-                </Button>
+            <Button
+                key="pay"
+                size="small"
+                color="success"
+                onClick={() => {
+                    console.log('[PendingPaymentOrderCard] Кнопка "Оплатить" нажата, taskInfo:', taskInfo, 'typeof:', typeof taskInfo);
+                    onPay(taskInfo);
+                }}
+                disabled={isDisabled}
+            >
+                Оплатить
+            </Button>
         );
     }
 
-    return <OrderCard taskInfo={taskInfo} actions={actions} />;
+    return <OrderCard taskInfo={taskInfo} actions={actions}/>;
 }
 
-export function PendingEmployeesOrderCard({ taskInfo, onAssignEmployee, onMoreInfo, role }) {
+export function PendingEmployeesOrderCard({taskInfo, onAssignEmployee, onMoreInfo, role}) {
     const actions = [
         <Button key="info" size="small" color="info" onClick={onMoreInfo}>
             Подробнее
@@ -125,11 +125,10 @@ export function PendingEmployeesOrderCard({ taskInfo, onAssignEmployee, onMoreIn
         );
     }
 
-    return <OrderCard taskInfo={taskInfo} actions={actions} />;
+    return <OrderCard taskInfo={taskInfo} actions={actions}/>;
 }
 
-
-export function InProgressOrderCard({ taskInfo, onMoreInfo, onReportCompletion, role }) {
+export function InProgressOrderCard({taskInfo, onMoreInfo, onReportCompletion, role}) {
     const actions = [
         <Button key="info" size="small" color="info" onClick={onMoreInfo}>
             Подробнее
@@ -144,23 +143,28 @@ export function InProgressOrderCard({ taskInfo, onMoreInfo, onReportCompletion, 
         );
     }
 
-    return <OrderCard taskInfo={taskInfo} actions={actions} />;
+    return <OrderCard taskInfo={taskInfo} actions={actions}/>;
 }
 
 
-export function DoneOrderCard({taskInfo, onMoreInfo, onViewReport, role}) {
-    return (
-        <OrderCard
-            role={role}
-            taskInfo={taskInfo}
-            actions={[
-                <Button key="info" size="small" color="info" onClick={onMoreInfo}>
-                    Подробнее
-                </Button>,
-                <Button key="report" size="small" color="secondary" onClick={onViewReport}>
-                    Посмотреть отчёт
-                </Button>,
-            ]}
-        />
-    );
+export function DoneOrderCard({ taskInfo, onMoreInfo, onViewReport, role }) {
+    const actions = [
+        <Button key="info" size="small" color="info" onClick={onMoreInfo}>
+            Подробнее
+        </Button>,
+    ];
+
+    if (
+        onViewReport &&
+        taskInfo.taskStatus !== 'CANCELED_BY_USER' &&
+        taskInfo.taskStatus !== 'CANCELED_BY_ADMIN'
+    ) {
+        actions.push(
+            <Button key="reportView" size="small" color="secondary" onClick={onViewReport}>
+                Посмотреть отчёт
+            </Button>
+        );
+    }
+
+    return <OrderCard taskInfo={taskInfo} actions={actions} role={role} />;
 }

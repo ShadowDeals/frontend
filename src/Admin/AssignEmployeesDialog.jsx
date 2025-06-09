@@ -12,11 +12,12 @@ export default function AssignEmployeesDialog({ open, onClose, onSubmit, taskInf
     const [selectedExecutorIds, setSelectedExecutorIds] = useState([]);
     const [mainExecutorId, setMainExecutorId] = useState(null);
 
-    const freeExecutors = useFreeExecutors();
+    const { executors, loading, error, refetch } = useFreeExecutors();
     // console.log('free executors: ', freeExecutors.executors);
 
     useEffect(() => {
         if (!open) {
+            refetch();
             setSelectedExecutorIds([]);
             setMainExecutorId(null);
         }
@@ -46,7 +47,7 @@ export default function AssignEmployeesDialog({ open, onClose, onSubmit, taskInf
                 Назначение исполнителей
             </DialogTitle>
             <DialogContent dividers>
-                {freeExecutors.executors.length === 0 ? (
+                {executors.length === 0 ? (
                     <Typography color="text.secondary" fontStyle="italic">
                         Нет свободных исполнителей
                     </Typography>
@@ -68,7 +69,7 @@ export default function AssignEmployeesDialog({ open, onClose, onSubmit, taskInf
                             value={selectedExecutorIds.map(String)}
                             onChange={handleSelectChange}
                         >
-                            {freeExecutors.executors.map(({ executorId, executorName }) => {
+                            {executors.map(({ executorId, executorName }) => {
                                 const disabled =
                                     !selectedExecutorIds.includes(executorId) &&
                                     selectedExecutorIds.length >= MAX_SELECTION;
@@ -87,7 +88,7 @@ export default function AssignEmployeesDialog({ open, onClose, onSubmit, taskInf
                                 </Typography>
                                 <Stack spacing={1}>
                                     {selectedExecutorIds.map(id => {
-                                        const employee = freeExecutors.executors.find(e => e.executorId === id);
+                                        const employee = executors.find(e => e.executorId === id);
                                         return (
                                             <FormControlLabel
                                                 key={id}

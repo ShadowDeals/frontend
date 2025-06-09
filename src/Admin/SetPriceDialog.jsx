@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -6,7 +6,6 @@ import {
     DialogActions,
     TextField,
     Button,
-    InputAdornment,
 } from '@mui/material';
 import { useFormik } from 'formik';
 
@@ -14,6 +13,13 @@ import { setPriceFormConfig } from "../AccessControl/ValidationSchemas.js";
 
 export default function PriceSetDialog({ open, onClose, onSubmit, taskInfo }) {
     // console.log('Пришло PriceSetDialog', taskInfo);
+
+    useEffect(() => {
+        if (open) {
+            formik.resetForm();
+        }
+    }, [open]);
+
     const formik = useFormik({
         initialValues: setPriceFormConfig.initialValues,
         validationSchema: setPriceFormConfig.validationSchema,

@@ -41,20 +41,51 @@ export function useDialogSubmitConfig() {
                 });
 
                 console.log('Исполнители назначены:', res.data);
-
-                return {
-                    success: true,
-                    message: 'Исполнители успешно назначены',
-                };
             } catch (err) {
                 console.error('Ошибка при назначении исполнителей:', err?.response?.data || err.message);
                 return {
                     success: false,
-                    message: 'при назначении исполнителей',
+                    message: 'Ошибка при назначении исполнителей',
+                };
+            }
+
+            try {
+                const taskId = selectedOrder?.taskId;
+                const bandId = decodedToken?.bandId;
+
+                console.log('taskId:', taskId);
+                console.log('bandId:', bandId);
+                console.log('authHeaders:', authHeaders);
+
+                const putUrl = 'http://localhost:8080/task';
+                const putParams = {
+                    taskId,
+                    bandId,
+                    taskStatus: 'IN_WORK'
+                };
+
+                await axios.put(putUrl, null, {
+                    params: putParams,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...authHeaders,
+                    },
+                });
+
+                console.log('Статус задачи обновлён на IN_WORK');
+
+                return {
+                    success: true,
+                    message: 'Исполнители назначены, статус задачи обновлён',
+                };
+            } catch (err) {
+                console.error('Ошибка при обновлении статуса задачи:', err?.response?.data || err.message);
+                return {
+                    success: false,
+                    message: 'Исполнители назначены, но статус задачи не удалось обновить',
                 };
             }
         },
-
         report: async ({ reportInfo, selectedOrder }) => {
             console.log('submit reportInfo', reportInfo, selectedOrder);
 
@@ -72,7 +103,7 @@ export function useDialogSubmitConfig() {
                 const params = { taskId };
 
                 const body = {
-                    // status: reportInfo.status,
+                    status: reportInfo.status === 'success' ? 'FINISHED' : 'FAILED',
                     description: reportInfo.description,
                     timeSpent: reportInfo.timeSpent,
                 };
