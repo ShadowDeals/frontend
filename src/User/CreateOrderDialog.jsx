@@ -14,15 +14,8 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import useRegions from "../AccessControl/useRegions.js";
-
-// Пример taskTypeLabels
-export const taskTypeLabels = {
-    HIJACKING: 'Угон',
-    DELIVERY: 'Доставка',
-    MURDER: 'Убийство',
-    ROBBERY: 'Ограбление',
-    SCARING: 'Запугивание',
-};
+import {taskTypeLabels} from "../Common/Cards.jsx";
+import {createTaskFormConfig} from "../AccessControl/ValidationSchemas.js";
 
 const getFieldsConfig = (regions = []) => [
     {
@@ -51,7 +44,7 @@ const getFieldsConfig = (regions = []) => [
         onFocusResetError: true,
     },
     {
-        name: 'regionSelect',
+        name: 'region',
         label: 'Выберите регион',
         type: 'select',
         required: false,
@@ -60,30 +53,19 @@ const getFieldsConfig = (regions = []) => [
 ];
 
 
-const validationSchema = Yup.object({
-    address: Yup.string().trim().required('Введите адрес'),
-    description: Yup.string().trim().required('Введите описание'),
-    taskType: Yup.string()
-        .oneOf(Object.keys(taskTypeLabels), 'Недопустимый тип задания')
-        .required('Выберите тип задания'),
-    region: Yup.string().trim().optional(),
-});
 
-export default function CreateTaskDialog({ open, onClose, onSubmit }) {
+
+export default function CreateOrderDialog({ open, onClose, onSubmit }) {
     const {regionsBandExist} = useRegions();
     console.log('Регионы: ', regionsBandExist);
     const formik = useFormik({
-        initialValues: {
-            address: '',
-            description: '',
-            taskType: '',
-            region: '',
-        },
-        validationSchema,
+        initialValues: createTaskFormConfig.initialValues,
+        validationSchema: createTaskFormConfig.validationSchema,
         onSubmit: (values) => {
             const finalData = {
                 ...values,
                 region: values.region || null,
+                price: null
             };
             onSubmit(finalData);
             onClose();

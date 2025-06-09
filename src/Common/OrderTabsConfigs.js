@@ -5,7 +5,7 @@ import {
     InProgressOrderCard, DoneOrderCard
 } from "./Cards.jsx";
 
-export function getAdminTabsConfig(currentTaskInfos, openOrderDetailsDialog, openAssignExecutorsDialog) {
+export function getAdminTabsConfig(currentTaskInfos, openOrderDetailsDialog, openAssignExecutorsDialog, openSetPriceDialog) {
     return [
         {
             index: 0,
@@ -13,7 +13,7 @@ export function getAdminTabsConfig(currentTaskInfos, openOrderDetailsDialog, ope
             CardComponent: PendingApplyOrderCard,
             onReject: (id) => console.log('Reject order', id),
             onMoreInfo: openOrderDetailsDialog,
-            onSetPrice: (id) => console.log('Price Set', id),
+            onSetPrice: openSetPriceDialog,
             taskInfos: currentTaskInfos,
         },
         {

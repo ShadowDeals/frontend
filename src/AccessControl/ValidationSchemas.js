@@ -119,8 +119,18 @@ export const createTaskFormConfig = {
         address: Yup.string().trim().required('Введите адрес'),
         description: Yup.string().trim().required('Введите описание'),
         taskType: Yup.string()
-            .oneOf(Object.values(taskTypeLabels), 'Недопустимый тип задания')
+            .oneOf(Object.keys(taskTypeLabels), 'Недопустимый тип задания')
             .required('Выберите тип задания'),
         region: Yup.string().trim().optional(),
+    }),
+};
+
+export const setPriceFormConfig = {
+    initialValues: { price: '' },
+    validationSchema: Yup.object({
+        price: Yup.number()
+            .typeError('Введите число')
+            .required('Обязательное поле')
+            .positive('Цена должна быть положительной'),
     }),
 };

@@ -8,17 +8,19 @@ import {
     Stack,
     Grid, Button
 } from "@mui/material";
-import {getAdminTabsConfig, getSoldierTabsConfig, getUserTabsConfig} from './OrgderTabsConfigs.js';
+import {getAdminTabsConfig, getSoldierTabsConfig, getUserTabsConfig} from './OrderTabsConfigs.js';
 
 
 import {useMemo, useState} from "react";
-import OrderDetailsDialog from "../Admin/OrderDetailsDialog.jsx";
+import OrderDetailsDialog from "./OrderDetailsDialog.jsx";
 import AssignEmployeesDialog from "../Admin/AssignEmployeesDialog.jsx"
 import {useTasks} from "./useTasks.js";
 import ReportDialog from "../Soldier/ReportDialog.jsx";
-import CreateTaskDialog from "../User/CreateTaskDialog.jsx";
+import CreateOrderDialog from "../User/CreateOrderDialog.jsx";
+import {useDialogSubmitConfig} from "./useDialogSubmitConfig.js";
+import PriceSetDialog from "../Admin/SetPriceDialog.jsx";
 
-function CustomTabPanel(props) {
+export function CustomTabPanel(props) {
     const {children, value, index, ...other} = props;
 
     return (
@@ -40,7 +42,7 @@ CustomTabPanel.propTypes = {
     value: PropTypes.number.isRequired,
 };
 
-function a11yProps(index) {
+export function a11yProps(index) {
     return {
         id: `simple-tab-${index}`,
         'aria-controls': `simple-tabpanel-${index}`,
@@ -145,6 +147,15 @@ OrderTabs.propTypes = {
     onPageChange: PropTypes.func.isRequired,
 };
 
+// console.log('role:', role);
+// console.log('waitingForAccept:', waitingForAccept?.tasks);
+// console.log('waitingForPayment:', waitingForPayment?.tasks);
+// console.log('waitingForEmployee:', waitingForEmployee?.tasks);
+// console.log('inProgress:', inProgress?.tasks);
+// console.log('finished:', finished?.tasks);
+// console.log('roleTabsMap:', roleTabsMap);
+// console.log('Tabs for current role:', roleTabsMap[role]);
+
 export default function OrdersComponent({role}) {
     const {
         waitingForAccept,
@@ -153,13 +164,6 @@ export default function OrdersComponent({role}) {
         inProgress,
         finished,
     } = useTasks(role);
-
-    console.log('role:', role);
-    console.log('waitingForAccept:', waitingForAccept?.tasks);
-    console.log('waitingForPayment:', waitingForPayment?.tasks);
-    console.log('waitingForEmployee:', waitingForEmployee?.tasks);
-    console.log('inProgress:', inProgress?.tasks);
-    console.log('finished:', finished?.tasks);
 
     const roleTabsMap = React.useMemo(() => {
         const commonTabs = [
@@ -186,9 +190,6 @@ export default function OrdersComponent({role}) {
         finished?.tasks
     ]);
 
-    console.log('roleTabsMap:', roleTabsMap);
-    console.log('Tabs for current role:', roleTabsMap[role]);
-
     const [tabNum, setTabNum] = React.useState(0);
 
     const currentTaskInfos = React.useMemo(() => {
@@ -202,6 +203,7 @@ export default function OrdersComponent({role}) {
         assignExecutors: false,
         report: false,
         createOrder: false,
+        setPrice: false
     });
 
     const openDialog = (dialogName, order) => {
@@ -211,7 +213,18 @@ export default function OrdersComponent({role}) {
     };
 
     const closeDialog = (dialogName) => {
+        console.log('closeDialog: ', dialogName);
         setDialogsState((prev) => ({...prev, [dialogName]: false}));
+    };
+
+    const dialogSubmitConfig = useDialogSubmitConfig();
+    const submitDialog = (dialogName, data) => {
+        const onSubmit = dialogSubmitConfig[dialogName];
+        if (typeof onSubmit === 'function') {
+            onSubmit(data);
+        } else {
+            console.warn(`onSubmit для диалога ${dialogName} не определён`);
+        }
     };
 
     const tabsConfig = useMemo(() => {
@@ -224,13 +237,14 @@ export default function OrdersComponent({role}) {
                 (order) => openDialog('orderDetails', order));
         } else if (role === 'Администратор') {
             return getAdminTabsConfig(currentTaskInfos, (order) => openDialog('orderDetails', order),
-                (order) => openDialog('assignExecutors', order));
+                (order) => openDialog('assignExecutors', order),
+                (order) => openDialog('setPrice', order));
         }
     }, [role, currentTaskInfos]);
 
 
-    console.log('wtf', currentTaskInfos);
-    console.log('wtf2', tabsConfig);
+    // console.log('wtf', currentTaskInfos);
+    // console.log('wtf2', tabsConfig);
 
     return (
         <Box sx={{height: '100%', width: '100%'}}>
@@ -251,7 +265,7 @@ export default function OrdersComponent({role}) {
                     <Button
                         variant="contained"
                         onClick={() => {
-                            openDialog('createTask')
+                            openDialog('createOrder')
                         }}
                         sx={{whiteSpace: 'nowrap', ml: 2}}
                     >
@@ -308,11 +322,18 @@ export default function OrdersComponent({role}) {
                 taskInfo={selectedOrder}
             />
             {role === 'Пользователь' &&
-                <CreateTaskDialog
-                    open={dialogsState['createTask']}
-                    onSubmit={()=>{console.log('task created!')}}
-                    onClose={() => closeDialog('createTask')}
-                ></CreateTaskDialog>}
+                <CreateOrderDialog
+                    open={dialogsState['createOrder']}
+                    onSubmit={(formData) => submitDialog('createOrder', formData)}
+                    onClose={() => closeDialog('createOrder')}
+                />}
+            {role === 'Администратор' &&
+            <PriceSetDialog
+                open={dialogsState['setPrice']}
+                onSubmit={(formData) => submitDialog('setPrice', formData)}
+                onClose={() => closeDialog('setPrice')}
+            />
+            }
         </Box>
     );
 }

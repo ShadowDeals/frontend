@@ -8,7 +8,7 @@ import {
     Button,
     Stack
 } from '@mui/material';
-import {formatDate, taskTypeLabels} from "../Common/Cards.jsx";
+import {formatDate, taskTypeLabels} from "./Cards.jsx";
 
 export default function OrderDetailsDialog({ open, onClose, taskInfo }) {
     if (!taskInfo) return null;

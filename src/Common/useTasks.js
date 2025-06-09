@@ -79,11 +79,11 @@ export function useTasks() {
     const finished = useTaskByStatus(TASK_STATUS_LABELS.FINISHED) || mockedTasks;
 
 
-    console.log('waitingForAccept:222', waitingForAccept?.tasks);
-    console.log('waitingForPayment:222', waitingForPayment?.tasks);
-    console.log('waitingForEmployee222:', waitingForEmployee?.tasks);
-    console.log('inProgress:222', inProgress?.tasks);
-    console.log('finished:222', finished?.tasks);
+    // console.log('waitingForAccept:222', waitingForAccept?.tasks);
+    // console.log('waitingForPayment:222', waitingForPayment?.tasks);
+    // console.log('waitingForEmployee222:', waitingForEmployee?.tasks);
+    // console.log('inProgress:222', inProgress?.tasks);
+    // console.log('finished:222', finished?.tasks);
 
     return {
         waitingForAccept,
