@@ -8,7 +8,7 @@ import {
     Stack,
     Grid, Button
 } from "@mui/material";
-import {getAdminTabsConfig, getSoldierTabsConfig, getUserTabsConfig} from './OrderTabsConfigs.js';
+import {getAdminTabsConfig, getSoldierTabsConfig, getUserTabsConfig} from './orderTabsConfigs.js';
 
 
 import {useMemo, useState} from "react";
@@ -19,6 +19,7 @@ import ReportDialog from "../Soldier/ReportDialog.jsx";
 import CreateOrderDialog from "../User/CreateOrderDialog.jsx";
 import {useDialogSubmitConfig} from "./useDialogSubmitConfig.js";
 import PriceSetDialog from "../Admin/SetPriceDialog.jsx";
+import PaymentDialog from "../User/PaymentDialog.jsx";
 
 export function CustomTabPanel(props) {
     const {children, value, index, ...other} = props;
@@ -63,7 +64,7 @@ function OrderTabs({
                    }
 ) {
 
-
+    console.log('[OrderTabs] onPay:', onPay, 'typeof:', typeof onPay);
     console.log('a сюда что дошло', taskInfos, role);
     console.log('Всего задач:', taskInfos.length);
     // console.log('Текущая страница:', page);
@@ -107,10 +108,10 @@ function OrderTabs({
                                     <CardComponent
                                         role={role}
                                         taskInfo={taskInfo}
-                                        onReject={() => onReject?.(taskInfo.taskId)}
+                                        onReject={() => onReject?.(taskInfo)}
                                         onMoreInfo={() => onMoreInfo?.(taskInfo)}
                                         onSetPrice={() => onSetPrice?.(taskInfo)}
-                                        onPay={() => onPay?.(taskInfo.taskId)}
+                                        onPay={() => onPay?.(taskInfo)}
                                         onReportCompletion={() => onReportCompletion?.(taskInfo)}
                                         onAssignEmployee={() => onAssignEmployee?.(taskInfo)}
                                         onViewReport={() => onViewReport?.(taskInfo)}
@@ -203,11 +204,12 @@ export default function OrdersComponent({role}) {
         assignExecutors: false,
         report: false,
         createOrder: false,
-        setPrice: false
+        setPrice: false,
+        payment: false
     });
 
     const openDialog = (dialogName, order) => {
-        console.log('Открываем диалог: ', dialogName);
+        console.log('Открываем диалог ', dialogName, 'c order', order);
         setSelectedOrder(order);
         setDialogsState((prev) => ({...prev, [dialogName]: true}));
     };
@@ -234,18 +236,37 @@ export default function OrdersComponent({role}) {
                 (order) => openDialog('reportDialog', order));
         } else if (role === 'Пользователь') {
             return getUserTabsConfig(currentTaskInfos,
-                (order) => openDialog('orderDetails', order));
+                (order) => {
+                    console.log('[Пользователь], currentTaskInfos: ', currentTaskInfos);
+                    console.log('[Пользователь] Открытие деталей. order =', order, typeof order);
+                    openDialog('orderDetails', order);
+                },
+                (order) => {
+                    console.log('[Пользователь], currentTaskInfos: ', currentTaskInfos);
+                    console.log('[Пользователь] Открытие оплаты. order =', order, typeof order);
+                    openDialog('payment', order);
+                });
         } else if (role === 'Администратор') {
-            return getAdminTabsConfig(currentTaskInfos, (order) => openDialog('orderDetails', order),
-                (order) => openDialog('assignExecutors', order),
-                (order) => openDialog('setPrice', order));
+            return getAdminTabsConfig(currentTaskInfos,
+                (order) => {
+                    console.log('[Админ] Детали заказа:', order, typeof order);
+                    openDialog('orderDetails', order, typeof order);
+                },
+                (order) => {
+                    console.log('[Админ] Назначение исполнителей:', order, typeof order);
+                    openDialog('assignExecutors', order, typeof order);
+                },
+                (order) => {
+                    console.log('[Админ] Установка цены:', order, typeof order);
+                    openDialog('setPrice', order, typeof order);
+                });
         }
     }, [role, currentTaskInfos]);
 
 
     // console.log('wtf', currentTaskInfos);
     // console.log('wtf2', tabsConfig);
-
+    console.log('selected order в orderComponent: ', selectedOrder);
     return (
         <Box sx={{height: '100%', width: '100%'}}>
             <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -328,13 +349,20 @@ export default function OrdersComponent({role}) {
                     onClose={() => closeDialog('createOrder')}
                 />}
             {role === 'Администратор' &&
-            <PriceSetDialog
-                open={dialogsState['setPrice']}
-                onSubmit={(formData) => submitDialog('setPrice', selectedOrder, formData)}
-                onClose={() => closeDialog('setPrice')}
-                taskInfo={selectedOrder}
-            />
+                <PriceSetDialog
+                    open={dialogsState['setPrice']}
+                    onSubmit={(formData) => submitDialog('setPrice', selectedOrder, formData)}
+                    onClose={() => closeDialog('setPrice')}
+                    taskInfo={selectedOrder}
+                />
             }
+            {role === 'Пользователь' &&
+                <PaymentDialog
+                    open={dialogsState['payment']}
+                    // onSubmit={(formData) => submitDialog('payment', selectedOrder, formData)}
+                    // onClose={() => closeDialog('payment')}
+                    taskInfo={selectedOrder}
+                />}
         </Box>
     );
 }

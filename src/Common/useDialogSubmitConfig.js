@@ -70,5 +70,9 @@ export function useDialogSubmitConfig() {
                 }
             }
         },
+        payment: async (data) => {
+            console.log('pay via config', data);
+            // ...
+        },
     };
 }

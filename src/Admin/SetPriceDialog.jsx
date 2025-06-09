@@ -13,6 +13,7 @@ import { useFormik } from 'formik';
 import { setPriceFormConfig } from "../AccessControl/ValidationSchemas.js";
 
 export default function PriceSetDialog({ open, onClose, onSubmit, taskInfo }) {
+    console.log('Пришло PriceSetDialog', taskInfo);
     const formik = useFormik({
         initialValues: setPriceFormConfig.initialValues,
         validationSchema: setPriceFormConfig.validationSchema,

@@ -88,7 +88,7 @@ export function PendingPaymentOrderCard({ taskInfo, onReject, onMoreInfo, onPay,
             Подробнее
         </Button>,
     ];
-
+    console.log('В кнопке taskInfo', taskInfo);
     if (role === 'Пользователь') {
         const isDisabled = taskInfo.taskStatus === taskStatusLabels.WAITING_FOR_PRICE_ASSIGNMENT;
         actions.push(
@@ -96,15 +96,16 @@ export function PendingPaymentOrderCard({ taskInfo, onReject, onMoreInfo, onPay,
                     key="pay"
                     size="small"
                     color="success"
-                    onClick={onPay}
+                    onClick={() => {
+                        console.log('[PendingPaymentOrderCard] Кнопка "Оплатить" нажата, taskInfo:', taskInfo, 'typeof:', typeof taskInfo);
+                        onPay(taskInfo);
+                    }}
                     disabled={isDisabled}
                 >
                     Оплатить
                 </Button>
         );
     }
-
-
 
     return <OrderCard taskInfo={taskInfo} actions={actions} />;
 }

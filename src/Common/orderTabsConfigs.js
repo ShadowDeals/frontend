@@ -74,7 +74,7 @@ export function getSoldierTabsConfig(currentTaskInfos, openOrderDetailsDialog, o
     ];
 }
 
-export function getUserTabsConfig(currentTaskInfos, openOrderDetailsDialog) {
+export function getUserTabsConfig(currentTaskInfos, openOrderDetailsDialog, openPaymentDialog) {
     console.log('tracing currTI', currentTaskInfos);
     return [
         {
@@ -91,7 +91,7 @@ export function getUserTabsConfig(currentTaskInfos, openOrderDetailsDialog) {
             CardComponent: PendingPaymentOrderCard,
             onReject: (id) => console.log('Cancel deal', id),
             onMoreInfo: openOrderDetailsDialog,
-            onPay: (card) => console.log('Paid successfully', card),
+            onPay: openPaymentDialog,
             taskInfos: currentTaskInfos,
         },
         {
