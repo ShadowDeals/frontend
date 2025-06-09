@@ -71,8 +71,12 @@ export function useDialogSubmitConfig() {
             }
         },
         payment: async (data) => {
-            console.log('pay via config', data);
-            // ...
+            console.log(' pay via config Цена установлена!', data);
+
+            return {
+                success: true,
+                result: 'snackbar payment message!',
+            };
         },
     };
 }

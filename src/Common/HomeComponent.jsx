@@ -79,7 +79,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     justifyContent: 'flex-end',
 }));
 
-
 export default function HomeComponent() {
     const { bandId = null, sub = '', roles= [] } = useDecodedToken() || {};
 

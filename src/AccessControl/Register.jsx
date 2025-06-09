@@ -19,7 +19,7 @@ import { useFormik } from 'formik';
 import { registerFormConfigs } from "./ValidationSchemas.js";
 import { v4 as uuidv4 } from 'uuid';
 import useRegions from "./useRegions.js";
-import ErrorSnackbar from "../Common/ErrorSnackbar.jsx";
+import ErrorSnackbar from "../Common/StatusSnackbar.jsx";
 import {useSnackbar} from "../Common/useSnackbar.js";
 
 

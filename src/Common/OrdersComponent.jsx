@@ -20,6 +20,8 @@ import CreateOrderDialog from "../User/CreateOrderDialog.jsx";
 import {useDialogSubmitConfig} from "./useDialogSubmitConfig.js";
 import PriceSetDialog from "../Admin/SetPriceDialog.jsx";
 import PaymentDialog from "../User/PaymentDialog.jsx";
+import {useSnackbar} from "./useSnackbar.js";
+import StatusSnackbar from "./StatusSnackbar.jsx";
 
 export function CustomTabPanel(props) {
     const {children, value, index, ...other} = props;
@@ -220,14 +222,40 @@ export default function OrdersComponent({role}) {
     };
 
     const dialogSubmitConfig = useDialogSubmitConfig();
-    const submitDialog = (dialogName, ...args) => {
+
+    const submitDialog = async (dialogName, ...args) => {
         const onSubmit = dialogSubmitConfig[dialogName];
         if (typeof onSubmit === 'function') {
-            onSubmit(...args);
+            try {
+                const result = await onSubmit(...args);
+                return { success: true, result };
+            } catch (err) {
+                return {
+                    success: false,
+                    error: {
+                        type: 'error',
+                        text: err?.message || 'Неизвестная ошибка',
+                        errcode: err?.response?.status,
+                    },
+                };
+            }
         } else {
-            console.warn(`onSubmit для диалога ${dialogName} не определён`);
+            return {
+                success: false,
+                error: {
+                    type: 'warning',
+                    text: `onSubmit для диалога ${dialogName} не определён`,
+                },
+            };
         }
     };
+
+    const {
+        open,
+        snackbar,
+        showSnackbar,
+        hideSnackbar,
+    } = useSnackbar();
 
     const tabsConfig = useMemo(() => {
         if (role === 'Солдат') {
@@ -343,10 +371,28 @@ export default function OrdersComponent({role}) {
             {role === 'Пользователь' &&
                 <PaymentDialog
                     open={dialogsState['payment']}
-                    onSubmit={(formData) => submitDialog('payment', selectedOrder, formData)}
+                    onSubmit={async (formData) => {
+                        const result = await submitDialog('payment', selectedOrder, formData);
+
+                        if (result?.success) {
+                            showSnackbar({ type: 'success', text: 'Оплата прошла успешно' });
+                        } else {
+                            showSnackbar(result?.error ?? {
+                                type: 'error',
+                                text: 'Произошла неизвестная ошибка при оплате',
+                            });
+                        }
+
+                        closeDialog('payment');
+                    }}
                     onClose={() => closeDialog('payment')}
                     taskInfo={selectedOrder}
                 />}
+            <StatusSnackbar
+                open={open}
+                snackbar={snackbar}
+                onClose={hideSnackbar}
+            ></StatusSnackbar>
         </Box>
     );
 }

@@ -8,13 +8,12 @@ import {
 } from "@mui/material";
 import Cookies from 'js-cookie';
 
-import {Formik, useFormik} from 'formik';
+import {useFormik} from 'formik';
 import * as Yup from 'yup';
 import axios from "axios";
 import {useSnackbar} from "../Common/useSnackbar.js";
-import ErrorSnackbar from "../Common/ErrorSnackbar.jsx";
 import React from "react";
-import StatusSnackbar from "../Common/ErrorSnackbar.jsx";
+import StatusSnackbar from "../Common/StatusSnackbar.jsx";
 
 const validationSchema = Yup.object({
     email: Yup.string().email('Неверный формат email').required('Введите почту'),
@@ -54,7 +53,7 @@ function LoginComponent() {
                         errcode: error.response.status,
                     });
                 } else {
-                    showError({
+                    showSnackbar({
                         errcode: 'NETWORK',
                         text: error.message || 'Ошибка сети',
                     });
