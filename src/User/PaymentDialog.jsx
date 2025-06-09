@@ -12,7 +12,7 @@ export default function PaymentDialog({ open, onClose, onSubmit, taskInfo }) {
     // console.log('[PaymentDialog] taskInfo =', taskInfo, '| typeof =', typeof taskInfo);
     const handlePayClick = () => {
         if (onSubmit) {
-            onSubmit(taskInfo);
+            onSubmit();
         }
         onClose();
     };

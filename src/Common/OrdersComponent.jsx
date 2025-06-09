@@ -22,6 +22,7 @@ import PriceSetDialog from "../Admin/SetPriceDialog.jsx";
 import PaymentDialog from "../User/PaymentDialog.jsx";
 import {useSnackbar} from "./useSnackbar.js";
 import StatusSnackbar from "./StatusSnackbar.jsx";
+import RejectDialog from "./RejectDialog.jsx";
 
 export function CustomTabPanel(props) {
     const {children, value, index, ...other} = props;
@@ -66,9 +67,9 @@ function OrderTabs({
                    }
 ) {
 
-    console.log('[OrderTabs] onPay:', onPay, 'typeof:', typeof onPay);
-    console.log('a сюда что дошло', taskInfos, role);
-    console.log('Всего задач:', taskInfos.length);
+    // console.log('[OrderTabs] onPay:', onPay, 'typeof:', typeof onPay);
+    // console.log('a сюда что дошло', taskInfos, role);
+    // console.log('Всего задач:', taskInfos.length);
     // console.log('Текущая страница:', page);
     // console.log('Срез с', (page - 1) * taskInfosPerPage, 'по', page * taskInfosPerPage);
     // console.log('Итоговый массив:', currentTaskInfos);
@@ -79,13 +80,13 @@ function OrderTabs({
     const pageCount = Math.ceil((taskInfos?.length || 0) / taskInfosPerPage);
 
 
-    console.log('pageCount', taskInfos?.length, pageCount);
+    // console.log('pageCount', taskInfos?.length, pageCount);
 
     const paginatedTaskInfos = taskInfos.slice(
         (page - 1) * taskInfosPerPage,
         page * taskInfosPerPage
     );
-    console.log('Количество страниц:', pageCount, taskInfos.length);
+    // console.log('Количество страниц:', pageCount, taskInfos.length);
     return (
         <Box sx={{width: '100%', height: '100%'}}>
             <Stack spacing={2} sx={{alignItems: 'center', height: '100%'}}>
@@ -208,7 +209,9 @@ export default function OrdersComponent({role}) {
         report: false,
         createOrder: false,
         setPrice: false,
-        payment: false
+        payment: false,
+        reject: false,
+
     });
 
     const openDialog = (dialogName, order) => {
@@ -224,21 +227,21 @@ export default function OrdersComponent({role}) {
 
     const dialogSubmitConfig = useDialogSubmitConfig();
 
-    const submitDialog = async (dialogName, ...args) => {
+    const submitDialog = async (dialogName, args = {}) => {
         const onSubmit = dialogSubmitConfig[dialogName];
         if (typeof onSubmit !== 'function') {
-            showSnackbar({ type: 'error', text: `onSubmit для диалога ${dialogName} не определён` });
+            showSnackbar({type: 'error', text: `onSubmit для диалога ${dialogName} не определён`});
             return;
         }
 
-        const result = await onSubmit(...args);
+        const result = await onSubmit(args);
 
         if (result.success) {
-            showSnackbar({ type: 'success', text: result.message });
+            showSnackbar({type: 'success', text: result.message});
             refetch();
             closeDialog(dialogName);
         } else {
-            showSnackbar({ type: 'error', text: result.message });
+            showSnackbar({type: 'error', text: result.message});
             refetch();
         }
     };
@@ -254,17 +257,19 @@ export default function OrdersComponent({role}) {
         if (role === 'Солдат') {
             return getSoldierTabsConfig(currentTaskInfos,
                 (order) => openDialog('orderDetails', order),
-                (order) => openDialog('reportDialog', order));
+                (order) => openDialog('reportDialog', order),
+                (order) => openDialog('reject', order));
         } else if (role === 'Пользователь') {
             return getUserTabsConfig(currentTaskInfos,
                 (order) =>
                     openDialog('orderDetails', order),
-                (order) => openDialog('payment', order));
+                (order) => openDialog('payment', order),);
         } else if (role === 'Администратор') {
             return getAdminTabsConfig(currentTaskInfos,
                 (order) => openDialog('orderDetails', order),
                 (order) => openDialog('assignExecutors', order),
-                (order) => openDialog('setPrice', order));
+                (order) => openDialog('setPrice', order),
+                (order) => openDialog('reject', order));
         }
     }, [role, currentTaskInfos]);
 
@@ -280,7 +285,7 @@ export default function OrdersComponent({role}) {
                     value={tabNum}
                     onChange={(event, newValue) => {
                         setTabNum(newValue);
-                            refetch();
+                        refetch();
                     }}
                     aria-label="tabs by role"
                 >
@@ -351,13 +356,13 @@ export default function OrdersComponent({role}) {
             {role === 'Пользователь' &&
                 <CreateOrderDialog
                     open={dialogsState['createOrder']}
-                    onSubmit={(formData) => submitDialog('createOrder', formData)}
+                    onSubmit={(newTask) => submitDialog('createOrder', {newTask})}
                     onClose={() => closeDialog('createOrder')}
                 />}
             {role === 'Администратор' &&
                 <PriceSetDialog
                     open={dialogsState['setPrice']}
-                    onSubmit={(formData) => submitDialog('setPrice', selectedOrder, formData)}
+                    onSubmit={(price) => submitDialog('setPrice', { selectedOrder, price })}
                     onClose={() => closeDialog('setPrice')}
                     taskInfo={selectedOrder}
                 />
@@ -365,8 +370,16 @@ export default function OrdersComponent({role}) {
             {role === 'Пользователь' &&
                 <PaymentDialog
                     open={dialogsState['payment']}
-                    onSubmit={async (formData) =>  await submitDialog('payment', selectedOrder, formData)}
+                    onSubmit={async () => await submitDialog('payment', { selectedOrder})}
                     onClose={() => closeDialog('payment')}
+                    taskInfo={selectedOrder}
+                />}
+
+            {(role === 'Пользователь' || role === 'Администратор') &&
+                <RejectDialog
+                    open={dialogsState['reject']}
+                    onSubmit={async (reason) => await submitDialog('reject', {selectedOrder, reason})}
+                    onClose={() => closeDialog('reject')}
                     taskInfo={selectedOrder}
                 />}
             <StatusSnackbar

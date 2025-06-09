@@ -195,6 +195,20 @@ const TheShadowDealsTheme = createTheme({
                         },
                     },
                 },
+                containedError: {
+                    backgroundColor: '#d32f2f',
+                    color: '#fff',
+                    '&:hover': {
+                        backgroundColor: '#b71c1c',
+                    },
+                    '&:active': {
+                        backgroundColor: '#9a0007',
+                    },
+                    '&.Mui-disabled': {
+                        backgroundColor: '#d7cbb9',
+                        color: '#a18c7d',
+                    },
+                },
                 containedPrimary: {
                     backgroundColor: '#5C3A0E',
                     color: '#F2E6C4',

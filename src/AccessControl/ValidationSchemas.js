@@ -96,6 +96,7 @@ export const registerFormConfigs = {
         }),
     },
 };
+
 export const reportFormConfig = {
     initialValues: {
         status: 'success',
@@ -106,7 +107,6 @@ export const reportFormConfig = {
         description: Yup.string().trim().required('Заполните это поле'),
     }),
 };
-
 
 export const createTaskFormConfig = {
     initialValues: {

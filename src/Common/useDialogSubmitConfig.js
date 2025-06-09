@@ -17,37 +17,46 @@ export function useDialogSubmitConfig() {
             console.log('submit report', data);
             // ...
         },
-        createOrder: async (data) => {
+        createOrder: async ({newTask}) => {
+            console.log('createOrder: ', );
             try {
-                const res = await axios.post('http://localhost:8080/task', data, {
+                const res = await axios.post('http://localhost:8080/task', newTask, {
                     headers: {
                         'Content-Type': 'application/json',
                         ...authHeaders,
                     },
                 });
                 console.log('Задание создано:', res.data);
+                return {
+                    success: true,
+                    message: 'Задание успешно создано',
+                };
             } catch (err) {
                 if (err.response) {
                     console.error('Ошибка создания задания:', err.response.data);
                 } else {
                     console.error('Ошибка сети:', err.message);
                 }
+                return {
+                    success: false,
+                    message: 'Ошибка создания задания',
+                };
             }
         },
-        setPrice: async (taskInfo, price) => {
+        setPrice: async ({ selectedOrder, price }) => {
+            console.log('selectedOrder, price  --->', selectedOrder, price.price);
             try {
                 const bandId = decodedToken?.bandId || null;
 
                 const params = {
-                    taskId: taskInfo.taskId,
-                    bandId: bandId,
-                    taskStatus: 'WAITING_FOR_PAYMENT',
+                    taskId: selectedOrder.taskId,
+                    bandId,
+                    price: Number(price.price),
                 };
 
-                const url = 'http://localhost:8080/task';
+                console.log('params: ', params);
+                const url = `http://localhost:8080/task/price`;
 
-                console.log('bandId:', bandId);
-                console.log('taskId:', taskInfo.taskId);
                 console.log('URL запроса:', `${url}?${new URLSearchParams(params).toString()}`);
 
                 const res = await axios.put(url, null, {
@@ -60,21 +69,98 @@ export function useDialogSubmitConfig() {
 
                 console.log('Цена установлена:', res.data);
 
+                return {
+                    success: true,
+                    message: 'Цена успешно установлена',
+                };
             } catch (err) {
-                if (err.response) {
-                    console.error('Ошибка установки цены:', err.response.data);
-                } else {
-                    console.error('Ошибка сети при установке цены:', err.message);
-                }
+                console.error('Ошибка установки цены:', err?.response?.data || err.message);
+                return {
+                    success: false,
+                    message: 'Ошибка при установке цены',
+                };
             }
         },
-        payment: async (data) => {
-            console.log(' pay via config Цена установлена!', data);
+        payment: async ({ selectedOrder }) => {
+            console.log('payment destr: ', selectedOrder);
+            try {
+                const taskId = selectedOrder?.taskId;
+                const bandId = decodedToken?.bandId;
 
-            return {
-                success: true,
-                message: 'snackbar payment message!',
-            };
+                if (!taskId || !bandId) {
+                    console.error('Отсутствуют необходимые параметры: taskId или bandId');
+                    return {
+                        success: false,
+                        message: 'Не удалось выполнить оплату: отсутствует taskId или bandId',
+                    };
+                }
+
+                const params = {
+                    taskId,
+                    bandId,
+                    taskStatus: 'WAITING_FOR_ASSIGNMENT',
+                };
+
+                const url = 'http://localhost:8080/task';
+
+                const res = await axios.put(url, null, {
+                    params,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...authHeaders,
+                    },
+                });
+
+                console.log('Задание оплачено:', res.data);
+
+                return {
+                    success: true,
+                    message: 'Задание успешно оплачено',
+                };
+            } catch (err) {
+                console.error('Ошибка при оплате задания:', err?.response?.data || err.message);
+                return {
+                    success: false,
+                    message: 'Ошибка при оплате задания',
+                };
+            }
+        },
+        reject: async ({ selectedOrder, reason }) => {
+            console.log('selectedOrder, reason  --->', selectedOrder, reason.reason);
+            try {
+                const taskId = selectedOrder?.taskId;
+                if (!taskId) {
+                    console.error('Нет taskId для отмены задания');
+                    return {
+                        success: false,
+                        message: 'ID задания отсутствует',
+                    };
+                }
+                const res = await axios.put(
+                    `http://localhost:8080/task/cancel`,
+                    { reason: reason.reason },
+                    {
+                        params: { taskId },
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...authHeaders,
+                        },
+                    }
+                );
+
+                console.log('Задание отменено:', res.data);
+
+                return {
+                    success: true,
+                    message: 'Задание успешно отменено',
+                };
+            } catch (err) {
+                console.error('Ошибка отмены задания:', err?.response?.data || err.message);
+                return {
+                    success: false,
+                    message: 'Ошибка при отмене задания',
+                };
+            }
         },
     };
 }
