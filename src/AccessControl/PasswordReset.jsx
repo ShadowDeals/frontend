@@ -16,28 +16,46 @@ import {
 import { useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import StatusSnackbar from "../Common/StatusSnackbar.jsx";
+import {useSnackbar} from "../Common/useSnackbar.js";
+import {EmailResetPasswordConfig} from "./ValidationSchemas.js";
+import axios from "axios";
 
 function PasswordResetComponent() {
+    const {
+        open,
+        snackbar,
+        showSnackbar,
+        hideSnackbar
+    } = useSnackbar();
     const [dialogOpen, setDialogOpen] = useState(false);
 
     const location = useLocation();
     const navigate = useNavigate();
 
+    const formik = useFormik({
+        initialValues: EmailResetPasswordConfig.initialValues,
+        validationSchema:  EmailResetPasswordConfig.validationSchema,
+        onSubmit: async (values) => {
+            try {
+                const response = await axios.post(
+                    'http://localhost:8080/auth/change/password/email',
+                    { email: values.email }
+                );
+                console.log('Ответ от сервера: ', response.data);
+                // showSnackbar({ type: 'success', text: 'Инструкция отправлена на почту' });
+                setDialogOpen(true);
+            } catch (error) {
+                console.error('Ошибка при отправке письма:', error);
+                showSnackbar({ type: 'error', text: error.response?.data?.message || 'Ошибка при отправке письма' });
+            }
+        },
+
+    });
+
     if (!location.state?.fromLogin) {
         return <Navigate to="/login" replace />;
     }
-
-    const formik = useFormik({
-        initialValues: {
-            email: '',
-        },
-        validationSchema: Yup.object({
-            email: Yup.string().email('Неверный формат почты').required('Обязательное поле'),
-        }),
-        onSubmit: () => {
-            setDialogOpen(true);
-        },
-    });
 
     const handleClose = () => {
         setDialogOpen(false);
@@ -133,6 +151,7 @@ function PasswordResetComponent() {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <StatusSnackbar open={open} onClose={hideSnackbar} snackbar={snackbar}/>
         </Box>
     );
 }

@@ -12,6 +12,7 @@ import CheckEmailComponent from "./AccessControl/CheckEmail.jsx";
 import {Provider} from "react-redux";
 import store from "./Redux/store.js"
 import CssBaseline from "@mui/material/CssBaseline";
+import EnterNewPassword from "./AccessControl/EnterNewPassword.jsx";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
                         <Route path="/confirm" element={<EmailConfirmComponent/>}/>
                         <Route path="/check-email" element={<CheckEmailComponent/>}/>
                         <Route path="/home" element={<HomeComponent />}/>
+                        <Route path="/change-password" element={<EnterNewPassword/>}> </Route>
                     </Routes>
               </BrowserRouter>
           </Provider>

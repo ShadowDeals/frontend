@@ -150,3 +150,12 @@ export const PasswordDbLockConfig = {
     }),
 };
 
+export const EmailResetPasswordConfig = {
+    initialValues: {
+        email: '',
+    },
+    validationSchema: Yup.object({
+        email: Yup.string().email('Неверный формат почты').required('Обязательное поле'),
+    }),
+};
+
