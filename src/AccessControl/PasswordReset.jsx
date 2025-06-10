@@ -15,7 +15,6 @@ import {
 } from '@mui/material';
 import { useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import StatusSnackbar from "../Common/StatusSnackbar.jsx";
 import {useSnackbar} from "../Common/useSnackbar.js";
 import {EmailResetPasswordConfig} from "./ValidationSchemas.js";
