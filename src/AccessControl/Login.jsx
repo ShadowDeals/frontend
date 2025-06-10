@@ -14,6 +14,10 @@ import axios from "axios";
 import {useSnackbar} from "../Common/useSnackbar.js";
 import React from "react";
 import StatusSnackbar from "../Common/StatusSnackbar.jsx";
+import {useDecodedToken} from "../Common/tokenHooks.js";
+import {setBandId} from "../Redux/store.js";
+import {jwtDecode} from "jwt-decode";
+import {useDispatch} from "react-redux";
 
 const validationSchema = Yup.object({
     email: Yup.string().email('Неверный формат email').required('Введите почту'),
@@ -22,6 +26,8 @@ const validationSchema = Yup.object({
 
 
 function LoginComponent() {
+    const dispatch = useDispatch();
+
     const navigate = useNavigate();
     const formik = useFormik({
         initialValues: { email: '', password: '' },
@@ -35,14 +41,44 @@ function LoginComponent() {
                 });
                 console.log('Успешный логин, данные:', data);
 
+                const expiresInDays = Math.ceil(data.accessExpiresAt / (60 * 60 * 24));
                 Cookies.set('accessToken', data.accessToken, {
-                    expires: 7,
+                    expires: expiresInDays,
+                    secure: true,
+                    sameSite: 'Strict',
+                });
+
+                Cookies.set('refreshToken', data.refreshToken, {
+                    expires: expiresInDays,
+                    secure: true,
+                    sameSite: 'Strict',
+                });
+
+                Cookies.set('userEmail', data.email, {
+                    expires: expiresInDays,
                     secure: true,
                     sameSite: 'Strict',
                 });
 
                 const tokenFromCookie = Cookies.get('accessToken');
-                console.log('Токен из куки:', tokenFromCookie);
+                const refreshFromCookie = Cookies.get('refreshToken');
+                const emailFromCookie = Cookies.get('userEmail');
+
+                console.log('Access Token из куки:', tokenFromCookie);
+                console.log('Refresh Token из куки:', refreshFromCookie);
+                console.log('Email из куки:', emailFromCookie);
+
+                console.log('Полные данные ответа:', {
+                    accessToken: tokenFromCookie,
+                    accessExpiresAt: data.accessExpiresAt,  // 86400 (в секундах)
+                    refreshToken: refreshFromCookie,
+                    email: emailFromCookie,
+                });
+
+                const decodedToken = jwtDecode(tokenFromCookie);
+                const bandId = decodedToken?.bandId;
+                console.log('Декодирован в логине bandId: ', bandId)
+                dispatch(setBandId(bandId));
 
                 navigate("/home");
             } catch (error) {

@@ -1,53 +1,123 @@
 import React, { useEffect, useState } from 'react';
-import {Box, Typography, Card, CardContent, Stack, Button} from '@mui/material';
+import {
+    Box,
+    Typography,
+    Card,
+    CardContent,
+    Stack,
+    Button
+} from '@mui/material';
+import { useGangInfo } from './useGangInfo';
+import { useSnackbar } from './useSnackbar';
+import StatusSnackbar from './StatusSnackbar';
 import axios from "axios";
-import Cookies from "js-cookie";
+import {useAuthHeaders} from "./tokenHooks.js";
 
-const FindGang = () => {
-    const [submitted, setSubmitted] = useState([]); // массив строк: regionName
-    const [gangs, setGangs] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const accessToken = Cookies.get('accessToken');
+export const Regions = {
+    VASILEOSTROVKIY_REGION: "Василеостровский район",
+    VIBORGSKY_REGION: "Выборгский район",
+    MOSCOW_REGION: "Московский район",
+};
 
-    const handleApply = (regionName) => {
-        setSubmitted((prev) => [...prev, regionName]);
-        // Здесь можно добавить POST-запрос на отправку заявки
+export const RegionsReverse = Object.fromEntries(
+    Object.entries(Regions).map(([key, value]) => [value, key])
+);
+
+// Вынесенная функция, чистая — принимает все зависимости как аргументы
+export const handleApply = async ({
+                                      regionName,
+                                      ownRegions,
+                                      submitted,
+                                      setSubmitted,
+                                      showSnackbar,
+                                      authHeaders,
+                                  }) => {
+    if (ownRegions.includes(regionName) || submitted.includes(regionName)) {
+        showSnackbar({
+            type: 'info',
+            text: `Вы уже подали заявку в регион "${regionName}".`,
+        });
+        return;
+    }
+
+    const sendRequest = async (regionName, headers) => {
+        const regionKey = RegionsReverse?.[regionName];
+        try {
+            await axios.post(
+                `http://localhost:8080/request?regionName=${encodeURIComponent(regionKey)}`,
+                {},
+                { headers }
+            );
+
+            return {
+                status: 'success',
+                message: `Заявка на вступление в регион "${regionName}" отправлена.`,
+            };
+        } catch (error) {
+            return {
+                status: 'error',
+                message: `Ошибка при отправке заявки: ${error.response?.data?.message || error.message}`,
+            };
+        }
     };
 
+    const result = await sendRequest(regionName, authHeaders);
+
+    if (result.status === 'success') {
+        setSubmitted((prev) => [...prev, regionName]);
+    }
+
+    showSnackbar({
+        type: result.status,
+        text: result.message,
+    });
+};
+
+
+export function FindGang() {
+    const { regions, ownRegions, loading, response } = useGangInfo();
+    const [submitted, setSubmitted] = useState([]);
+    const {
+        open,
+        snackbar,
+        showSnackbar,
+        hideSnackbar
+    } = useSnackbar();
+
+    const authHeaders = useAuthHeaders();
+
+    const onApplyClick = (regionName) => {
+        handleApply({
+            regionName,
+            ownRegions,
+            submitted,
+            setSubmitted,
+            showSnackbar,
+            authHeaders,
+        });
+    };
+
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [gangsRes, ownRequestsRes] = await Promise.all([
-                    axios.get('http://localhost:8080/region?isBandExist=true'),
-                    axios.get('http://localhost:8080/request/own', {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`,
-                        }
-                    })
-                ]);
+        if (response.message) {
+            showSnackbar({
+                type: response.status === 'error' ? 'error' : 'info',
+                text: response.message,
+            });
+        }
+    }, [response, showSnackbar]);
 
-                const gangList = gangsRes.data || [];
-                const ownRequests = ownRequestsRes.data;
-
-                const submittedRegions = Array.isArray(ownRequests)
-                    ? ownRequests.map(r => r.bandRegion)
-                    : [];
-
-                setGangs(gangList);
-                setSubmitted(submittedRegions);
-            } catch (error) {
-                console.error("Ошибка при загрузке данных:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [accessToken]);
+    if (loading) {
+        return (
+            <Box sx={{ padding: 4 }}>
+                <Typography>Загрузка...</Typography>
+            </Box>
+        );
+    }
 
     return (
         <Box sx={{ width: '100%', height: '100%', padding: 4 }}>
-            <Typography variant="h5" textAlign={'right'} sx={{ marginBottom: 2 }}>
+            <Typography variant="h5" textAlign="right" sx={{ marginBottom: 2 }}>
                 Найди свою банду
             </Typography>
 
@@ -60,9 +130,9 @@ const FindGang = () => {
                     padding: 2,
                 }}
             >
-                {gangs.map((gang, index) => (
+                {regions.length > 0 && regions.map((region, index) => (
                     <Card
-                        key={gang.id || gang}
+                        key={region}
                         sx={{
                             minWidth: 200,
                             borderRadius: 2,
@@ -73,24 +143,27 @@ const FindGang = () => {
                         <CardContent>
                             <Stack direction="row" justifyContent="space-between" alignItems="center">
                                 <Typography variant="h6">
-                                    {gang}
+                                    {region}
                                 </Typography>
                                 <Button
                                     variant="contained"
                                     color="primary"
                                     size="small"
-                                    onClick={() => handleApply(gang)}
-                                    disabled={submitted.includes(gang)}
+                                    onClick={() => onApplyClick(region)}
+                                    disabled={ownRegions.includes(region) || submitted.includes(region)}
                                 >
-                                    {submitted.includes(gang) ? 'Заявка отправлена' : 'Отправить заявку'}
+                                    {(ownRegions.includes(region) || submitted.includes(region))
+                                        ? 'Заявка отправлена'
+                                        : 'Отправить заявку'}
                                 </Button>
                             </Stack>
                         </CardContent>
                     </Card>
                 ))}
+
             </Box>
+
+            <StatusSnackbar open={open} onClose={hideSnackbar} snackbar={snackbar} />
         </Box>
     );
-};
-
-export default FindGang;
+}

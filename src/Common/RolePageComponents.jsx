@@ -1,5 +1,5 @@
 import GangInfo from "./GangInfo.jsx";
-import FindGang from "./FindGang.jsx";
+import { FindGang } from "./FindGang.jsx";
 import OrdersComponent from "./OrdersComponent.jsx";
 import EmployeeTabs from "../Don/EmployeesComponent.jsx";
 import {Typography} from "@mui/material";

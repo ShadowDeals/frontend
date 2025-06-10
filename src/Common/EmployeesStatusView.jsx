@@ -69,7 +69,7 @@ const EmployeesListWithStatus = ({ employees, status }) => {
                 width: '100%',
                 height: '600px',
                 overflowY: 'auto',
-                border: '1px solid #5C3A0E',
+                // border: '1px solid #5C3A0E',
                 padding: 2,
             }}
         >

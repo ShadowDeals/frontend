@@ -21,6 +21,8 @@ import {useEffect, useState} from "react";
 import {useDecodedToken} from "./tokenHooks.js";
 import {RoleMenuList} from "./RoleMenuItem.jsx";
 import RoleTitle from "./RoleTitle.jsx";
+import {useDispatch, useSelector} from "react-redux";
+import {setBandId} from "../Redux/store.js";
 
 const drawerWidth = 240;
 
@@ -80,7 +82,19 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function HomeComponent() {
-    const { bandId = null, sub = '', roles= [] } = useDecodedToken() || {};
+    const dispatch = useDispatch();
+    const { sub = '', roles = [] } = useDecodedToken() || {}; // bandId = null
+    const bandId = useSelector(state => state.band.bandId);
+    // console.log('bandId в родительском:', bandId);
+    console.log('reduxBandId в родительском:', bandId);
+    useEffect(() => {
+        // if (bandId && bandId !== reduxBandId) {
+        //     console.log('В родительском компоненте  bandId стало: ', bandId);
+            console.log('В родительском компоненте  reduxBandId стало: ', bandId);
+            dispatch(setBandId(bandId));
+        // }
+    }, [bandId, dispatch]); // bandId,
+
 
     const theme = useTheme();
     const [open, setOpen] = useState(false);
