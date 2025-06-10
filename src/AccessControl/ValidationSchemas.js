@@ -139,3 +139,14 @@ export const setPriceFormConfig = {
             .positive('Цена должна быть положительной'),
     }),
 };
+
+
+export const PasswordDbLockConfig = {
+    initialValues: { password: '' },
+    validationSchema: Yup.object().shape({
+        password: Yup.string()
+            .required('Пароль обязателен')
+            .min(4, 'Минимум 6 символов'),
+    }),
+};
+

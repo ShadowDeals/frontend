@@ -105,7 +105,7 @@ const EmployeesListWithStatus = ({employees, status, showSnackbar}) => {
         >
             {employees.map((employee) => (
                 <Card
-                    key={employee}
+                    key={status === 'pending' ? (employee.id) : (employee.workerId)}
                     sx={{
                         minWidth: 200,
                         borderRadius: 2,

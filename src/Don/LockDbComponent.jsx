@@ -8,30 +8,51 @@ import {
     DialogContent,
     DialogActions, TextField
 } from '@mui/material';
-import React, { useState } from 'react';
-import { Formik, useFormik } from 'formik';
-import * as Yup from 'yup';
+import React, {useEffect, useState} from 'react';
+import {useFormik} from 'formik';
+import {PasswordDbLockConfig} from "../AccessControl/ValidationSchemas.js";
+import {useAuthHeaders} from "../Common/tokenHooks.js";
+import axios from "axios";
+import StatusSnackbar from "../Common/StatusSnackbar.jsx";
+import {useSnackbar} from "../Common/useSnackbar.js";
 
-const PasswordSchema = Yup.object().shape({
-    password: Yup.string()
-        .required('Пароль обязателен')
-        .min(4, 'Минимум 4 символа'),
-});
-
-export function PasswordDialog({ open, onClose, onConfirm }) {
+export function PasswordDialog({open, onClose, onConfirm, isLocked, authHeaders, showSnackbar}) {
     const formik = useFormik({
-        initialValues: {
-            password: '',
-        },
-        validationSchema: PasswordSchema,
-        onSubmit: (values) => {
-            onConfirm(values.password);
-            formik.resetForm();
+        initialValues: PasswordDbLockConfig.initialValues,
+        validationSchema: PasswordDbLockConfig.validationSchema,
+        onSubmit: async (values) => {
+            if (!authHeaders.Authorization) return;
+
+            const url = 'http://localhost:8080/band/block';
+            const config = {
+                headers: {
+                    ...authHeaders,
+                    'Content-Type': 'application/json',
+                },
+                data: {
+                    password: values.password,
+                },
+            };
+
+            try {
+                if (isLocked) {
+                    await axios.delete(url, config);
+                } else {
+                    await axios.post(url, { password: values.password }, { headers: authHeaders });
+                }
+
+                onConfirm(values.password);
+                formik.resetForm();
+                showSnackbar({type: 'success', text: 'Операция успешна!' });
+            } catch (error) {
+                console.error('Ошибка при блокировке/разблокировке:', error);
+                showSnackbar({type: 'error', text: error.message || 'Ошибка работы компонента "Блок БД' });
+            }
         },
     });
 
     return (
-        <Dialog open={open} onClose={onClose} sx = {{bgcolor:'#F2E6C4'}}>
+        <Dialog open={open} onClose={onClose} sx={{bgcolor: '#F2E6C4'}}>
             <DialogTitle>
                 Введите пароль
             </DialogTitle>
@@ -58,13 +79,13 @@ export function PasswordDialog({ open, onClose, onConfirm }) {
                     />
                 </form>
             </DialogContent>
-            <DialogActions >
+            <DialogActions>
                 <Button
                     variant='contained'
                     onClick={() => {
-                    formik.resetForm();
-                    onClose();
-                }}>
+                        formik.resetForm();
+                        onClose();
+                    }}>
                     Отмена
                 </Button>
                 <Button
@@ -82,6 +103,30 @@ export function PasswordDialog({ open, onClose, onConfirm }) {
 
 export function LockDatabaseComponent() {
     const [isLocked, setIsLocked] = useState(false);
+    const authHeaders = useAuthHeaders();
+
+    const {
+        open,
+        snackbar,
+        showSnackbar,
+        hideSnackbar
+    } = useSnackbar();
+
+    useEffect(() => {
+        if (!authHeaders.Authorization) return;
+
+        axios.get('http://localhost:8080/band/block',
+            {headers: authHeaders})
+            .then((res) => {
+                if (typeof res.data === 'boolean') {
+                    setIsLocked(res.data);
+                }
+            })
+            .catch((error) => {
+                console.error('Ошибка при получении статуса блокировки БД:', error);
+            });
+    }, [authHeaders]);
+
 
     const handleOpenDialog = () => {
         setDialogOpen(true);
@@ -125,11 +170,15 @@ export function LockDatabaseComponent() {
                 </Button>
             </Stack>
             <PasswordDialog
-                sx = {{bgcolor:'#F2E6C4'}}
+                sx={{bgcolor: '#F2E6C4'}}
                 open={dialogOpen}
                 onClose={() => setDialogOpen(false)}
                 onConfirm={handleConfirm}
+                isLocked={isLocked}
+                authHeaders={authHeaders}
+                showSnackbar={showSnackbar}
             />
+            <StatusSnackbar open={open} onClose={hideSnackbar} snackbar={snackbar}/>
         </Box>
     );
 }

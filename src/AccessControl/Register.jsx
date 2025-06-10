@@ -21,6 +21,7 @@ import { v4 as uuidv4 } from 'uuid';
 import useRegions from "./useRegions.js";
 import ErrorSnackbar from "../Common/StatusSnackbar.jsx";
 import {useSnackbar} from "../Common/useSnackbar.js";
+import StatusSnackbar from "../Common/StatusSnackbar.jsx";
 
 
 
@@ -96,8 +97,12 @@ const onRoleChange = (role, setSelectedRole, setFormConfig) => {
 function RegisterComponent() {
     const navigate = useNavigate();
     const [selectedRole, setSelectedRole] = useState('');
-    const { open, error, showError, hideError } = useSnackbar();
-
+    const {
+        open,
+        snackbar,
+        showSnackbar,
+        hideSnackbar
+    } = useSnackbar();
     const [formConfig, setFormConfig] = useState(null);
     const { regionsBandExist, regionsBandNotExist } = useRegions();
 
@@ -134,10 +139,10 @@ function RegisterComponent() {
                     navigate('/check-email', { state: { email: values.email } });
                 } else {
                     const errorData = await res.json();
-                    showError({ errcode: res.status, text: errorData.message || 'Ошибка регистрации' });
+                    showSnackbar({ type: 'error', text: errorData.message || 'Ошибка регистрации' });
                 }
             } catch (err) {
-                showError({ errcode: 'network', text: err.message || err.toString() });
+                showSnackbar({ type: 'error', text: err.message || err.toString() });
             } finally {
                 setSubmitting(false);
             }
@@ -288,12 +293,7 @@ function RegisterComponent() {
                     )}
                 </Stack>
             </Paper>
-
-            <ErrorSnackbar
-                open={open}
-                error={error}
-                onClose={hideError}
-            ></ErrorSnackbar>
+            <StatusSnackbar open={open} onClose={hideSnackbar} snackbar={snackbar}/>
         </Box>
     );
 }
