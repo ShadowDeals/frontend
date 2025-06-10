@@ -102,7 +102,7 @@ export function PasswordDialog({open, onClose, onConfirm, isLocked, authHeaders,
 }
 
 export function LockDatabaseComponent() {
-    const [isLocked, setIsLocked] = useState(false);
+    const [isLocked, setIsLocked] = useState(null);
     const authHeaders = useAuthHeaders();
 
     const {
@@ -148,27 +148,29 @@ export function LockDatabaseComponent() {
             height="100%"
             width="100%"
         >
-            <Stack spacing={10}>
-                <Typography
-                    variant="h4"
-                    color={isLocked ? 'error.main' : 'success.main'}
-                    gutterBottom
-                >
-                    Статус: {isLocked ? 'Блокирована' : 'Разблокирована'}
-                </Typography>
+            {isLocked !== null  && (
+                <Stack spacing={10}>
+                    <Typography
+                        variant="h4"
+                        color={isLocked ? 'error.main' : 'success.main'}
+                        gutterBottom
+                    >
+                        Статус: {isLocked ? 'Блокирована' : 'Разблокирована'}
+                    </Typography>
 
-                <Button
-                    variant="contained"
-                    onClick={handleOpenDialog}
-                    sx={{
-                        fontSize: '1.5rem',
-                        padding: '1rem 3rem',
-                        bgcolor: isLocked ? '#009900' : '#990000'
-                    }}
-                >
-                    {isLocked ? 'Разблокировать БД' : 'Блокировать БД'}
-                </Button>
-            </Stack>
+                    <Button
+                        variant="contained"
+                        onClick={handleOpenDialog}
+                        sx={{
+                            fontSize: '1.5rem',
+                            padding: '1rem 3rem',
+                            bgcolor: isLocked ? '#009900' : '#990000'
+                        }}
+                    >
+                        {isLocked ? 'Разблокировать БД' : 'Блокировать БД'}
+                    </Button>
+                </Stack>
+            )}
             <PasswordDialog
                 sx={{bgcolor: '#F2E6C4'}}
                 open={dialogOpen}
