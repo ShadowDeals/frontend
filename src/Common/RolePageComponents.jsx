@@ -8,8 +8,8 @@ import PlotsDashboard from "../Don/PlotsDashboard.jsx";
 
 export const pageComponentsByRole = {
     'Дон': {
-        'Сведения о банде': ({bandId, role}) =>
-            bandId ? <GangInfo role={role}/> : <FindGang/>,
+        'Сведения о банде': ({bandId, role, onBandIdChange}) =>
+            bandId ? <GangInfo role={role} onBandIdChange={onBandIdChange}/> : <FindGang/>,
         'Статистика': () => <PlotsDashboard/>,
         'Доступ к БД': () => <LockDatabaseComponent/>,
         'Сотрудники': ({bandId, role}) =>
@@ -20,8 +20,8 @@ export const pageComponentsByRole = {
             ),
     },
     'Администратор': {
-        'Сведения о банде': ({bandId, role}) =>
-            bandId ? <GangInfo role={role}/> : <FindGang/>,
+        'Сведения о банде': ({bandId, role, onBandIdChange}) =>
+            bandId ? <GangInfo role={role} onBandIdChange={onBandIdChange}/> : <FindGang/>,
         'Заказы': ({bandId, role}) =>
             bandId ? <OrdersComponent role={role}/> : (
                 <Typography variant="h5" sx={{textAlign: 'center', width: '100%'}}>

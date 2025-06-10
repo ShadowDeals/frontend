@@ -14,19 +14,13 @@ import axios from "axios";
 import {useSnackbar} from "../Common/useSnackbar.js";
 import React from "react";
 import StatusSnackbar from "../Common/StatusSnackbar.jsx";
-import {useDecodedToken} from "../Common/tokenHooks.js";
-import {setBandId} from "../Redux/store.js";
-import {jwtDecode} from "jwt-decode";
-import {useDispatch} from "react-redux";
 
 const validationSchema = Yup.object({
     email: Yup.string().email('Неверный формат email').required('Введите почту'),
     password: Yup.string().required('Введите пароль'),
 });
 
-
 function LoginComponent() {
-    const dispatch = useDispatch();
 
     const navigate = useNavigate();
     const formik = useFormik({
@@ -70,15 +64,10 @@ function LoginComponent() {
 
                 console.log('Полные данные ответа:', {
                     accessToken: tokenFromCookie,
-                    accessExpiresAt: data.accessExpiresAt,  // 86400 (в секундах)
+                    accessExpiresAt: data.accessExpiresAt,
                     refreshToken: refreshFromCookie,
                     email: emailFromCookie,
                 });
-
-                const decodedToken = jwtDecode(tokenFromCookie);
-                const bandId = decodedToken?.bandId;
-                console.log('Декодирован в логине bandId: ', bandId)
-                dispatch(setBandId(bandId));
 
                 navigate("/home");
             } catch (error) {
@@ -100,7 +89,6 @@ function LoginComponent() {
             }
         },
     });
-
 
     const {
         open,

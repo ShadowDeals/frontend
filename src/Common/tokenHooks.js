@@ -2,10 +2,9 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 import { jwtDecode } from 'jwt-decode';
 import Cookies from 'js-cookie';
 import axios from "axios";
-import {useDispatch} from "react-redux";
-import {setBandId} from "../Redux/store.js";
 
 export function useDecodedToken() {
+    console.log('useDecodedToken call');
     return useMemo(() => {
         const token = Cookies.get('accessToken');
         if (!token) return null;
@@ -39,11 +38,12 @@ export function useAuthHeaders() {
 }
 
 export function useRefreshToken() {
-    const dispatch = useDispatch();
+    console.log('useRefreshToken call');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const refresh = useCallback(async () => {
+        console.log('refresh call');
         const refreshToken = Cookies.get('refreshToken');
         if (!refreshToken) {
             setError('Отсутствует refreshToken');
@@ -89,9 +89,8 @@ export function useRefreshToken() {
                 email,
             });
 
-            const decodedToken = jwtDecode(accessToken);
-            console.log('При refresh устанавливаем bandId: ', decodedToken?.bandId);
-            dispatch(setBandId(decodedToken?.bandId || null));
+            console.log('Декодированные данные в дочернем компоненте: ', jwtDecode(accessToken));
+
             return accessToken;
         } catch (err) {
             console.error('Ошибка обновления токена:', err);

@@ -97,7 +97,6 @@ export function FindGang() {
         });
     };
 
-
     useEffect(() => {
         if (response.message) {
             showSnackbar({

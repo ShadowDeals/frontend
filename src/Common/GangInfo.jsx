@@ -4,9 +4,8 @@ import axios from 'axios';
 import {useAuthHeaders, useDecodedToken, useRefreshToken} from "./tokenHooks.js";
 import StatusSnackbar from "./StatusSnackbar.jsx";
 import {useSnackbar} from "./useSnackbar.js";
-import {useDispatch, useSelector} from "react-redux";
 import {jwtDecode} from "jwt-decode";
-import {setBandId} from "../Redux/store.js";
+
 
 const leaveGang = async (authHeaders) => {
     try {
@@ -20,15 +19,11 @@ const leaveGang = async (authHeaders) => {
     }
 };
 
-export function GangInfo ({ role }) {
-    const dispatch = useDispatch();
+export function GangInfo ({ role, onBandIdChange }) {
     const authHeaders = useAuthHeaders();
     const decodedToken = useDecodedToken() || null;
 
-    const currentBandId = useSelector(state => state.band.bandId);
-
     console.log('decodedToken из дочернего', decodedToken);
-    console.log('currentBandId из дочернего', currentBandId);
 
     const {
         open,
@@ -39,16 +34,18 @@ export function GangInfo ({ role }) {
 
     const { refresh } = useRefreshToken();
 
-    const handleLeave = async ({ decodedToken }) => {
+    const handleLeave = async () => {
         const result = await leaveGang(authHeaders);
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        console.log('Ждем 3 секунды перед обновлением токена...');
+        await sleep(3000); // 3000 миллисекунд = 3 секунды
+        console.log('Задержка завершена, обновляем токен...');
+
         const newAccessToken = await refresh();
 
-        console.log('newaccess',newAccessToken);
-        decodedToken = jwtDecode(newAccessToken);
-
-        console.log('decoded token из дочернего: ', decodedToken);
-        dispatch(setBandId(decodedToken?.bandId || null));
-        console.log('decoded token band id: ', decodedToken?.bandId || null);
+        console.log('decoded token band id: ', jwtDecode(newAccessToken)?.bandId || null);
+        onBandIdChange(jwtDecode(newAccessToken)?.bandId);
 
         if (showSnackbar) {
             if (!newAccessToken) {
@@ -86,7 +83,7 @@ export function GangInfo ({ role }) {
                         ID вашей банды: {decodedToken?.bandId || 'неизвестен'}
                     </Typography>
                     {role !== 'Дон' && (
-                        <Button variant="contained" onClick={(decodedToken) => handleLeave(decodedToken)}>
+                        <Button variant="contained" onClick={handleLeave}>
                             Выйти
                         </Button>
                     )}

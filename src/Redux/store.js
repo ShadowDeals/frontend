@@ -24,28 +24,11 @@ const authSlice = createSlice({
     },
 });
 
-const bandSlice = createSlice({
-    name: 'band',
-    initialState: {
-        bandId: null,
-    },
-    reducers: {
-        setBandId: (state, action) => {
-            state.bandId = action.payload;
-        },
-        clearBandId: (state) => {
-            state.bandId = null;
-        },
-    },
-});
-
 export const { setCredentials, clearCredentials } = authSlice.actions;
-export const { setBandId, clearBandId } = bandSlice.actions;
 
 const store = configureStore({
     reducer: {
         auth: authSlice.reducer,
-        band: bandSlice.reducer,
     },
 });
 

@@ -21,8 +21,6 @@ import {useEffect, useState} from "react";
 import {useDecodedToken} from "./tokenHooks.js";
 import {RoleMenuList} from "./RoleMenuItem.jsx";
 import RoleTitle from "./RoleTitle.jsx";
-import {useDispatch, useSelector} from "react-redux";
-import {setBandId} from "../Redux/store.js";
 
 const drawerWidth = 240;
 
@@ -82,19 +80,15 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function HomeComponent() {
-    const dispatch = useDispatch();
-    const { sub = '', roles = [] } = useDecodedToken() || {}; // bandId = null
-    const bandId = useSelector(state => state.band.bandId);
-    // console.log('bandId в родительском:', bandId);
-    console.log('reduxBandId в родительском:', bandId);
-    useEffect(() => {
-        // if (bandId && bandId !== reduxBandId) {
-        //     console.log('В родительском компоненте  bandId стало: ', bandId);
-            console.log('В родительском компоненте  reduxBandId стало: ', bandId);
-            dispatch(setBandId(bandId));
-        // }
-    }, [bandId, dispatch]); // bandId,
+    const { bandId: initialBandId = null, sub = '', roles= [] } = useDecodedToken() || {};
 
+    console.log('Родительский компонент: bandId', initialBandId);
+    const [bandId, setBandId] = useState(initialBandId);
+
+    const handleBandIdChange = (newBandId) => {
+        console.log('handleBandIdChange из родителя');
+        setBandId(newBandId);
+    };
 
     const theme = useTheme();
     const [open, setOpen] = useState(false);
@@ -188,7 +182,7 @@ export default function HomeComponent() {
             <Main open={open}>
                 <DrawerHeader />
                 {PageComponent ? (
-                        <PageComponent bandId={bandId} role={currentRole} />
+                        <PageComponent bandId={bandId} role={currentRole} onBandIdChange={handleBandIdChange}/>
                 ) : (
                     <Typography variant="h5" sx={{ textAlign: 'center' }}>
                         Страница не найдена
