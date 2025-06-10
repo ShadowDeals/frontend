@@ -23,7 +23,6 @@ export const RegionsReverse = Object.fromEntries(
     Object.entries(Regions).map(([key, value]) => [value, key])
 );
 
-// Вынесенная функция, чистая — принимает все зависимости как аргументы
 export const handleApply = async ({
                                       regionName,
                                       ownRegions,
@@ -72,7 +71,6 @@ export const handleApply = async ({
         text: result.message,
     });
 };
-
 
 export function FindGang() {
     const { regions, ownRegions, loading, response } = useGangInfo();
@@ -125,7 +123,7 @@ export function FindGang() {
                     width: '100%',
                     height: '80%',
                     overflowY: 'auto',
-                    border: '1px solid #900000',
+                    // border: '1px solid #900000',
                     padding: 2,
                 }}
             >

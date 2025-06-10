@@ -36,8 +36,8 @@ export const pageComponentsByRole = {
             ),
     },
     'Солдат': {
-        'Сведения о банде': ({bandId, role}) =>
-            bandId ? <GangInfo role={role}/> : <FindGang/>,
+        'Сведения о банде': ({bandId, role, onBandIdChange}) =>
+            bandId ? <GangInfo role={role} onBandIdChange={onBandIdChange}/> : <FindGang/>,
         'Задания': ({bandId, role}) =>
             bandId ? <OrdersComponent role={role}/> : (
                 <Typography variant="h5" sx={{textAlign: 'center', width: '100%'}}>

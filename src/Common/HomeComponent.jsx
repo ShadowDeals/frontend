@@ -24,7 +24,6 @@ import RoleTitle from "./RoleTitle.jsx";
 
 const drawerWidth = 240;
 
-
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme }) => ({
         flexGrow: 1,

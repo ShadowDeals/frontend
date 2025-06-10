@@ -12,7 +12,7 @@ export default function EmployeeTabs({role}) {
         setValue(newValue);
     };
 
-    console.log("Действующая роль: ", role)
+    console.log("Действующая роль в EmployeeTabs: ", role)
     return (
         <Box sx={{ height: '100%', alignItems:'center', width:'100%' }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

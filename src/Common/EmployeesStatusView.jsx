@@ -1,38 +1,55 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {Box, Typography, Card, CardContent, Stack, Paper, Button} from '@mui/material';
 import {useEmployees} from "./useEmployees.js";
 import axios from "axios";
-import Cookies from "js-cookie";
+import {useAuthHeaders} from "./tokenHooks.js";
 
-const EmployeesListWithStatus = ({ employees, status }) => {
+const EmployeesListWithStatus = ({employees, status}) => {
+    console.log('employees тут какие', employees);
+    console.log('EmployeesListWithStatus статус какой: ', status);
     const [actioned, setActioned] = useState({});
 
-    const accessToken = Cookies.get('accessToken');
-    console.log(accessToken);
+    const authHeaders = useAuthHeaders();
+
+    useEffect(() => {
+        console.log('Updated actioned:', actioned);
+    }, [actioned]);
+
     const handleAction = async (employee) => {
         const employeeId = status === 'pending' ? employee.id : employee.workerId;
 
-        console.log('работаем для employeeId: ', employeeId);
+        console.log('работаем для employee: ', employee);
         if (status === 'pending') {
             try {
                 await axios.put(
                     `http://localhost:8080/request?requestId=${employeeId}`,
-                    null,
+                    {},
                     {
                         headers: {
-                            Authorization: `Bearer ${accessToken}`,
-                            'Content-Type': 'application/json',
+                            ...authHeaders,
                         },
                     }
                 );
                 console.log(`Запрос отправлен для requestId=${employeeId}`);
-                setActioned((prev) => ({ ...prev, [employeeId]: true }));
+                setActioned((prev) => ({...prev, [employeeId]: true}));
+                console.log('actioned pending -> ', actioned);
             } catch (error) {
                 console.error('Ошибка при отправке запроса:', error);
             }
+        } else if (status === 'active') {
+            await axios.put(
+                `http://localhost:8080/band/kick?userId=${employeeId}`,{},
+                {
+                    headers: {
+                        ...authHeaders,
+                    },
+                }
+            );
+            setActioned((prev) => ({...prev, [employeeId]: true}));
+            console.log('actioned active -> ', actioned);
         } else {
             console.log(`Действие для статуса ${status} не реализовано`);
-            setActioned((prev) => ({ ...prev, [employeeId]: true }));
+            setActioned((prev) => ({...prev, [employeeId]: true}));
         }
     };
 
@@ -75,7 +92,7 @@ const EmployeesListWithStatus = ({ employees, status }) => {
         >
             {employees.map((employee) => (
                 <Card
-                    key={employee.workerId}
+                    key={employee.id}
                     sx={{
                         minWidth: 200,
                         borderRadius: 2,
@@ -89,14 +106,14 @@ const EmployeesListWithStatus = ({ employees, status }) => {
                                 <Typography
                                     color="black"
                                     variant="h6"
-                                    sx={{ fontWeight: 'bold', mb: 0.5 }}
+                                    sx={{fontWeight: 'bold', mb: 0.5}}
                                 >
                                     Имя: {status === 'pending' ? (employee.name) : (employee.workerName)}
                                 </Typography>
                                 <Typography
                                     color="black"
                                     variant="body2"
-                                    sx={{ fontFamily: 'Monospace', mb: 0.5 }}
+                                    sx={{fontFamily: 'Monospace', mb: 0.5}}
                                 >
                                     ID: {status === 'pending' ? (employee.id) : (employee.workerId)}
                                 </Typography>
@@ -105,9 +122,10 @@ const EmployeesListWithStatus = ({ employees, status }) => {
                                         <Typography
                                             color="black"
                                             variant="body2"
-                                            sx={{ fontFamily: 'Monospace', mb: 0.5 }}
+                                            sx={{fontFamily: 'Monospace', mb: 0.5}}
                                         >
-                                            Дата создания заявки: {employee.dateCreated ? new Date(employee.dateCreated).toLocaleString() : 'неизвестна'}
+                                            Дата создания
+                                            заявки: {employee.dateCreated ? new Date(employee.dateCreated).toLocaleString() : 'неизвестна'}
                                         </Typography>
                                     ) : (<></>)
                                 }
@@ -117,9 +135,9 @@ const EmployeesListWithStatus = ({ employees, status }) => {
                                 color="primary"
                                 size="small"
                                 onClick={() => handleAction(employee)}
-                                disabled={actioned[employee.id]}
+                                disabled={actioned[status === 'pending' ? employee.id : employee.workerId]}
                             >
-                                {actioned[employee.id] ? labelDone : labelActive}
+                                {actioned[status === 'pending' ? employee.id : employee.workerId] ? labelDone : labelActive}
                             </Button>
                         </Stack>
                     </CardContent>
@@ -129,26 +147,26 @@ const EmployeesListWithStatus = ({ employees, status }) => {
     );
 };
 
-const EmployeesStatusView = ({ role, status = 'pending' }) => {
+const EmployeesStatusView = ({role, status = 'pending'}) => {
     console.log('Статус в EmployeesStatusView: ', status);
-    const { employees, loading, error } = useEmployees(role, status);
+    const {employees, loading, error} = useEmployees(role, status);
     console.log('employees', employees);
     return (
-        <Box sx={{ width: '100%', height: '100%', padding: 4 }}>
+        <Box sx={{width: '100%', height: '100%', padding: 4}}>
 
             {role === 'Дон' ? (
                 <Stack spacing={2}>
-                    <Typography variant="h6" sx={{ marginBottom: 2, textAlign: 'right' }}>
+                    <Typography variant="h6" sx={{marginBottom: 2, textAlign: 'right'}}>
                         Администраторы
                     </Typography>
-                    <EmployeesListWithStatus employees={employees} status={status} />
+                    <EmployeesListWithStatus employees={employees} status={status}/>
                 </Stack>
             ) : role === 'Администратор' ? (
-                <Box sx={{ width: '100%' }}>
-                    <Typography textAlign={'right'} variant="h6" sx={{ ml:2 }}>
+                <Box sx={{width: '100%'}}>
+                    <Typography textAlign={'right'} variant="h6" sx={{ml: 2}}>
                         Солдаты
                     </Typography>
-                    <EmployeesListWithStatus employees={employees} status={status} />
+                    <EmployeesListWithStatus employees={employees} status={status}/>
                 </Box>
             ) : null}
         </Box>
