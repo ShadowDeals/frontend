@@ -162,6 +162,13 @@ OrderTabs.propTypes = {
 
 export default function OrdersComponent({role}) {
     const {
+        open,
+        snackbar,
+        showSnackbar,
+        hideSnackbar,
+    } = useSnackbar();
+
+    const {
         waitingForAccept,
         waitingForPayment,
         waitingForEmployee,
@@ -171,7 +178,7 @@ export default function OrdersComponent({role}) {
         cancelledByAdmin,
         cancelledByUser,
         refetch
-    } = useTasks(role);
+    } = useTasks({role, showSnackbar});
 
     const roleTabsMap = React.useMemo(() => {
         const finishedCombined = [
@@ -269,13 +276,6 @@ export default function OrdersComponent({role}) {
             refetch();
         }
     };
-
-    const {
-        open,
-        snackbar,
-        showSnackbar,
-        hideSnackbar,
-    } = useSnackbar();
 
     const tabsConfig = useMemo(() => {
         if (role === 'Солдат') {

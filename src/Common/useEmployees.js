@@ -42,7 +42,11 @@ export const useEmployees = (role, status) => {
                     setLoading(false);
                 })
                 .catch(err => {
-                    setError(err.message || 'Ошибка загрузки данных');
+                    if (err.response?.status === 423) {
+                        setError('Дон заблокировал базу данных!');
+                    } else {
+                        setError(err.message || 'Ошибка загрузки данных');
+                    }
                     setLoading(false);
                 });
         } else if (status === 'active') {
@@ -66,7 +70,11 @@ export const useEmployees = (role, status) => {
                     setLoading(false);
                 })
                 .catch(err => {
-                    setError(err.message || 'Ошибка загрузки данных');
+                    if (err.response?.status === 423) {
+                        setError('Дон заблокировал базу данных!');
+                    } else {
+                        setError(err.message || 'Ошибка загрузки данных');
+                    }
                     setLoading(false);
                 });
         } else {

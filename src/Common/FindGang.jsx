@@ -31,7 +31,9 @@ export const handleApply = async ({
                                       showSnackbar,
                                       authHeaders,
                                   }) => {
+    console.log('Регион какой тут перед оптравкой: ', regionName);
     if (ownRegions.includes(regionName) || submitted.includes(regionName)) {
+        console.log('Непонятно какого ну ладно: ', regionName);
         showSnackbar({
             type: 'info',
             text: `Вы уже подали заявку в регион "${regionName}".`,
@@ -49,26 +51,27 @@ export const handleApply = async ({
             );
 
             return {
-                status: 'success',
-                message: `Заявка на вступление в регион "${regionName}" отправлена.`,
+                type: 'success',
+                text: `Заявка на вступление в регион "${regionName}" отправлена!`,
             };
         } catch (error) {
             return {
-                status: 'error',
-                message: `Ошибка при отправке заявки: ${error.response?.data?.message || error.message}`,
+                type: 'error',
+                text: `Ошибка при отправке заявки: ${error.response?.data?.message || error.message}`,
             };
         }
     };
 
     const result = await sendRequest(regionName, authHeaders);
 
-    if (result.status === 'success') {
+    if (result.type === 'success') {
+        console.log('устанавливаем что регион: ', regionName, 'помечен как отправленный');
         setSubmitted((prev) => [...prev, regionName]);
     }
 
     showSnackbar({
-        type: result.status,
-        text: result.message,
+        type: result.type,
+        text: result.text,
     });
 };
 
@@ -94,15 +97,6 @@ export function FindGang() {
             authHeaders,
         });
     };
-
-    useEffect(() => {
-        if (response.message) {
-            showSnackbar({
-                type: response.status === 'error' ? 'error' : 'info',
-                text: response.message,
-            });
-        }
-    }, [response, showSnackbar]);
 
     if (loading) {
         return (

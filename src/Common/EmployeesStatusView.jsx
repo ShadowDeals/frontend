@@ -3,8 +3,10 @@ import {Box, Typography, Card, CardContent, Stack, Paper, Button} from '@mui/mat
 import {useEmployees} from "./useEmployees.js";
 import axios from "axios";
 import {useAuthHeaders} from "./tokenHooks.js";
+import StatusSnackbar from "./StatusSnackbar.jsx";
+import {useSnackbar} from "./useSnackbar.js";
 
-const EmployeesListWithStatus = ({employees, status}) => {
+const EmployeesListWithStatus = ({employees, status, showSnackbar}) => {
     console.log('employees тут какие', employees);
     console.log('EmployeesListWithStatus статус какой: ', status);
     const [actioned, setActioned] = useState({});
@@ -33,12 +35,20 @@ const EmployeesListWithStatus = ({employees, status}) => {
                 console.log(`Запрос отправлен для requestId=${employeeId}`);
                 setActioned((prev) => ({...prev, [employeeId]: true}));
                 console.log('actioned pending -> ', actioned);
+                showSnackbar({
+                    type: 'success',
+                    text: 'Сотрудник успешно принят на работу!',
+                })
             } catch (error) {
                 console.error('Ошибка при отправке запроса:', error);
+                showSnackbar({
+                    type: 'success',
+                    text: 'Ошибка приёма сотрудника на работу',
+                })
             }
         } else if (status === 'active') {
             await axios.put(
-                `http://localhost:8080/band/kick?userId=${employeeId}`,{},
+                `http://localhost:8080/band/kick?userId=${employeeId}`, {},
                 {
                     headers: {
                         ...authHeaders,
@@ -46,7 +56,10 @@ const EmployeesListWithStatus = ({employees, status}) => {
                 }
             );
             setActioned((prev) => ({...prev, [employeeId]: true}));
-            console.log('actioned active -> ', actioned);
+            showSnackbar({
+                type: 'success',
+                text: 'Сотрудник успешно уволен!',
+            })
         } else {
             console.log(`Действие для статуса ${status} не реализовано`);
             setActioned((prev) => ({...prev, [employeeId]: true}));
@@ -92,7 +105,7 @@ const EmployeesListWithStatus = ({employees, status}) => {
         >
             {employees.map((employee) => (
                 <Card
-                    key={employee.id}
+                    key={employee}
                     sx={{
                         minWidth: 200,
                         borderRadius: 2,
@@ -148,27 +161,42 @@ const EmployeesListWithStatus = ({employees, status}) => {
 };
 
 const EmployeesStatusView = ({role, status = 'pending'}) => {
+    const {
+        open,
+        snackbar,
+        showSnackbar,
+        hideSnackbar
+    } = useSnackbar();
+
     console.log('Статус в EmployeesStatusView: ', status);
     const {employees, loading, error} = useEmployees(role, status);
-    console.log('employees', employees);
+
+    useEffect(() => {
+        console.log('Ошибка в EmployeesStatusView', error);
+        if (error) {
+            console.log('Высвечиваем ', error);
+            showSnackbar({ type: 'error', text: error });
+        }
+    }, [error]);
+
     return (
         <Box sx={{width: '100%', height: '100%', padding: 4}}>
-
             {role === 'Дон' ? (
                 <Stack spacing={2}>
                     <Typography variant="h6" sx={{marginBottom: 2, textAlign: 'right'}}>
                         Администраторы
                     </Typography>
-                    <EmployeesListWithStatus employees={employees} status={status}/>
+                    <EmployeesListWithStatus employees={employees} status={status} showSnackbar={showSnackbar}/>
                 </Stack>
             ) : role === 'Администратор' ? (
                 <Box sx={{width: '100%'}}>
                     <Typography textAlign={'right'} variant="h6" sx={{ml: 2}}>
                         Солдаты
                     </Typography>
-                    <EmployeesListWithStatus employees={employees} status={status}/>
+                    <EmployeesListWithStatus employees={employees} status={status} showSnackbar={showSnackbar}/>
                 </Box>
             ) : null}
+            <StatusSnackbar open={open} onClose={hideSnackbar} snackbar={snackbar}/>
         </Box>
     );
 };

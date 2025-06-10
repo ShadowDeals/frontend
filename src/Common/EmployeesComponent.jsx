@@ -2,8 +2,8 @@ import * as React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import EmployeesStatusView from "../Common/EmployeesStatusView.jsx";
-import {a11yProps, CustomTabPanel} from "../Common/OrdersComponent.jsx";
+import EmployeesStatusView from "./EmployeesStatusView.jsx";
+import {a11yProps, CustomTabPanel} from "./OrdersComponent.jsx";
 
 export default function EmployeeTabs({role}) {
     const [value, setValue] = React.useState(0);

@@ -7,9 +7,9 @@ import {useSnackbar} from "./useSnackbar.js";
 import {jwtDecode} from "jwt-decode";
 
 
-const leaveGang = async (authHeaders) => {
+const leaveGang =  (authHeaders) => {
     try {
-        await axios.put('http://localhost:8080/user/leave', {}, { headers: authHeaders });
+        axios.put('http://localhost:8080/user/leave', {}, { headers: authHeaders });
         return { status: 'success', message: 'Вы успешно вышли из банды.' };
     } catch (error) {
         return {
@@ -35,11 +35,11 @@ export function GangInfo ({ role, onBandIdChange }) {
     const { refresh } = useRefreshToken();
 
     const handleLeave = async () => {
-        const result = await leaveGang(authHeaders);
+        const result = leaveGang(authHeaders);
         const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-        console.log('Ждем 3 секунды перед обновлением токена...');
-        await sleep(3000); // 3000 миллисекунд = 3 секунды
+        console.log('Ждем 2 секунды перед обновлением токена...');
+        await sleep(300);
         console.log('Задержка завершена, обновляем токен...');
 
         const newAccessToken = await refresh();

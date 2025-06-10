@@ -2,16 +2,8 @@ import {useEffect, useState, useCallback} from "react";
 import {useAuthHeaders, useDecodedToken} from "./tokenHooks.js";
 import axios from "axios";
 
-const mockedTasks = [{
-    "taskId": "95da87e2-7ec7-43c8-8839-ba4e4d17ee7a",
-    "address": "город Mock",
-    "description": "Мокированные данные",
-    "dateCreated": "2025-06-07T12:54:46.731320Z",
-    "taskType": "HIJACKING",
-    "taskStatus": "WAITING_FOR_PAYMENT"
-}];
 
-export function useTaskByStatus(taskStatus) {
+export function useTaskByStatus({taskStatus, showSnackbar}) {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -28,20 +20,33 @@ export function useTaskByStatus(taskStatus) {
 
         setLoading(true);
         try {
-            const { data } = await axios.get('http://localhost:8080/task', {
+            const {data} = await axios.get('http://localhost:8080/task', {
                 headers: authHeaders,
-                params: { bandId, taskStatus },
+                params: {bandId, taskStatus},
             });
 
             setTasks(data.length === 0 ? [] : data);
-            // setTasks(data.length === 0 ? mockedTasks : data);
+            // showSnackbar({
+            //     type: 'success',
+            //     text: 'Успешно загружено!'
+            // });
         } catch (err) {
-            console.log('useTaskByStatusError:', err);
             setError(err);
+            if (err.response?.status === 423) {
+                showSnackbar({
+                    type: 'error',
+                    text: 'Дон заблокировал базу данных!'
+                });
+            } else {
+                showSnackbar({
+                    type: 'error',
+                    text: 'Произошла ошибка при загрузке задач.'
+                });
+            }
         } finally {
             setLoading(false);
         }
-    }, [bandId, taskStatus, authHeaders]);
+    }, [bandId, taskStatus, authHeaders, showSnackbar]);
 
     useEffect(() => {
         fetchData();
@@ -55,7 +60,6 @@ export function useTaskByStatus(taskStatus) {
     };
 }
 
-
 export const TASK_STATUS_LABELS = {
     IN_WORK: "IN_WORK",
     FINISHED: "FINISHED",
@@ -65,10 +69,9 @@ export const TASK_STATUS_LABELS = {
     CANCELED_BY_ADMIN: "CANCELED_BY_ADMIN",
     CANCELED_BY_USER: "CANCELED_BY_USER",
     FAILED: "FAILED"
-
 };
 
-function useTaskByStatusWithRole(status, role) {
+function useTaskByStatusWithRole({status, role, showSnackbar}) {
     const cancelledStatuses = [
         TASK_STATUS_LABELS.CANCELED_BY_ADMIN,
         TASK_STATUS_LABELS.CANCELED_BY_USER,
@@ -77,28 +80,45 @@ function useTaskByStatusWithRole(status, role) {
     const isCancelledStatus = cancelledStatuses.includes(status);
     const isSoldier = role === 'Солдат';
 
-    const result = useTaskByStatus(status);
+    const result = useTaskByStatus({taskStatus: status, showSnackbar});
 
     if (isCancelledStatus && isSoldier) {
         return {
             ...result,
             tasks: [],
-            refetch: () => {},
+            refetch: () => {
+            },
         };
     }
 
     return result;
 }
 
-export function useTasks({ role }) {
-    const waitingForAccept = useTaskByStatusWithRole(TASK_STATUS_LABELS.WAITING_FOR_ACCEPT, role);
-    const waitingForPayment = useTaskByStatusWithRole(TASK_STATUS_LABELS.WAITING_FOR_PAYMENT, role);
-    const waitingForEmployee = useTaskByStatusWithRole(TASK_STATUS_LABELS.WAITING_FOR_ASSIGNMENT, role);
-    const inProgress = useTaskByStatusWithRole(TASK_STATUS_LABELS.IN_WORK, role);
-    const finished = useTaskByStatusWithRole(TASK_STATUS_LABELS.FINISHED, role);
-    const failed = useTaskByStatusWithRole(TASK_STATUS_LABELS.FAILED, role);
-    const cancelledByAdmin = useTaskByStatusWithRole(TASK_STATUS_LABELS.CANCELED_BY_ADMIN, role);
-    const cancelledByUser = useTaskByStatusWithRole(TASK_STATUS_LABELS.CANCELED_BY_USER, role);
+export function useTasks({role, showSnackbar}) {
+    const waitingForAccept = useTaskByStatusWithRole({
+        status: TASK_STATUS_LABELS.WAITING_FOR_ACCEPT,
+        role,
+        showSnackbar
+    });
+    const waitingForPayment = useTaskByStatusWithRole({
+        status: TASK_STATUS_LABELS.WAITING_FOR_PAYMENT,
+        role,
+        showSnackbar
+    });
+    const waitingForEmployee = useTaskByStatusWithRole({
+        status: TASK_STATUS_LABELS.WAITING_FOR_ASSIGNMENT,
+        role,
+        showSnackbar
+    });
+    const inProgress = useTaskByStatusWithRole({status: TASK_STATUS_LABELS.IN_WORK, role, showSnackbar});
+    const finished = useTaskByStatusWithRole({status: TASK_STATUS_LABELS.FINISHED, role, showSnackbar});
+    const failed = useTaskByStatusWithRole({status: TASK_STATUS_LABELS.FAILED, role, showSnackbar});
+    const cancelledByAdmin = useTaskByStatusWithRole({
+        status: TASK_STATUS_LABELS.CANCELED_BY_ADMIN,
+        role,
+        showSnackbar
+    });
+    const cancelledByUser = useTaskByStatusWithRole({status: TASK_STATUS_LABELS.CANCELED_BY_USER, role, showSnackbar});
 
     const refetchAll = () => {
         waitingForAccept.refetch();
@@ -123,6 +143,7 @@ export function useTasks({ role }) {
         refetch: refetchAll,
     };
 }
+
 // console.log('waitingForAccept:222', waitingForAccept?.tasks);
 // console.log('waitingForPayment:222', waitingForPayment?.tasks);
 // console.log('waitingForEmployee222:', waitingForEmployee?.tasks);
