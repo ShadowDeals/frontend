@@ -89,9 +89,8 @@ const PlotsDashboard = () => {
                                     data={[
                                         stats?.completedTasksCount,
                                         stats?.tasksCount,
-                                        Math.max(stats.tasksCount - stats.completedTasksCount, 0)
                                     ]}
-                                    xLabels={['Выполнено', 'Всего', 'Провалено']}
+                                    xLabels={['Выполнено', 'Всего']}
                                 />
                             </Stack>
                         </Grid>

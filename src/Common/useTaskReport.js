@@ -24,7 +24,9 @@ export function useTaskReport(taskId) {
                 });
                 setReport(response.data);
                 setError(null);
+                console.log('Успешно загружен reportView: ');
             } catch (err) {
+                console.log('Ошибка загрузки reportView: ', err);
                 setError(err);
                 setReport(null);
             } finally {
