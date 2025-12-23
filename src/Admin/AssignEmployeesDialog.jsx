@@ -57,6 +57,7 @@ export default function AssignEmployeesDialog({ open, onClose, onSubmit, taskInf
                             Выберите исполнителей (Ctrl+Click для множественного выбора, не больше {MAX_SELECTION}):
                         </Typography>
                         <select
+                            id="employees_select"
                             multiple
                             size={8}
                             style={{
@@ -94,6 +95,8 @@ export default function AssignEmployeesDialog({ open, onClose, onSubmit, taskInf
                                                 key={id}
                                                 control={
                                                     <Radio
+                                                        id={'main_executor_radio_first'}
+
                                                         sx={{
                                                             color: '#7a2e00',
                                                             '&.Mui-checked': {

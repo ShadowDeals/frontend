@@ -39,6 +39,7 @@ const getFieldsConfig = (regions = []) => [
         name: 'taskType',
         label: 'Тип задания',
         type: 'select',
+        id: "task-type-select",
         required: true,
         options: Object.entries(taskTypeLabels).map(([value, label]) => ({ value, label })),
         onFocusResetError: true,
@@ -46,6 +47,7 @@ const getFieldsConfig = (regions = []) => [
     {
         name: 'region',
         label: 'Выберите регион',
+        id: "task-region-select",
         type: 'select',
         required: false,
         options: regions.map(region => ({ value: region, label: region })),
@@ -94,12 +96,13 @@ export default function CreateOrderDialog({ open, onClose, onSubmit }) {
 
             <form onSubmit={formik.handleSubmit}>
                 <DialogContent dividers>
-                    {getFieldsConfig(regionsBandExist).map(({ name: field, label, type, multiline, rows, options, onFocusResetError }) => (
+                    {getFieldsConfig(regionsBandExist).map(({ name: field, id, label, type, multiline, rows, options, onFocusResetError }) => (
                         <TextField
                             key={field}
                             fullWidth
                             size="small"
                             select={type === 'select'}
+                            id={id}
                             type={type !== 'select' ? type : undefined}
                             label={label}
                             name={field}

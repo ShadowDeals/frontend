@@ -25,7 +25,9 @@ export default function CheckEmailComponent() {
                 sx={{
                     p: 4,
                     textAlign: 'center',
-                    width: '40%',}}
+                    width: { xs: '90%', sm: '500px', md: '500px' },
+                    minWidth: '300px',
+                }}
             >
                 <Stack>
                     <Link

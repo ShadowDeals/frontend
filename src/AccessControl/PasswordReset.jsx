@@ -77,12 +77,12 @@ function PasswordResetComponent() {
                 <Paper
                     elevation={5}
                     sx={{
-                        width: '20%',
-                        height: '30%',
+                        width: { xs: '90%', sm: '400px', md: '400px' },
+                        minWidth: '300px',
+                        p: 5,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        p: 5,
                         justifyContent: 'flex-start',
                     }}
                 >

@@ -206,7 +206,7 @@ function WelcomeCentralComponent() {
             >
                 <Stack
                     spacing={3}
-                    sx={{marginTop: '30%'}}
+                    sx={{marginTop: '30%', marginRight: '5%'}}
                 >
                     <Typography
                         variant="h2"

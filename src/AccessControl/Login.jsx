@@ -109,8 +109,8 @@ function LoginComponent() {
             <Paper
                 elevation={5}
                 sx={{
-                    width: '20%',
-                    height: '42%',
+                    width: { xs: '90%', sm: '400px', md: '400px' },
+                    minWidth: '300px',
                     alignItems: 'center',
                     p: 5,
                 }}
@@ -187,4 +187,4 @@ function LoginComponent() {
     );
 }
 
-export default LoginComponent
+export default LoginComponent;

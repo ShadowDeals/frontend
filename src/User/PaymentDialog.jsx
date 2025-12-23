@@ -28,7 +28,7 @@ export default function PaymentDialog({ open, onClose, onSubmit, taskInfo }) {
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>Отмена</Button>
-                <Button variant="contained" color="primary" onClick={handlePayClick}>
+                <Button id="payment_button" variant="contained" color="primary" onClick={handlePayClick}>
                     Оплатить
                 </Button>
             </DialogActions>

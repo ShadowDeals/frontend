@@ -33,7 +33,7 @@ export const taskStatusLabels = {
 
 export function OrderCard({taskInfo, actions}) {
     return (
-        <Card sx={{width: '100%', height: '100%'}} elevation={5}>
+        <Card sx={{ minWidth:'350px', width: '100%', height: '100%'}} elevation={5}>
             <CardContent>
                 <Stack spacing={1}>
                     <Typography gutterBottom sx={{color: 'text.secondary', fontSize: 14}}>
