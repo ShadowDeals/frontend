@@ -55,7 +55,7 @@ def user_create_task_fill_info_and_logout():
     u.click_button_by_text("Создать заказ")
     time.sleep(GENERAL_SLEEP_CONSTANT)
     u.fill_input_by_name("address", "Улица Ленина")
-    u.fill_input_by_name("description", "Приехать постоять 5 минут и уехать - 4")
+    u.fill_input_by_name("description", "Приехать постоять 5 минут и уехать - 5")
     u.select_first_option_by_id("task-type-select")
     u.select_first_option_by_id("task-region-select")
     u.click_button_by_text("Создать")

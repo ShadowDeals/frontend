@@ -107,7 +107,7 @@ function OrderTabs({
                     >
                         {paginatedTaskInfos.map((taskInfo) => {
                             return (
-                                <Grid key={taskInfo.taskId} size={3}>
+                                <Grid key={taskInfo.taskId} size={4}>
                                     <CardComponent
                                         role={role}
                                         taskInfo={taskInfo}
