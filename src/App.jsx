@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import WelcomeCentralComponent from "./Welcome/Welcome.jsx";
 import LoginComponent from "./AccessControl/Login.jsx";
@@ -19,7 +19,7 @@ function App() {
       <ThemeProvider theme={TheShadowDealsTheme}>
           <CssBaseline />
           <Provider store={store}>
-              <BrowserRouter>
+              <HashRouter>
                     <Routes>
                         <Route path="/" element={<Navigate to="/welcome" replace />} />
                         <Route path="/welcome" element={<WelcomeCentralComponent/>} />
@@ -31,7 +31,7 @@ function App() {
                         <Route path="/home" element={<HomeComponent />}/>
                         <Route path="/change-password" element={<EnterNewPassword/>}> </Route>
                     </Routes>
-              </BrowserRouter>
+              </HashRouter>
           </Provider>
       </ThemeProvider>
   )

@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {Box, Typography, Grid, Link, Stack, List, ListItem, Button} from '@mui/material';
+import React from 'react';
+import {Box, Typography, Grid, Stack, List, ListItem, Button} from '@mui/material';
 import {styled, useTheme} from '@mui/material/styles';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import MuiAccordion from '@mui/material/Accordion';
@@ -9,6 +9,11 @@ import MuiAccordionSummary, {
 
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import { useNavigate } from "react-router-dom";
+
+import robbery from '/robbery-welcome.svg';
+import dollar from '/dollar-welcome.svg';
+import judicial from '/judicial-welcome.svg';
+import bat from '/baseball-bat-welcome.svg';
 
 const AccordionPanel = {
     Don: 'panel1',
@@ -140,6 +145,7 @@ function LogoGridItem({ src, alt = 'default-logo' }) {
 }
 
 function GridLogos() {
+    const base = import.meta.env.BASE_URL;
     return (
         <Grid
             container
@@ -148,22 +154,10 @@ function GridLogos() {
             width="60%"
             height="60%"
         >
-            <LogoGridItem
-                src={"/robbery-welcome.svg"}
-                alt="robbery-welcome"
-            > </LogoGridItem>
-            <LogoGridItem
-                src={"/dollar-welcome.svg"}
-                alt="dollar-welcome"
-            > </LogoGridItem>
-            <LogoGridItem
-                src={"/judicial-welcome.svg"}
-                alt="judicial-welcome"
-            > </LogoGridItem>
-            <LogoGridItem
-                src={"/baseball-bat-welcome.svg"}
-                alt="baseball-bat-welcome"
-            > </LogoGridItem>
+            <LogoGridItem src={robbery} alt="robbery" />
+            <LogoGridItem src={dollar} alt="dollar" />
+            <LogoGridItem src={judicial} alt="judicial" />
+            <LogoGridItem src={bat} alt="bat" />
         </Grid>
     );
 }
