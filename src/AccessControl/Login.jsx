@@ -14,6 +14,7 @@ import axios from "axios";
 import {useSnackbar} from "../Common/useSnackbar.js";
 import React from "react";
 import StatusSnackbar from "../Common/StatusSnackbar.jsx";
+import {API_BASE} from "../baseUrl.js";
 
 const validationSchema = Yup.object({
     email: Yup.string().email('Неверный формат email').required('Введите почту'),
@@ -29,7 +30,7 @@ function LoginComponent() {
         onSubmit: async (values, { setSubmitting }) => {
             console.log('Логин:', values);
             try {
-                const { data } = await axios.post('http://localhost:8080/auth/signin', {
+                const { data } = await axios.post( `${API_BASE}/api/auth/signin`, {
                     email: values.email,
                     password: values.password,
                 });

@@ -2,6 +2,7 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 import { jwtDecode } from 'jwt-decode';
 import Cookies from 'js-cookie';
 import axios from "axios";
+import {API_BASE} from "../baseUrl.js";
 
 export function useDecodedToken() {
     console.log('useDecodedToken call');
@@ -54,7 +55,7 @@ export function useRefreshToken() {
         setError(null);
 
         try {
-            const response = await axios.post('http://localhost:8080/auth/refresh', {
+            const response = await axios.post(`${API_BASE}/api/auth/refresh`, {
                 refreshToken,
             });
 

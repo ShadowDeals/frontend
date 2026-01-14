@@ -5,6 +5,7 @@ import axios from "axios";
 import {useAuthHeaders} from "./tokenHooks.js";
 import StatusSnackbar from "./StatusSnackbar.jsx";
 import {useSnackbar} from "./useSnackbar.js";
+import {API_BASE} from "../baseUrl.js";
 
 const EmployeesListWithStatus = ({employees, status, showSnackbar}) => {
     console.log('employees тут какие', employees);
@@ -24,7 +25,7 @@ const EmployeesListWithStatus = ({employees, status, showSnackbar}) => {
         if (status === 'pending') {
             try {
                 await axios.put(
-                    `http://localhost:8080/request?requestId=${employeeId}`,
+                    `${API_BASE}/api/request?requestId=${employeeId}`,
                     {},
                     {
                         headers: {
@@ -48,7 +49,7 @@ const EmployeesListWithStatus = ({employees, status, showSnackbar}) => {
             }
         } else if (status === 'active') {
             await axios.put(
-                `http://localhost:8080/band/kick?userId=${employeeId}`, {},
+                `${API_BASE}/api/band/kick?userId=${employeeId}`, {},
                 {
                     headers: {
                         ...authHeaders,

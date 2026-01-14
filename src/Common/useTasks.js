@@ -1,6 +1,7 @@
 import {useEffect, useState, useCallback} from "react";
 import {useAuthHeaders, useDecodedToken} from "./tokenHooks.js";
 import axios from "axios";
+import {API_BASE} from "../baseUrl.js";
 
 
 export function useTaskByStatus({taskStatus, showSnackbar}) {
@@ -20,7 +21,7 @@ export function useTaskByStatus({taskStatus, showSnackbar}) {
 
         setLoading(true);
         try {
-            const {data} = await axios.get('http://localhost:8080/task', {
+            const {data} = await axios.get(`${API_BASE}/api/task`, {
                 headers: authHeaders,
                 params: {bandId, taskStatus},
             });

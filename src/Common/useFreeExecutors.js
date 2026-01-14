@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useDecodedToken, useAuthHeaders } from "./tokenHooks.js";
 
+import { API_BASE } from "../baseUrl.js";
+
 export function useFreeExecutors() {
     const [executors, setExecutors] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -26,7 +28,7 @@ export function useFreeExecutors() {
         setLoading(true);
         setError(null);
         try {
-            const { data } = await axios.get("http://localhost:8080/task/executors", {
+            const { data } = await axios.get(`${API_BASE}/api/task/executors`, {
                 headers: authHeaders,
                 params: { bandId },
             });

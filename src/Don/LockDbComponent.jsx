@@ -15,6 +15,7 @@ import {useAuthHeaders} from "../Common/tokenHooks.js";
 import axios from "axios";
 import StatusSnackbar from "../Common/StatusSnackbar.jsx";
 import {useSnackbar} from "../Common/useSnackbar.js";
+import {API_BASE} from "../baseUrl.js";
 
 export function PasswordDialog({open, onClose, onConfirm, isLocked, authHeaders, showSnackbar}) {
     const formik = useFormik({
@@ -23,7 +24,7 @@ export function PasswordDialog({open, onClose, onConfirm, isLocked, authHeaders,
         onSubmit: async (values) => {
             if (!authHeaders.Authorization) return;
 
-            const url = 'http://localhost:8080/band/block';
+            const url = `${API_BASE}/api/band/block`;
             const config = {
                 headers: {
                     ...authHeaders,
@@ -115,7 +116,7 @@ export function LockDatabaseComponent() {
     useEffect(() => {
         if (!authHeaders.Authorization) return;
 
-        axios.get('http://localhost:8080/band/block',
+        axios.get(`${API_BASE}/api/band/block`,
             {headers: authHeaders})
             .then((res) => {
                 if (typeof res.data === 'boolean') {

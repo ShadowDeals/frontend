@@ -1,5 +1,6 @@
 import {useAuthHeaders, useDecodedToken} from './tokenHooks.js';
 import axios from 'axios';
+import {API_BASE} from "../baseUrl.js";
 
 export function useDialogSubmitConfig() {
     const authHeaders = useAuthHeaders();
@@ -29,7 +30,7 @@ export function useDialogSubmitConfig() {
                     };
                 }
 
-                const url = 'http://localhost:8080/task/executors';
+                const url = `${API_BASE}/api/task/executors`;
                 const params = { taskId, officerId };
 
                 const res = await axios.post(url, selectedExecutorIds, {
@@ -57,7 +58,7 @@ export function useDialogSubmitConfig() {
                 console.log('bandId:', bandId);
                 console.log('authHeaders:', authHeaders);
 
-                const putUrl = 'http://localhost:8080/task';
+                const putUrl = `${API_BASE}/api/task`;
                 const putParams = {
                     taskId,
                     bandId,
@@ -99,7 +100,7 @@ export function useDialogSubmitConfig() {
                     };
                 }
 
-                const url = `http://localhost:8080/task/report`;
+                const url = `${API_BASE}/api/task/report`;
                 const params = { taskId };
 
                 const body = {
@@ -133,7 +134,7 @@ export function useDialogSubmitConfig() {
         createOrder: async ({newTask}) => {
             console.log('createOrder: ', newTask);
             try {
-                const res = await axios.post('http://localhost:8080/task', newTask, {
+                const res = await axios.post(`${API_BASE}/api/task`, newTask, {
                     headers: {
                         'Content-Type': 'application/json',
                         ...authHeaders,
@@ -168,7 +169,7 @@ export function useDialogSubmitConfig() {
                 };
 
                 console.log('params: ', params);
-                const url = `http://localhost:8080/task/price`;
+                const url = `${API_BASE}/api/task/price`;
 
                 console.log('URL запроса:', `${url}?${new URLSearchParams(params).toString()}`);
 
@@ -211,7 +212,7 @@ export function useDialogSubmitConfig() {
                     taskId,
                 };
 
-                const url = 'http://localhost:8080/task/payment';
+                const url = `${API_BASE}/api/task/payment`;
 
                 const res = await axios.put(url, null, {
                     params,
@@ -247,7 +248,7 @@ export function useDialogSubmitConfig() {
                     };
                 }
                 const res = await axios.put(
-                    `http://localhost:8080/task/cancel`,
+                    `${API_BASE}/api/task/cancel`,
                     { reason: reason.reason },
                     {
                         params: { taskId },

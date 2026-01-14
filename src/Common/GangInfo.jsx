@@ -6,10 +6,11 @@ import StatusSnackbar from "./StatusSnackbar.jsx";
 import {useSnackbar} from "./useSnackbar.js";
 import {jwtDecode} from "jwt-decode";
 
+import {API_BASE} from "../baseUrl.js";
 
 const leaveGang =  (authHeaders) => {
     try {
-        axios.put('http://localhost:8080/user/leave', {}, { headers: authHeaders });
+        axios.put(`${API_BASE}/api/user/leave`, {}, { headers: authHeaders });
         return { status: 'success', message: 'Вы успешно вышли из банды.' };
     } catch (error) {
         return {

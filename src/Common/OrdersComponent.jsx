@@ -99,7 +99,7 @@ function OrderTabs({
                 >
                     <Grid
                         container
-                        spacing={2}
+                        spacing={3}
                         padding={2}
                         columns={12}
 

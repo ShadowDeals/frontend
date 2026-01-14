@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import axios from 'axios';
 import {useAuthHeaders} from './tokenHooks.js';
+import {API_BASE} from "../baseUrl.js";
 
 export const useGangInfo = () => {
     const [regions, setRegions] = useState([]);
@@ -18,8 +19,8 @@ export const useGangInfo = () => {
         const fetchData = async () => {
             try {
                 const [regionsRes, requestsRes] = await Promise.all([
-                    axios.get('http://localhost:8080/region?isBandExist=true'),
-                    axios.get('http://localhost:8080/request/own', {
+                    axios.get(`${API_BASE}/api/region?isBandExist=true`),
+                    axios.get(`${API_BASE}/api/request/own`, {
                         headers: authHeaders
                     })
                 ]);

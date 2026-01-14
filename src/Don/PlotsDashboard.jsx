@@ -6,6 +6,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import StatusSnackbar from "../Common/StatusSnackbar.jsx";
 import axios from "axios";
 import {useSnackbar} from "../Common/useSnackbar.js";
+import {API_BASE} from "../baseUrl.js";
 
 export function ChartsOverviewDemo({data = [], xLabels = []}) {
     return (
@@ -51,7 +52,7 @@ const PlotsDashboard = () => {
                 return;
             }
             try {
-                const response = await axios.get('http://localhost:8080/band/stats', {
+                const response = await axios.get(`${API_BASE}/api/band/stats`, {
                     headers: authHeaders,
                 });
                 setStats(response.data);

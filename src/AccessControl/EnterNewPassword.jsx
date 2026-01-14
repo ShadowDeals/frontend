@@ -6,6 +6,7 @@ import {useSnackbar} from "../Common/useSnackbar.js";
 import StatusSnackbar from "../Common/StatusSnackbar.jsx";
 import {useLocation, useNavigate} from "react-router-dom";
 import axios from "axios";
+import {API_BASE} from "../baseUrl.js";
 
 const validationSchema = Yup.object({
     password: Yup.string()
@@ -37,7 +38,7 @@ const EnterNewPassword = ({onSubmit}) => {
         validationSchema,
         onSubmit: async (values, { setSubmitting }) => {
             try {
-                const response = await axios.put('http://localhost:8080/auth/change/password', {
+                const response = await axios.put(`${API_BASE}/api/auth/change/password`, {
                     email,
                     newPassword: values.password,
                     changePasswordCode,
@@ -75,7 +76,14 @@ const EnterNewPassword = ({onSubmit}) => {
             component="form"
             onSubmit={formik.handleSubmit}
         >
-            <Paper elevation={5} sx={{width: '20%', height: '35%', p: 5}}>
+            <Paper elevation={5} sx={{
+                width: { xs: '90%', sm: '400px', md: '400px' },
+                p: 5,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+            }}>
                 <Stack spacing={2}>
                     <Typography variant="h6" textAlign="center">Введите новый пароль</Typography>
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuthHeaders } from './tokenHooks.js';
+import {API_BASE} from "../baseUrl.js";
 
 export function useTaskReport(taskId) {
     const [report, setReport] = useState(null);
@@ -18,7 +19,7 @@ export function useTaskReport(taskId) {
         const fetchReport = async () => {
             setLoading(true);
             try {
-                const response = await axios.get('http://localhost:8080/task/report', {
+                const response = await axios.get(`${API_BASE}/api/task/report`, {
                     headers: authHeaders,
                     params: { taskId },
                 });

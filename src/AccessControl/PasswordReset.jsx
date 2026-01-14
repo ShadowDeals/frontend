@@ -19,6 +19,7 @@ import StatusSnackbar from "../Common/StatusSnackbar.jsx";
 import {useSnackbar} from "../Common/useSnackbar.js";
 import {EmailResetPasswordConfig} from "./ValidationSchemas.js";
 import axios from "axios";
+import {API_BASE} from "../baseUrl.js";
 
 function PasswordResetComponent() {
     const {
@@ -38,7 +39,7 @@ function PasswordResetComponent() {
         onSubmit: async (values) => {
             try {
                 const response = await axios.post(
-                    'http://localhost:8080/auth/change/password/email',
+                    `${API_BASE}/api/auth/change/password/email`,
                     { email: values.email }
                 );
                 console.log('Ответ от сервера: ', response.data);

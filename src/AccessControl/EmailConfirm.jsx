@@ -3,6 +3,7 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import CircularProgress from '@mui/material/CircularProgress';
+import {API_BASE} from "../baseUrl.js";
 
 export function EmailConfirmComponent() {
     const navigate = useNavigate();
@@ -24,7 +25,7 @@ export function EmailConfirmComponent() {
         const code = searchParams.get("code");
         if (!code) return;
 
-        const baseUrl = "http://localhost:8080/auth/confirm/email";
+        const baseUrl = `${API_BASE}/api/auth/confirm/email`;
         const fullUrl = `${baseUrl}?code=${encodeURIComponent(code)}`;
         console.log("Полный HTTP путь запроса:", fullUrl);
 

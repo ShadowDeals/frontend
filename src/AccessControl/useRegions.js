@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import {API_BASE} from "../baseUrl.js";
 
 const useRegions = () => {
     const [regionsBandExist, setRegionsBandExist] = useState([]);
@@ -11,8 +12,8 @@ const useRegions = () => {
         const fetchRegions = async () => {
             try {
                 const [existRes, notExistRes] = await Promise.all([
-                    axios.get('http://localhost:8080/region?isBandExist=true'),
-                    axios.get('http://localhost:8080/region?isBandExist=false')
+                    axios.get(`${API_BASE}/api/region?isBandExist=true`),
+                    axios.get(`${API_BASE}/api/region?isBandExist=false`)
                 ]);
                 setRegionsBandExist(existRes.data);
                 setRegionsBandNotExist(notExistRes.data);

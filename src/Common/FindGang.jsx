@@ -12,6 +12,7 @@ import { useSnackbar } from './useSnackbar';
 import StatusSnackbar from './StatusSnackbar';
 import axios from "axios";
 import {useAuthHeaders} from "./tokenHooks.js";
+import { API_BASE } from "../baseUrl.js";
 
 export const Regions = {
     VASILEOSTROVKIY_REGION: "Василеостровский район",
@@ -45,7 +46,7 @@ export const handleApply = async ({
         const regionKey = RegionsReverse?.[regionName];
         try {
             await axios.post(
-                `http://localhost:8080/request?regionName=${encodeURIComponent(regionKey)}`,
+                `${API_BASE}/api/request?regionName=${encodeURIComponent(regionKey)}`,
                 {},
                 { headers }
             );

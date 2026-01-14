@@ -13,6 +13,12 @@ import {formatDate, taskTypeLabels} from "./Cards.jsx";
 export default function OrderDetailsDialog({ open, onClose, taskInfo }) {
     if (!taskInfo) return null;
 
+    const isCancelled =
+        taskInfo.taskStatus === 'CANCELED_BY_USER' ||
+        taskInfo.taskStatus === 'CANCELED_BY_ADMIN';
+
+    console.log('Task status:', taskInfo.taskStatus, 'isCancelled:', isCancelled);
+
     return (
         <Dialog
             slotProps={{
@@ -47,6 +53,13 @@ export default function OrderDetailsDialog({ open, onClose, taskInfo }) {
                     <Typography sx={{ color: 'text.secondary', fontSize: 14 }} component="div">
                         Статус: {taskInfo.taskStatus}
                     </Typography>
+                    {isCancelled && taskInfo.cancelReason && (
+                        <Typography
+                            sx={{ color: 'error.main', fontSize: 14, mt: 1 }}
+                        >
+                            Причина отказа: {taskInfo.cancelReason}
+                        </Typography>
+                    )}
                 </Stack>
             </DialogContent>
             <DialogActions>

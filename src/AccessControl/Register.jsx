@@ -19,9 +19,9 @@ import { useFormik } from 'formik';
 import { registerFormConfigs } from "./ValidationSchemas.js";
 import { v4 as uuidv4 } from 'uuid';
 import useRegions from "./useRegions.js";
-import ErrorSnackbar from "../Common/StatusSnackbar.jsx";
 import {useSnackbar} from "../Common/useSnackbar.js";
 import StatusSnackbar from "../Common/StatusSnackbar.jsx";
+import {API_BASE} from "../baseUrl.js";
 
 
 
@@ -129,7 +129,7 @@ function RegisterComponent() {
 
                 console.log('Request body:', body);
 
-                const res = await fetch('http://localhost:8080/auth/signup', {
+                const res = await fetch(`${API_BASE}/api/auth/signup`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body),

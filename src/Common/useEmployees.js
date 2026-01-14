@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
+import {API_BASE} from "../baseUrl.js";
 
 export const useEmployees = (role, status) => {
     const [employees, setEmployees] = useState([]);
@@ -33,7 +34,7 @@ export const useEmployees = (role, status) => {
         }
 
         if (status === 'pending') {
-            const pendingEndpoint = 'http://localhost:8080/request';
+            const pendingEndpoint = `${API_BASE}/api/request`;
             axios.get(pendingEndpoint, {
                 headers: { Authorization: `Bearer ${accessToken}` },
             })
@@ -59,7 +60,7 @@ export const useEmployees = (role, status) => {
             console.log('активный запрос пошёл');
 
             const userRole = role === 'Дон' ? 'ADMIN' : 'SOLDIER';
-            const activeEndpoint = `http://localhost:8080/band/workers?bandId=${bandId}&userRole=${userRole}`;
+            const activeEndpoint = `${API_BASE}/api/band/workers?bandId=${bandId}&userRole=${userRole}`;
 
             axios.get(activeEndpoint, {
                 headers: { Authorization: `Bearer ${accessToken}` },
